@@ -1,14 +1,16 @@
 package org.firstinspires.ftc.teamcode;
 
-import com.qualcomm.robotcore.eventloop.opmode.OpMode;
-import com.qualcomm.robotcore.eventloop.opmode.TeleOp;
-import com.qualcomm.robotcore.hardware.DcMotor;
-import com.qualcomm.robotcore.hardware.DcMotorSimple;
+import com.qualcomm.robotcore.eventloop.opmode.*;
+import com.qualcomm.robotcore.hardware.*;
 import com.qualcomm.robotcore.util.Range;
 
 @TeleOp(name = "Driver Control")
 public class DriverControl extends OpMode {
+    // the DC motors for the wheels and arm
     private DcMotor leftWheelMotor, rightWheelMotor, armMotor;
+
+    // the servo moto for the claw
+    private Servo clawServo;
 
     private double leftStickX; // the x position of left joystick; left and right position of the joystick
     private double leftStickY; // the y position of left joystick; up and down position of the joystick
@@ -25,9 +27,14 @@ public class DriverControl extends OpMode {
         this.rightWheelMotor = hardwareMap.get(DcMotor.class, "right_motor");
         this.armMotor = hardwareMap.get(DcMotor.class, "arm_motor");
 
+        this.clawServo = hardwareMap.get(Servo.class, "claw_servo");
+
         // setting the direction of the motors
-        this.leftWheelMotor.setDirection(DcMotorSimple.Direction.REVERSE);
         // rightWheelMotor and armMotor are forward by default
+        this.leftWheelMotor.setDirection(DcMotorSimple.Direction.REVERSE);
+
+        // setting hook servo position to 1, which is upright, aka not pressing the hook
+        hookServo.setPosition(1.0);
 
         // set x and y positions of the left joystick
         this.leftStickX = 0;
@@ -48,6 +55,7 @@ public class DriverControl extends OpMode {
         this.getControls();
 
         this.movement();
+        this.armMovement();
         this.grabber();
     }
 
@@ -69,16 +77,28 @@ public class DriverControl extends OpMode {
         rightWheelMotor.setPower(rightWheelPower);
     }
 
-    public void grabber() {
+    public void armMovement() {
         /*
          * Controls arm movement of the robot
          */
-
-
+        
         // set armPower
         armPower = Range.clip(this.rightStickY, -1.0, 1.0);
 
+        // set the motor to the power
         armMotor.setPower(armPower);
+    }
+
+    public void grabber() {
+        // if A button is pressed, release the claw
+        if (gamepad1.a) {
+            this.clawServo.setPosition(1.0);
+        }
+
+        // if B button is pressed, close the claw to half
+        if (gamepad1.b) {
+            this.clawServo.setPosition(0.5);
+        }
     }
 
     public void getControls() {
@@ -87,3 +107,4 @@ public class DriverControl extends OpMode {
         this.leftStickY = gamepad1.left_stick_y;
 
     }
+}
