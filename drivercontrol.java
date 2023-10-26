@@ -6,6 +6,12 @@ import com.qualcomm.robotcore.hardware.DcMotor;
 import com.qualcomm.robotcore.hardware.DcMotorSimple;
 import com.qualcomm.robotcore.util.Range;
 
+/*
+ * Git commit example
+ * 
+ */
+
+
 @TeleOp(name = "Driver Control")
 public class DriverControl extends OpMode {
     private DcMotor leftWheelMotor, rightWheelMotor, armMotor;
@@ -73,6 +79,7 @@ public class DriverControl extends OpMode {
         /*
          * Controls arm movement of the robot
          */
+
 
 
         // set armPower
