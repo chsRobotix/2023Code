@@ -1,16 +1,25 @@
 package org.firstinspires.ftc.teamcode;
 
+import java.io.Serial;
+import java.rmi.server.ServerCloneException;
+
 import com.qualcomm.robotcore.eventloop.opmode.*;
 import com.qualcomm.robotcore.hardware.*;
 import com.qualcomm.robotcore.util.Range;
 
 @TeleOp(name = "Driver Control")
 public class DriverControl extends OpMode {
-    // the DC motors for the wheels and arm
-    private DcMotor leftWheelMotor, rightWheelMotor, armMotor;
+    // the DC motors for the wheels
+    private DcMotor leftWheelMotor, rightWheelMotor;
+    
+    // the DC motors for the arm 
+    private armRotationMotor, armExtensionMotor;
 
-    // the servo moto for the claw
-    private Servo clawServo;
+    // the servo motors for the pincers of the claw
+    private Servo leftPincerServo, rightPincerServo;
+
+    // the servo that rotates the claw back and forth
+    private Servo clawRotationServo;
 
     private double leftStickX; // the x position of left joystick; left and right position of the joystick
     private double leftStickY; // the y position of left joystick; up and down position of the joystick
@@ -25,16 +34,18 @@ public class DriverControl extends OpMode {
         // assigning the motors variables to the configured names on the driver hub
         this.leftWheelMotor = hardwareMap.get(DcMotor.class, "left_motor");
         this.rightWheelMotor = hardwareMap.get(DcMotor.class, "right_motor");
-        this.armMotor = hardwareMap.get(DcMotor.class, "arm_motor");
+        this.armRotationMotor = hardwareMap.get(DcMotor.class, "arm_motor");
 
-        this.clawServo = hardwareMap.get(Servo.class, "claw_servo");
+        this.leftPincerServo = hardwareMap.get(Servo.class, "left_pincer_servo");
+        this.rightPincerServo = hardwareMap.get(Servo.class, "right_pincer_servo");
 
         // setting the direction of the motors
-        // rightWheelMotor and armMotor are forward by default
+        // rightWheelMotor and armRotationMotor are forward by default
         this.leftWheelMotor.setDirection(DcMotorSimple.Direction.REVERSE);
 
-        // setting hook servo position to 1, which is upright, aka not pressing the hook
-        hookServo.setPosition(1.0);
+        // setting the two servo positions to 1, which is upright, aka not pressing the claw
+        leftPincerServo.setPosition(1.0);
+        rightPincerServo.setPosition(1.0);
 
         // set x and y positions of the left joystick
         this.leftStickX = 0;
@@ -86,18 +97,18 @@ public class DriverControl extends OpMode {
         armPower = Range.clip(this.rightStickY, -1.0, 1.0);
 
         // set the motor to the power
-        armMotor.setPower(armPower);
+        armRotationMotor.setPower(armPower);
     }
 
     public void grabber() {
         // if A button is pressed, release the claw
         if (gamepad1.a) {
-            this.clawServo.setPosition(1.0);
+            this.leftPincerServo.setPosition(1.0);
         }
 
         // if B button is pressed, close the claw to half
         if (gamepad1.b) {
-            this.clawServo.setPosition(0.5);
+            this.leftPincerServo.setPosition(0.5);
         }
     }
 
