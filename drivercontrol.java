@@ -9,11 +9,15 @@ import com.qualcomm.robotcore.util.Range;
 
 @TeleOp(name = "Driver Control")
 public class DriverControl extends OpMode {
+    // constants for how far the arm can extend and retract
+    private final int ARM_EXTEND_LIMIT;
+    private final int ARM_RETRACT_LIMIT;
+
     // the DC motors for the wheels
     private DcMotor leftWheelMotor, rightWheelMotor;
     
-    // the DC motors for the arm 
-    private armRotationMotor, armExtensionMotor;
+    // the DC motors for the arm
+    private DcMotor armRotationMotor, armExtensionMotor;
 
     // the servo motors for the pincers of the claw
     private Servo leftPincerServo, rightPincerServo;
@@ -34,7 +38,9 @@ public class DriverControl extends OpMode {
         // assigning the motors variables to the configured names on the driver hub
         this.leftWheelMotor = hardwareMap.get(DcMotor.class, "left_motor");
         this.rightWheelMotor = hardwareMap.get(DcMotor.class, "right_motor");
-        this.armRotationMotor = hardwareMap.get(DcMotor.class, "arm_motor");
+
+        this.armRotationMotor = hardwareMap.get(DcMotor.class, "arm_rotator");
+        this.armExtensionMotor = hardwareMap.get(DcMotor.class, "arm_extender");
 
         this.leftPincerServo = hardwareMap.get(Servo.class, "left_pincer_servo");
         this.rightPincerServo = hardwareMap.get(Servo.class, "right_pincer_servo");
@@ -44,15 +50,8 @@ public class DriverControl extends OpMode {
         this.leftWheelMotor.setDirection(DcMotorSimple.Direction.REVERSE);
 
         // setting the two servo positions to 1, which is upright, aka not pressing the claw
-        leftPincerServo.setPosition(1.0);
-        rightPincerServo.setPosition(1.0);
-
-        // set x and y positions of the left joystick
-        this.leftStickX = 0;
-        this.leftStickY = 0;
-
-        // set x and y positions of right joystick
-        this.rightStickX = this.rightStickY = 0;
+        this.leftPincerServo.setPosition(1.0);
+        this.rightPincerServo.setPosition(1.0);
 
         this.leftWheelPower = 0;
         this.rightWheelPower = 0;
@@ -63,7 +62,6 @@ public class DriverControl extends OpMode {
     @Override
     public void loop() {
         telemetry.update(); // call-back to android console
-        this.getControls();
 
         this.movement();
         this.armMovement();
@@ -76,39 +74,69 @@ public class DriverControl extends OpMode {
          * Moves robot forward, backard, left, and right
          * according to left joystick
          */
-        double turn = this.leftStickX;
-        double drive = this.leftStickY;
+        double turn = gamepad1.left_stick_x;
+        double drive = gamepad1.left_stick_y;
 
         // power levels
         // motor gear rotation is inversed
-        leftWheelPower = Range.clip(drive + turn, -1.0, 1.0);
-        rightWheelPower = Range.clip(drive - turn, -1.0, 1.0);
+        this.leftWheelPower = Range.clip(drive + turn, -1.0, 1.0);
+        this.rightWheelPower = Range.clip(drive - turn, -1.0, 1.0);
 
-        leftWheelMotor.setPower(leftWheelPower);
-        rightWheelMotor.setPower(rightWheelPower);
+        this.leftWheelMotor.setPower(this.leftWheelPower);
+        this.rightWheelMotor.setPower(this.rightWheelPower);
     }
 
+    // controls the angle that the arm is at
+    // as well as whether the arm is extended or not
     public void armMovement() {
         /*
          * Controls arm movement of the robot
          */
         
         // set armPower
-        armPower = Range.clip(this.rightStickY, -1.0, 1.0);
+        this.armPower = Range.clip(gamepad1.right_stick_y, -1.0, 1.0);
 
         // set the motor to the power
-        armRotationMotor.setPower(armPower);
+        this.armRotationMotor.setPower(this.armPower);
+
+
+        // get how far the arm is extended
+        int armExtension = this.armExtensionMotor.getCurrentPosition();
+
+        // if dpad_up is pressed and the arm is not extended
+        if (gamepad1.dpad_up && armExtension < this.ARM_EXTEND_LIMIT) {
+            // set the target position to the max length of the arm
+            this.armExtensionMotor.setTargetPosition(this.ARM_EXTEND_LIMIT);
+            // move at max speed
+            this.armExtensionMotor.setPower(1.0);
+            // extend the arm to its max length
+            this.armExtensionMotor.setMode(DcMotor.RunMode.RUN_TO_POSITION);
+
+        } else if (gamepad1.dpad_down && armExtension > this.ARM_RETRACT_LIMIT) { // if dpad_down is pressed and the arm is not fully retracted
+            // set the target position to the min length of the arm
+            this.armExtensionMotor.setTargetPosition(this.ARM_RETRACT_LIMIT);
+            // move at max speed
+            this.armExtensionMotor.setPower(-1.0);
+            // retract the arm to its min length
+            this.armExtensionMotor.setMode(DcMotor.RunMode.RUN_TO_POSITION);
+        }
     }
 
+    // Flicks the grabber back and forth
+    // Also closes and opens the claw
     public void grabber() {
-        // if A button is pressed, release the claw
-        if (gamepad1.a) {
+        // if the left bumper is pressed, release the claw
+        if (gamepad1.left_bumper) {
             this.leftPincerServo.setPosition(1.0);
+            this.rightPincerServo.setPosition(1.0);
+
+        } else if (gamepad1.right_bumper) { // if the right bumper is pressed, close the claw to half
+            this.leftPincerServo.setPosition(0.5);
+            this.rightPincerServo.setPosition(0.5);
         }
 
-        // if B button is pressed, close the claw to half
-        if (gamepad1.b) {
-            this.leftPincerServo.setPosition(0.5);
+        if (gamepad1.a) {
+            
         }
     }
 
@@ -116,6 +144,5 @@ public class DriverControl extends OpMode {
         // update x and y values of the left joystick
         this.leftStickX = gamepad1.left_stick_x;
         this.leftStickY = gamepad1.left_stick_y;
-
     }
 }
