@@ -64,7 +64,7 @@ public class DriverControl extends OpMode {
         telemetry.update(); // call-back to android console
 
         this.movement();
-        this.armMovement();
+        this.moveArm();
         this.grabber();
     }
 
@@ -88,7 +88,7 @@ public class DriverControl extends OpMode {
 
     // controls the angle that the arm is at
     // as well as whether the arm is extended or not
-    public void armMovement() {
+    public void moveArm() {
         /*
          * Controls arm movement of the robot
          */
