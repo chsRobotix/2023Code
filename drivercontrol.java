@@ -17,6 +17,7 @@ public class DriverControl extends OpMode {
     // constants for how far the arm can extend and retract
     private final int ARM_EXTEND_LIMIT;
     private final int ARM_RETRACT_LIMIT;
+    private final int ARM_ROTATIONAL_VELOCITY = 1;
 
     // the DC motors for the wheels
     private DcMotor leftWheelMotor, rightWheelMotor;
@@ -168,14 +169,15 @@ public class DriverControl extends OpMode {
 
         // rotational limits
 
+
         // priorities gradual arm movement from trigger
         if (Math.abs(triggerVelocity) > 0) {
             // gradual arm movement from trigger
-            // armrotationalmotor.setPower(triggerVelocity / constant)
+            this.armRotationMotor.setPower(triggerVelocity / this.ARM_ROTATIONAL_VELOCITY);
 
         } else if (Math.abs(bumperVelocity) > 0) {
             // instantaneous arm movement from bumper
-            // armrotationalmotor.setPower(triggerVelocity * constant)
+            this.armRotationMotor.setPower(triggerVelocity * this.ARM_ROTATIONAL_VELOCITY);
 
         }
 
