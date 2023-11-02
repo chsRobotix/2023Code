@@ -113,7 +113,8 @@ public class DriverControl extends OpMode {
         // gradually raise the arm
         if (gamepad1.right_trigger) {
             this.armPower = 0.5;
-        } else if (gamepad1.left_bumper) { // if the left 
+        } else if (gamepad1.left_bumper) { // if the right bumper is pressed,
+        // gradually raise the arm
             this.armPower = -0.5;
         }
 
