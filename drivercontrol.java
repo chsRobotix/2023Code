@@ -25,12 +25,6 @@ public class DriverControl extends OpMode {
     // the servo that rotates the claw back and forth
     private Servo clawRotationServo;
 
-    private double leftStickX; // the x position of left joystick; left and right position of the joystick
-    private double leftStickY; // the y position of left joystick; up and down position of the joystick
-
-    private double rightStickX; // x position of right joystick
-    private double rightStickY; // y position of the right joystick
-
     private double leftWheelPower, rightWheelPower, armPower;
 
     @Override
@@ -49,9 +43,12 @@ public class DriverControl extends OpMode {
         // rightWheelMotor and armRotationMotor are forward by default
         this.leftWheelMotor.setDirection(DcMotorSimple.Direction.REVERSE);
 
-        // setting the two servo positions to 1, which is upright, aka not pressing the claw
+        // setting the two pincer servo positions to 1, which is upright, aka not pressing the claw
         this.leftPincerServo.setPosition(1.0);
         this.rightPincerServo.setPosition(1.0);
+
+        // set the servo position of the grabber rotator to 1.0
+        this.clawRotationServo.setPosition(1.0);
 
         this.leftWheelPower = 0;
         this.rightWheelPower = 0;
@@ -86,20 +83,8 @@ public class DriverControl extends OpMode {
         this.rightWheelMotor.setPower(this.rightWheelPower);
     }
 
-    // controls the angle that the arm is at
-    // as well as whether the arm is extended or not
-    public void moveArm() {
-        /*
-         * Controls arm movement of the robot
-         */
-        
-        // set armPower
-        this.armPower = Range.clip(gamepad1.right_stick_y, -1.0, 1.0);
-
-        // set the motor to the power
-        this.armRotationMotor.setPower(this.armPower);
-
-
+    // extends the arm back and forth
+    public void extendArm() {
         // get how far the arm is extended
         int armExtension = this.armExtensionMotor.getCurrentPosition();
 
@@ -122,27 +107,49 @@ public class DriverControl extends OpMode {
         }
     }
 
+    // rotates the arm up and down
+    public void rotateArm() {
+        // if the right bumper is pressed,
+        // gradually raise the arm
+        if (gamepad1.right_trigger) {
+            this.armPower = 0.5;
+        } else if (gamepad1.left_bumper) { // if the left 
+            this.armPower = -0.5;
+        }
+
+        // set the motor to the power
+        this.armRotationMotor.setPower(this.armPower);
+    }
+
+    /*
+     * Controls arm movement of the robot
+     */
+    public void moveArm() {
+        extendArm();
+        rotateArm();
+    }
+
     // Flicks the grabber back and forth
     // Also closes and opens the claw
     public void grabber() {
         // if the left bumper is pressed, release the claw
-        if (gamepad1.left_bumper) {
+        if (gamepad1.b) {
             this.leftPincerServo.setPosition(1.0);
             this.rightPincerServo.setPosition(1.0);
 
-        } else if (gamepad1.right_bumper) { // if the right bumper is pressed, close the claw to half
+        } else if (gamepad1.x) { // if the right bumper is pressed, close the claw to half
             this.leftPincerServo.setPosition(0.5);
             this.rightPincerServo.setPosition(0.5);
         }
 
-        if (gamepad1.a) {
-            
-        }
-    }
+        // if the y button is pressed
+        if (gamepad1.y) {
+            // move the claws to position 0.0
+            this.clawRotationServo.setPosition(0.0);
 
-    public void getControls() {
-        // update x and y values of the left joystick
-        this.leftStickX = gamepad1.left_stick_x;
-        this.leftStickY = gamepad1.left_stick_y;
+        } else if (gamepad1.a) { // if the b button is pressed 
+            // move the claw to position 1.0
+            this.clawRotationServo.setPosition(1.0);
+        }
     }
 }
