@@ -19,6 +19,9 @@ public class DriverControl extends OpMode {
     private final int ARM_RETRACT_LIMIT;
     private final int ARM_ROTATIONAL_VELOCITY = 1;
 
+    // constant for the speed that the arm spins with
+    private final int ARM_ROTATIONAL_VELOCITY = 1;
+
     // the DC motors for the wheels
     private DcMotor leftWheelMotor, rightWheelMotor;
 
@@ -49,10 +52,12 @@ public class DriverControl extends OpMode {
         // rightWheelMotor and armRotationMotor are forward by default
         this.leftWheelMotor.setDirection(DcMotorSimple.Direction.REVERSE);
 
-        // setting the two servo positions to 1, which is upright, aka not pressing the
-        // claw
+        // setting the two pincer servo positions to 1, which is upright, aka not pressing the claw
         this.leftPincerServo.setPosition(1.0);
         this.rightPincerServo.setPosition(1.0);
+
+        // set the servo position of the grabber rotator to 1.0
+        this.clawRotationServo.setPosition(1.0);
 
         this.leftWheelPower = 0;
         this.rightWheelPower = 0;
@@ -87,20 +92,13 @@ public class DriverControl extends OpMode {
         this.rightWheelMotor.setPower(this.rightWheelPower);
     }
 
-    /**
-     * Controls arm movement of the robot
-     * controls the angle that the arm is at
-     * as well as whether the arm is extended or not
-     */
-
-    public void moveArm() {
-
+    // extends the arm back and forth
+    public void extendArm() {
         // set armPower
         this.armPower = Range.clip(gamepad1.right_stick_y, -1.0, 1.0);
 
         // set the motor to the power
         this.armRotationMotor.setPower(this.armPower);
-
         // get how far the arm is extended
         int armExtension = this.armExtensionMotor.getCurrentPosition();
 
@@ -129,36 +127,14 @@ public class DriverControl extends OpMode {
         }
     }
 
-    /**
-     * Flicks the grabber back and forth
-     * Also closes and opens the claw
-     */
-    public void grabber() {
-        // grabber clutch and release
-        if (gamepad1.left_bumper) {
-            // if the left bumper is pressed, release the claw
-            this.leftPincerServo.setPosition(1.0);
-            this.rightPincerServo.setPosition(1.0);
-
-        } else if (gamepad1.right_bumper) {
-            // if the right bumper is pressed, close the claw to half
-            this.leftPincerServo.setPosition(0.5);
-            this.rightPincerServo.setPosition(0.5);
-        }
-
-        // grabber rotation
-        if (gamepad1.a) {
-
-        }
-    }
-
-    /**
-     * 
+    /* 
+     * Rotates the arm up and down
      */
     public void rotateArm() {
         // calculates rotational velocity from triggers and bumper
         double triggerVelocity = gamepad1.right_trigger - gamepad1.left_trigger;
         double bumperVelocity = 0;
+
         if (gamepad1.left_bumper) {
             bumperVelocity--;
         }
@@ -178,8 +154,69 @@ public class DriverControl extends OpMode {
         } else if (Math.abs(bumperVelocity) > 0) {
             // instantaneous arm movement from bumper
             this.armRotationMotor.setPower(triggerVelocity * this.ARM_ROTATIONAL_VELOCITY);
+        }
+    }
 
+    /*
+     * Controls arm movement of the robot,
+     * including both rotation and extension
+     */
+    public void moveArm() {
+        extendArm();
+        rotateArm();
+    }
+
+    // Moves the grabber back and forth
+    // Also closes and opens the claw
+    public void grabber() {
+        // if the left bumper is pressed, release the claw
+        if (gamepad1.b) {
+            this.leftPincerServo.setPosition(1.0);
+            this.rightPincerServo.setPosition(1.0);
+
+        } else if (gamepad1.x) { // if the right bumper is pressed, close the claw to half 
+            this.leftPincerServo.setPosition(0.5);
+            this.rightPincerServo.setPosition(0.5);
         }
 
+        // if the y button is pressed
+        if (gamepad1.y) {
+            // move the claws to position 0.0
+            this.clawRotationServo.setPosition(0.0);
+
+        } else if (gamepad1.a) { // if the b button is pressed 
+            // move the claw to position 1.0
+            this.clawRotationServo.setPosition(1.0);
+        }
+    }
+
+    /*
+     * Rotate the arm up and down 
+     */
+    public void rotateArm() {
+        // calculates rotational velocity from triggers and bumper
+        double triggerVelocity = gamepad1.right_trigger - gamepad1.left_trigger;
+        double bumperVelocity = 0;
+      
+        if (gamepad1.left_bumper) {
+            bumperVelocity--;
+        }
+
+        if (gamepad1.right_bumper) {
+            bumperVelocity++;
+        }
+
+        // rotational limits
+
+
+        // priorities gradual arm movement from trigger
+        if (Math.abs(triggerVelocity) > 0) {
+            // gradual arm movement from trigger
+            this.armRotationMotor.setPower(triggerVelocity / this.ARM_ROTATIONAL_VELOCITY);
+
+        } else if (Math.abs(bumperVelocity) > 0) {
+            // instantaneous arm movement from bumper
+            this.armRotationMotor.setPower(triggerVelocity * this.ARM_ROTATIONAL_VELOCITY);
+        }
     }
 }
