@@ -7,15 +7,23 @@ import com.qualcomm.robotcore.eventloop.opmode.*;
 import com.qualcomm.robotcore.hardware.*;
 import com.qualcomm.robotcore.util.Range;
 
+/*
+ * Git commit example
+ * 
+ */
+
 @TeleOp(name = "Driver Control")
 public class DriverControl extends OpMode {
     // constants for how far the arm can extend and retract
     private final int ARM_EXTEND_LIMIT;
     private final int ARM_RETRACT_LIMIT;
 
+    // constant for the speed that the arm spins with
+    private final int ARM_ROTATIONAL_VELOCITY = 1;
+
     // the DC motors for the wheels
     private DcMotor leftWheelMotor, rightWheelMotor;
-    
+
     // the DC motors for the arm
     private DcMotor armRotationMotor, armExtensionMotor;
 
@@ -65,12 +73,12 @@ public class DriverControl extends OpMode {
         this.grabber();
     }
 
+    /**
+     * Controls wheel movement of the robot
+     * Moves robot forward, backard, left, and right
+     * according to left joystick
+     */
     public void movement() {
-        /*
-         * Controls wheel movement of the robot
-         * Moves robot forward, backard, left, and right
-         * according to left joystick
-         */
         double turn = gamepad1.left_stick_x;
         double drive = gamepad1.left_stick_y;
 
@@ -92,45 +100,67 @@ public class DriverControl extends OpMode {
         if (gamepad1.dpad_up && armExtension < this.ARM_EXTEND_LIMIT) {
             // set the target position to the max length of the arm
             this.armExtensionMotor.setTargetPosition(this.ARM_EXTEND_LIMIT);
+
             // move at max speed
             this.armExtensionMotor.setPower(1.0);
+
             // extend the arm to its max length
             this.armExtensionMotor.setMode(DcMotor.RunMode.RUN_TO_POSITION);
 
-        } else if (gamepad1.dpad_down && armExtension > this.ARM_RETRACT_LIMIT) { // if dpad_down is pressed and the arm is not fully retracted
+        } else if (gamepad1.dpad_down && armExtension > this.ARM_RETRACT_LIMIT) {
+            // if dpad_down is pressed and the arm
+            // is not fully retracted
             // set the target position to the min length of the arm
             this.armExtensionMotor.setTargetPosition(this.ARM_RETRACT_LIMIT);
+
             // move at max speed
             this.armExtensionMotor.setPower(-1.0);
+
             // retract the arm to its min length
             this.armExtensionMotor.setMode(DcMotor.RunMode.RUN_TO_POSITION);
         }
     }
 
-    // rotates the arm up and down
+    /* 
+     * Rotates the arm up and down
+     */
     public void rotateArm() {
-        // if the right bumper is pressed,
-        // gradually raise the arm
-        if (gamepad1.right_trigger) {
-            this.armPower = 0.5;
-        } else if (gamepad1.left_bumper) { // if the right bumper is pressed,
-        // gradually raise the arm
-            this.armPower = -0.5;
+        // calculates rotational velocity from triggers and bumper
+        double triggerVelocity = gamepad1.right_trigger - gamepad1.left_trigger;
+        double bumperVelocity = 0;
+
+        if (gamepad1.left_bumper) {
+            bumperVelocity--;
         }
 
-        // set the motor to the power
-        this.armRotationMotor.setPower(this.armPower);
+        if (gamepad1.right_bumper) {
+            bumperVelocity++;
+        }
+
+        // rotational limits
+
+
+        // priorities gradual arm movement from trigger
+        if (Math.abs(triggerVelocity) > 0) {
+            // gradual arm movement from trigger
+            this.armRotationMotor.setPower(triggerVelocity / this.ARM_ROTATIONAL_VELOCITY);
+
+        } else if (Math.abs(bumperVelocity) > 0) {
+            // instantaneous arm movement from bumper
+            this.armRotationMotor.setPower(triggerVelocity * this.ARM_ROTATIONAL_VELOCITY);
+        }
     }
 
     /*
-     * Controls arm movement of the robot
+     * Controls arm movement of the robot,
+     * including both rotation and extension
      */
     public void moveArm() {
         extendArm();
         rotateArm();
     }
 
-    // Flicks the grabber back and forth
+    // Moves the grabber back and forth
     // Also closes and opens the claw
     public void grabber() {
         // if the left bumper is pressed, release the claw
