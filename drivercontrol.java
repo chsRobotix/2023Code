@@ -143,7 +143,7 @@ public class drivercontrol extends OpMode {
 
         // gradually raise the arm
         if (Math.abs(triggerVelocity) > 0) {
-            this.armRotationMotor.setPower(triggerVelocity * this.ARM_ROTATIONAL_VELOCITY);
+            this.armRotationMotor.setPower(0.5);//triggerVelocity * this.ARM_ROTATIONAL_VELOCITY);
         }
 
         // if the right bumper is pressed
