@@ -131,7 +131,7 @@ public class drivercontrol extends OpMode {
             this.armPower = -this.ARM_ROTATIONAL_VELOCITY;
         }
 
-        //
+        // 
 
         // set the motor to the power
         this.armRotationMotor.setPower(this.armPower);
