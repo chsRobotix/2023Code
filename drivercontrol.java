@@ -17,10 +17,9 @@ public class DriverControl extends OpMode {
     // constants for how far the arm can extend and retract
     private final int ARM_EXTEND_LIMIT;
     private final int ARM_RETRACT_LIMIT;
-    private final int ARM_ROTATIONAL_VELOCITY = 1;
 
     // constant for the speed that the arm spins with
-    private final int ARM_ROTATIONAL_VELOCITY = 1;
+    private final int ARM_ROTATIONAL_VELOCITY = 0.5;
 
     // the DC motors for the wheels
     private DcMotor leftWheelMotor, rightWheelMotor;
@@ -130,31 +129,22 @@ public class DriverControl extends OpMode {
     /* 
      * Rotates the arm up and down
      */
+
+    /*
+     * rotates the arm up and down
+     */
     public void rotateArm() {
-        // calculates rotational velocity from triggers and bumper
-        double triggerVelocity = gamepad1.right_trigger - gamepad1.left_trigger;
-        double bumperVelocity = 0;
-
-        if (gamepad1.left_bumper) {
-            bumperVelocity--;
+        // if the right bumper is pressed,
+        // gradually raise the arm
+        if (gamepad1.right_trigger) {
+            this.armPower = this.ARM_ROTATIONAL_VELOCITY;
+        } else if (gamepad1.left_trigger) { // if the right bumper is pressed,
+            // gradually raise the arm
+            this.armPower = -this.ARM_ROTATIONAL_VELOCITY;
         }
 
-        if (gamepad1.right_bumper) {
-            bumperVelocity++;
-        }
-
-        // rotational limits
-
-
-        // priorities gradual arm movement from trigger
-        if (Math.abs(triggerVelocity) > 0) {
-            // gradual arm movement from trigger
-            this.armRotationMotor.setPower(triggerVelocity / this.ARM_ROTATIONAL_VELOCITY);
-
-        } else if (Math.abs(bumperVelocity) > 0) {
-            // instantaneous arm movement from bumper
-            this.armRotationMotor.setPower(triggerVelocity * this.ARM_ROTATIONAL_VELOCITY);
-        }
+        // set the motor to the power
+        this.armRotationMotor.setPower(this.armPower);
     }
 
     /*
@@ -187,36 +177,6 @@ public class DriverControl extends OpMode {
         } else if (gamepad1.a) { // if the b button is pressed 
             // move the claw to position 1.0
             this.clawRotationServo.setPosition(1.0);
-        }
-    }
-
-    /*
-     * Rotate the arm up and down 
-     */
-    public void rotateArm() {
-        // calculates rotational velocity from triggers and bumper
-        double triggerVelocity = gamepad1.right_trigger - gamepad1.left_trigger;
-        double bumperVelocity = 0;
-      
-        if (gamepad1.left_bumper) {
-            bumperVelocity--;
-        }
-
-        if (gamepad1.right_bumper) {
-            bumperVelocity++;
-        }
-
-        // rotational limits
-
-
-        // priorities gradual arm movement from trigger
-        if (Math.abs(triggerVelocity) > 0) {
-            // gradual arm movement from trigger
-            this.armRotationMotor.setPower(triggerVelocity / this.ARM_ROTATIONAL_VELOCITY);
-
-        } else if (Math.abs(bumperVelocity) > 0) {
-            // instantaneous arm movement from bumper
-            this.armRotationMotor.setPower(triggerVelocity * this.ARM_ROTATIONAL_VELOCITY);
         }
     }
 }
