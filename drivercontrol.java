@@ -13,6 +13,10 @@ public class drivercontrol extends OpMode {
     private final int ARM_EXTEND_LIMIT;
     private final int ARM_RETRACT_LIMIT;
 
+    // constants for how far the arm can rotate up and down
+    private final int ARM_ROTATE_MAX;
+    private final int ARM_ROTATE_MIN;
+
     // constant for the speed that the arm spins with
     private final int ARM_ROTATIONAL_VELOCITY = 0.5;
 
@@ -28,6 +32,7 @@ public class drivercontrol extends OpMode {
     // the servo that rotates the claw back and forth
     private Servo clawRotationServo;
 
+    // the current power of the wheels and arm
     private double leftWheelPower, rightWheelPower, armPower;
 
     @Override
@@ -133,9 +138,12 @@ public class drivercontrol extends OpMode {
 
         // if the right bumper is pressed
         if (gamepad1.right_bumper) {
-
-        } else if (gamepad1.left_bumper) {
+            // raise the arm to a set point
             
+
+        } else if (gamepad1.left_bumper) { // if the left the bumper is pressed
+            // lower the arm to a set point
+
         }
 
         // set the motor to the power
