@@ -1,6 +1,7 @@
 package org.firstinspires.ftc.teamcode;
 
 import java.io.Serial;
+import java.lang.Math;
 import java.rmi.server.ServerCloneException;
 
 import com.qualcomm.robotcore.eventloop.opmode.*;
@@ -51,7 +52,8 @@ public class drivercontrol extends OpMode {
         // rightWheelMotor and armRotationMotor are forward by default
         this.leftWheelMotor.setDirection(DcMotorSimple.Direction.REVERSE);
 
-        // setting the two pincer servo positions to 1, which is upright, aka not pressing the claw
+        // setting the two pincer servo positions to 1, which is upright, aka not
+        // pressing the claw
         this.leftPincerServo.setPosition(1.0);
         this.rightPincerServo.setPosition(1.0);
 
@@ -91,6 +93,15 @@ public class drivercontrol extends OpMode {
         this.rightWheelMotor.setPower(this.rightWheelPower);
     }
 
+    /*
+     * Controls arm movement of the robot,
+     * including both rotation and extension
+     */
+    public void moveArm() {
+        extendArm();
+        rotateArm();
+    }
+
     // extends the arm back and forth
     public void extendArm() {
         // set the motor to the power
@@ -99,7 +110,7 @@ public class drivercontrol extends OpMode {
         int armExtension = this.armExtensionMotor.getCurrentPosition();
 
         // if dpad_up is pressed and the arm is not extended
-        if (gamepad1.dpad_up && armExtension < this.ARM_EXTEND_LIMIT) {
+        if (gamepad1.dpad_up) {// && armExtension < this.ARM_EXTEND_LIMIT) {
             // set the target position to the max length of the arm
             this.armExtensionMotor.setTargetPosition(this.ARM_EXTEND_LIMIT);
 
@@ -109,7 +120,7 @@ public class drivercontrol extends OpMode {
             // extend the arm to its max length
             this.armExtensionMotor.setMode(DcMotor.RunMode.RUN_TO_POSITION);
 
-        } else if (gamepad1.dpad_down && armExtension > this.ARM_RETRACT_LIMIT) {
+        } else if (gamepad1.dpad_down) {// && armExtension > this.ARM_RETRACT_LIMIT) {
             // if dpad_down is pressed and the arm
             // is not fully retracted
             // set the target position to the min length of the arm
@@ -123,40 +134,26 @@ public class drivercontrol extends OpMode {
         }
     }
 
-    /* 
+    /*
      * Rotates the arm up and down
      */
     public void rotateArm() {
-        // if the right trigger is pressed,
+        double triggerVelocity = gamepad1.right_trigger - gamepad1.left_trigger;
+        double bumperVelocity = 0;
+        if (gamepad1.right_bumper)
+            bumperVelocity++;
+
+        if (gamepad1.left_bumper)
+            bumperVelocity--;
+
         // gradually raise the arm
-        if (gamepad1.right_trigger > 0) {
-            this.armPower = this.ARM_ROTATIONAL_VELOCITY;
-        } else if (gamepad1.left_trigger > 0) { // if the left trigger is pressed,
-            // gradually lower the arm
-            this.armPower = -this.ARM_ROTATIONAL_VELOCITY;
+        if (Math.abs(triggerVelocity) > 0) {
+            this.armRotationMotor.setPower(0.5);//triggerVelocity * this.ARM_ROTATIONAL_VELOCITY);
         }
 
         // if the right bumper is pressed
-        if (gamepad1.right_bumper) {
-            // raise the arm to a set point
-            
-
-        } else if (gamepad1.left_bumper) { // if the left the bumper is pressed
-            // lower the arm to a set point
-
+        if (Math.abs(bumperVelocity) > 0) {
         }
-
-        // set the motor to the power
-        this.armRotationMotor.setPower(this.armPower);
-    }
-
-    /*
-     * Controls arm movement of the robot,
-     * including both rotation and extension
-     */
-    public void moveArm() {
-        extendArm();
-        rotateArm();
     }
 
     // Moves the grabber back and forth
@@ -167,7 +164,7 @@ public class drivercontrol extends OpMode {
             this.leftPincerServo.setPosition(1.0);
             this.rightPincerServo.setPosition(1.0);
 
-        } else if (gamepad1.x) { // if the right bumper is pressed, close the claw to half 
+        } else if (gamepad1.x) { // if the right bumper is pressed, close the claw to half
             this.leftPincerServo.setPosition(0.5);
             this.rightPincerServo.setPosition(0.5);
         }
@@ -177,7 +174,7 @@ public class drivercontrol extends OpMode {
             // move the claws to position 0.0
             this.clawRotationServo.setPosition(0.0);
 
-        } else if (gamepad1.a) { // if the b button is pressed 
+        } else if (gamepad1.a) { // if the b button is pressed
             // move the claw to position 1.0
             this.clawRotationServo.setPosition(1.0);
         }
