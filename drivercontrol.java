@@ -8,7 +8,7 @@ import com.qualcomm.robotcore.hardware.*;
 import com.qualcomm.robotcore.util.Range;
 
 @TeleOp(name = "Driver Control")
-public class DriverControl extends OpMode {
+public class drivercontrol extends OpMode {
     // constants for how far the arm can extend and retract
     private final int ARM_EXTEND_LIMIT;
     private final int ARM_RETRACT_LIMIT;
@@ -88,9 +88,6 @@ public class DriverControl extends OpMode {
 
     // extends the arm back and forth
     public void extendArm() {
-        // set armPower
-        this.armPower = Range.clip(gamepad1.right_stick_y, -1.0, 1.0);
-
         // set the motor to the power
         this.armRotationMotor.setPower(this.armPower);
         // get how far the arm is extended
@@ -102,7 +99,7 @@ public class DriverControl extends OpMode {
             this.armExtensionMotor.setTargetPosition(this.ARM_EXTEND_LIMIT);
 
             // move at max speed
-            this.armExtensionMotor.setPower(1.0);
+            this.armExtensionMotor.setPower(0.5);
 
             // extend the arm to its max length
             this.armExtensionMotor.setMode(DcMotor.RunMode.RUN_TO_POSITION);
@@ -114,7 +111,7 @@ public class DriverControl extends OpMode {
             this.armExtensionMotor.setTargetPosition(this.ARM_RETRACT_LIMIT);
 
             // move at max speed
-            this.armExtensionMotor.setPower(-1.0);
+            this.armExtensionMotor.setPower(-0.5);
 
             // retract the arm to its min length
             this.armExtensionMotor.setMode(DcMotor.RunMode.RUN_TO_POSITION);
@@ -125,14 +122,16 @@ public class DriverControl extends OpMode {
      * Rotates the arm up and down
      */
     public void rotateArm() {
-        // if the right bumper is pressed,
+        // if the right trigger is pressed,
         // gradually raise the arm
         if (gamepad1.right_trigger) {
             this.armPower = this.ARM_ROTATIONAL_VELOCITY;
-        } else if (gamepad1.left_trigger) { // if the right bumper is pressed,
+        } else if (gamepad1.left_trigger) { // if the right trigger is pressed,
             // gradually raise the arm
             this.armPower = -this.ARM_ROTATIONAL_VELOCITY;
         }
+
+        //
 
         // set the motor to the power
         this.armRotationMotor.setPower(this.armPower);
