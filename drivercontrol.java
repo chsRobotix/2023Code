@@ -7,11 +7,6 @@ import com.qualcomm.robotcore.eventloop.opmode.*;
 import com.qualcomm.robotcore.hardware.*;
 import com.qualcomm.robotcore.util.Range;
 
-/*
- * Git commit example
- * 
- */
-
 @TeleOp(name = "Driver Control")
 public class DriverControl extends OpMode {
     // constants for how far the arm can extend and retract
@@ -128,10 +123,6 @@ public class DriverControl extends OpMode {
 
     /* 
      * Rotates the arm up and down
-     */
-
-    /*
-     * rotates the arm up and down
      */
     public void rotateArm() {
         // if the right bumper is pressed,
