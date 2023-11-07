@@ -124,14 +124,19 @@ public class drivercontrol extends OpMode {
     public void rotateArm() {
         // if the right trigger is pressed,
         // gradually raise the arm
-        if (gamepad1.right_trigger) {
+        if (gamepad1.right_trigger > 0) {
             this.armPower = this.ARM_ROTATIONAL_VELOCITY;
-        } else if (gamepad1.left_trigger) { // if the right trigger is pressed,
-            // gradually raise the arm
+        } else if (gamepad1.left_trigger > 0) { // if the left trigger is pressed,
+            // gradually lower the arm
             this.armPower = -this.ARM_ROTATIONAL_VELOCITY;
         }
 
-        // 
+        // if the right bumper is pressed
+        if (gamepad1.right_bumper) {
+
+        } else if (gamepad1.left_bumper) {
+            
+        }
 
         // set the motor to the power
         this.armRotationMotor.setPower(this.armPower);
