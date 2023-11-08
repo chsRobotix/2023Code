@@ -1,9 +1,5 @@
 package org.firstinspires.ftc.teamcode;
 
-import java.io.Serial;
-import java.lang.Math;
-import java.rmi.server.ServerCloneException;
-
 import com.qualcomm.robotcore.eventloop.opmode.*;
 import com.qualcomm.robotcore.hardware.*;
 import com.qualcomm.robotcore.util.Range;
@@ -140,6 +136,7 @@ public class drivercontrol extends OpMode {
     public void rotateArm() {
         double triggerVelocity = gamepad1.right_trigger - gamepad1.left_trigger;
         double bumperVelocity = 0;
+        
         if (gamepad1.right_bumper)
             bumperVelocity++;
 
@@ -148,7 +145,8 @@ public class drivercontrol extends OpMode {
 
         // gradually raise the arm
         if (Math.abs(triggerVelocity) > 0) {
-            this.armRotationMotor.setPower(triggerVelocity * this.ARM_ROTATIONAL_VELOCITY);
+            int direction = triggerVelocity / Math.abs(triggerVelocity);
+            this.armRotationMotor.setPower(direction * this.ARM_ROTATIONAL_VELOCITY);
         }
 
         // if the one of the bumpers is pressed
