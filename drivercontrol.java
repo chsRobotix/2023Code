@@ -135,13 +135,6 @@ public class drivercontrol extends OpMode {
      */
     public void rotateArm() {
         double triggerVelocity = gamepad1.right_trigger - gamepad1.left_trigger;
-        double bumperVelocity = 0;
-        
-        if (gamepad1.right_bumper)
-            bumperVelocity++;
-
-        if (gamepad1.left_bumper)
-            bumperVelocity--;
 
         // gradually raise the arm
         if (Math.abs(triggerVelocity) > 0) {
@@ -149,8 +142,13 @@ public class drivercontrol extends OpMode {
             this.armRotationMotor.setPower(direction * this.ARM_ROTATIONAL_VELOCITY);
         }
 
-        // if the one of the bumpers is pressed
-        if (Math.abs(bumperVelocity) > 0) {
+        // instantly raises arm
+        if (gamepad1.right_bumper) {
+            this.armRotationMotor.setPosition(1.0);
+
+        } else if (gamepad1.left_bumper) {
+            this.armRotationMotor.setPosition(0.0);
+
         }
     }
 
