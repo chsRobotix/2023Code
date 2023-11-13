@@ -14,8 +14,11 @@ public class drivercontrol extends OpMode {
     private final int ARM_ROTATE_MAX;
     private final int ARM_ROTATE_MIN;
 
-    // constant for the speed that the arm spins with
-    private final int ARM_ROTATIONAL_VELOCITY = 0.5;
+    // constant for the speed that the arm rotates with
+    private final double ARM_ROTATIONAL_VELOCITY = 0.5;
+
+    // constant for the speed that the arm extends and retracts with
+    private final double ARM_EXTEND_SPEED = 0.5;
 
     // the DC motors for the wheels
     private DcMotor leftWheelMotor, rightWheelMotor;
@@ -71,7 +74,7 @@ public class drivercontrol extends OpMode {
         this.grabber();
     }
 
-    /**
+    /*
      * Controls wheel movement of the robot
      * Moves robot forward, backard, left, and right
      * according to left joystick
@@ -110,8 +113,8 @@ public class drivercontrol extends OpMode {
             // set the target position to the max length of the arm
             this.armExtensionMotor.setTargetPosition(this.ARM_EXTEND_LIMIT);
 
-            // move at max speed
-            this.armExtensionMotor.setPower(0.5);
+            // move at half 
+            this.armExtensionMotor.setPower(this.ARM_EXTEND_SPEED);
 
             // extend the arm to its max length
             this.armExtensionMotor.setMode(DcMotor.RunMode.RUN_TO_POSITION);
@@ -122,8 +125,8 @@ public class drivercontrol extends OpMode {
             // set the target position to the min length of the arm
             this.armExtensionMotor.setTargetPosition(this.ARM_RETRACT_LIMIT);
 
-            // move at max speed
-            this.armExtensionMotor.setPower(-0.5);
+            // move at half speed
+            this.armExtensionMotor.setPower(this.ARM_EXTEND_SPEED);
 
             // retract the arm to its min length
             this.armExtensionMotor.setMode(DcMotor.RunMode.RUN_TO_POSITION);
@@ -138,17 +141,22 @@ public class drivercontrol extends OpMode {
 
         // gradually raise the arm
         if (Math.abs(triggerVelocity) > 0) {
-            int direction = triggerVelocity / Math.abs(triggerVelocity);
+            // signum returns the sign of the value
+            int direction = Math.signum(triggerVelocity);
+            // set the power of the motor
             this.armRotationMotor.setPower(direction * this.ARM_ROTATIONAL_VELOCITY);
         }
 
-        // instantly raises arm
+        // instantly raises arm to max
         if (gamepad1.right_bumper) {
-            this.armRotationMotor.setPosition(1.0);
+            this.armRotationMotor.setTargetPosition(this.ARM_ROTATE_MAX);
+            this.armRotationMotor.setPower(this.ARM_ROTATIONAL_VELOCITY);
+            this.armRotationMotor.setMode(DcMotor.RunMode.RUN_TO_POSITION);
 
-        } else if (gamepad1.left_bumper) {
-            this.armRotationMotor.setPosition(0.0);
-
+        } else if (gamepad1.left_bumper) { // instantly lowers arm to min
+            this.armRotationMotor.setTargetPosition(this.ARM_ROTATE_MIN);
+            this.armRotationMotor.setPower(this.ARM_ROTATIONAL_VELOCITY);
+            this.armRotationMotor.setMode(DcMotor.RunMode.RUN_TO_POSITION);
         }
     }
 
