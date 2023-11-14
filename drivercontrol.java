@@ -145,7 +145,7 @@ public class drivercontrol extends OpMode {
         // gradually raise the arm
         if (Math.abs(triggerVelocity) > 0) {
             // signum returns the sign of the value
-            int direction = Math.signum(triggerVelocity);
+            double direction = Math.signum(triggerVelocity);
             // set the power of the motor
             this.armRotationMotor.setPower(direction * this.ARM_ROTATIONAL_VELOCITY);
         }
