@@ -1,6 +1,5 @@
 package org.firstinspires.ftc.teamcode;
 
-import java.lang.Math;
 import com.qualcomm.robotcore.eventloop.opmode.*;
 import com.qualcomm.robotcore.hardware.*;
 import com.qualcomm.robotcore.util.Range;
@@ -11,8 +10,15 @@ public class drivercontrol extends OpMode {
     private final int ARM_EXTEND_LIMIT;
     private final int ARM_RETRACT_LIMIT;
 
-    // constant for the speed that the arm spins with
-    private final int ARM_ROTATIONAL_VELOCITY = 0.5;
+    // constants for how far the arm can rotate up and down
+    private final int ARM_ROTATE_MAX;
+    private final int ARM_ROTATE_MIN;
+
+    // constant for the speed that the arm rotates with
+    private final double ARM_ROTATIONAL_VELOCITY = 0.5;
+
+    // constant for the speed that the arm extends and retracts with
+    private final double ARM_EXTEND_SPEED = 0.5;
 
     // the DC motors for the wheels
     private DcMotor leftWheelMotor, rightWheelMotor;
@@ -26,6 +32,7 @@ public class drivercontrol extends OpMode {
     // the servo that rotates the claw back and forth
     private Servo clawRotationServo;
 
+    // the current power of the wheels and arm
     private double leftWheelPower, rightWheelPower, armPower;
 
     @Override
@@ -67,7 +74,7 @@ public class drivercontrol extends OpMode {
         this.grabber();
     }
 
-    /**
+    /*
      * Controls wheel movement of the robot
      * Moves robot forward, backard, left, and right
      * according to left joystick
@@ -94,20 +101,20 @@ public class drivercontrol extends OpMode {
         rotateArm();
     }
 
-    // extends the arm back and forth
+    /*
+     * extends the arm back and forth
+     */ 
     public void extendArm() {
-        // set the motor to the power
-        this.armRotationMotor.setPower(this.armPower);
         // get how far the arm is extended
         int armExtension = this.armExtensionMotor.getCurrentPosition();
 
         // if dpad_up is pressed and the arm is not extended
         if (gamepad1.dpad_up) {// && armExtension < this.ARM_EXTEND_LIMIT) {
             // set the target position to the max length of the arm
-            this.armExtensionMotor.setTargetPosition(this.ARM_EXTEND_LIMIT);
+            this.armExtensionMotor.setTargetPosition(armExtension + 100);
 
-            // move at max speed
-            this.armExtensionMotor.setPower(0.5);
+            // move at a set speed 
+            this.armExtensionMotor.setPower(this.ARM_EXTEND_SPEED);
 
             // extend the arm to its max length
             this.armExtensionMotor.setMode(DcMotor.RunMode.RUN_TO_POSITION);
@@ -116,10 +123,10 @@ public class drivercontrol extends OpMode {
             // if dpad_down is pressed and the arm
             // is not fully retracted
             // set the target position to the min length of the arm
-            this.armExtensionMotor.setTargetPosition(this.ARM_RETRACT_LIMIT);
+            this.armExtensionMotor.setTargetPosition(armExtension - 100);
 
-            // move at max speed
-            this.armExtensionMotor.setPower(-0.5);
+            // move at a set speed
+            this.armExtensionMotor.setPower(-this.ARM_EXTEND_SPEED);
 
             // retract the arm to its min length
             this.armExtensionMotor.setMode(DcMotor.RunMode.RUN_TO_POSITION);
@@ -132,19 +139,27 @@ public class drivercontrol extends OpMode {
     public void rotateArm() {
         double triggerVelocity = gamepad1.right_trigger - gamepad1.left_trigger;
 
+        // how much the arm is rotated
+        int armRotation = this.armRotationMotor.getCurrentPosition();
+
         // gradually raise the arm
         if (Math.abs(triggerVelocity) > 0) {
-            int direction = triggerVelocity / Math.abs(triggerVelocity);
-            this.armRotationMotor.setPower(0.5);//triggerVelocity * this.ARM_ROTATIONAL_VELOCITY);
+            // signum returns the sign of the value
+            int direction = Math.signum(triggerVelocity);
+            // set the power of the motor
+            this.armRotationMotor.setPower(direction * this.ARM_ROTATIONAL_VELOCITY);
         }
 
         // instantly raises arm
         if (gamepad1.right_bumper) {
-            this.armRotationMotor.setPosition(1.0);
+            this.armRotationMotor.setTargetPosition(armRotation + 100);
+            this.armRotationMotor.setPower(this.ARM_ROTATIONAL_VELOCITY);
+            this.armRotationMotor.setMode(DcMotor.RunMode.RUN_TO_POSITION);
 
-        } else if (gamepad1.left_bumper) {
-            this.armRotationMotor.setPosition(0.0);
-
+        } else if (gamepad1.left_bumper) { // instantly lowers arm
+            this.armRotationMotor.setTargetPosition(armRotation - 100);
+            this.armRotationMotor.setPower(this.ARM_ROTATIONAL_VELOCITY);
+            this.armRotationMotor.setMode(DcMotor.RunMode.RUN_TO_POSITION);
         }
     }
 
