@@ -101,10 +101,10 @@ public class drivercontrol extends OpMode {
         rotateArm();
     }
 
-    // extends the arm back and forth
+    /*
+     * extends the arm back and forth
+     */ 
     public void extendArm() {
-        // set the motor to the power
-        this.armRotationMotor.setPower(this.armPower);
         // get how far the arm is extended
         int armExtension = this.armExtensionMotor.getCurrentPosition();
 
@@ -113,7 +113,7 @@ public class drivercontrol extends OpMode {
             // set the target position to the max length of the arm
             this.armExtensionMotor.setTargetPosition(this.ARM_EXTEND_LIMIT);
 
-            // move at half 
+            // move at a set speed 
             this.armExtensionMotor.setPower(this.ARM_EXTEND_SPEED);
 
             // extend the arm to its max length
@@ -125,7 +125,7 @@ public class drivercontrol extends OpMode {
             // set the target position to the min length of the arm
             this.armExtensionMotor.setTargetPosition(this.ARM_RETRACT_LIMIT);
 
-            // move at half speed
+            // move at a set speed
             this.armExtensionMotor.setPower(this.ARM_EXTEND_SPEED);
 
             // retract the arm to its min length
