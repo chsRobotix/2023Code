@@ -138,26 +138,24 @@ public class drivercontrol extends OpMode {
      */
     public void rotateArm() {
         double triggerVelocity = gamepad1.right_trigger - gamepad1.left_trigger;
+        double bumperVelocity = ((gamepad1.right_bumper) ? 1 : 0) - ((gamepad1.left_bumper) ? 1 : 0);
 
         // how much the arm is rotated
         int armRotation = this.armRotationMotor.getCurrentPosition();
 
         // gradually raise the arm
         if (Math.abs(triggerVelocity) > 0) {
-            // signum returns the sign of the value
-            int direction = Math.signum(triggerVelocity);
+            int direction = triggerVelocity / Math.abs(triggerVelocity);
             // set the power of the motor
+            this.armRotationMotor.setTargetPosition(armRotation + 100 * direction);
             this.armRotationMotor.setPower(direction * this.ARM_ROTATIONAL_VELOCITY);
+            this.armRotationMotor.setMode(DcMotor.RunMode.RUN_TO_POSITION);
         }
 
         // instantly raises arm
-        if (gamepad1.right_bumper) {
+        if (Math.abs(bumperVelocity) > 0) {
+            // set the power of the motor
             this.armRotationMotor.setTargetPosition(armRotation + 100);
-            this.armRotationMotor.setPower(this.ARM_ROTATIONAL_VELOCITY);
-            this.armRotationMotor.setMode(DcMotor.RunMode.RUN_TO_POSITION);
-
-        } else if (gamepad1.left_bumper) { // instantly lowers arm
-            this.armRotationMotor.setTargetPosition(armRotation - 100);
             this.armRotationMotor.setPower(this.ARM_ROTATIONAL_VELOCITY);
             this.armRotationMotor.setMode(DcMotor.RunMode.RUN_TO_POSITION);
         }
