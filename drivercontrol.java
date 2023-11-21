@@ -7,12 +7,12 @@ import com.qualcomm.robotcore.util.Range;
 @TeleOp(name = "Driver Control")
 public class drivercontrol extends OpMode {
     // constants for how far the arm can extend and retract
-    private final int ARM_EXTEND_LIMIT;
-    private final int ARM_RETRACT_LIMIT;
+    // private final int ARM_EXTEND_LIMIT;
+    // private final int ARM_RETRACT_LIMIT;
 
-    // constants for how far the arm can rotate up and down
-    private final int ARM_ROTATE_MAX;
-    private final int ARM_ROTATE_MIN;
+    // // constants for how far the arm can rotate up and down
+    private final int ARM_ROTATE_MAX = 2000;
+    private final int ARM_ROTATE_MIN = 0;
 
     // constant for the speed that the arm rotates with
     private final double ARM_ROTATIONAL_VELOCITY = 0.5;
@@ -34,7 +34,7 @@ public class drivercontrol extends OpMode {
     private final Servo pincerServo;
 
     // the servo that rotates the claw back and forth
-    private final Servo clawRotationServo;
+    // private final Servo clawRotationServo;
 
     @Override
     public void init() {
@@ -102,27 +102,19 @@ public class drivercontrol extends OpMode {
         // get how far the arm is extended
         int armExtension = this.armExtensionMotor.getCurrentPosition();
 
-        // if dpad_up is pressed and the arm is not extended
-        if (gamepad1.dpad_up) {// && armExtension < this.ARM_EXTEND_LIMIT) {
-            // set the target position to the max length of the arm
-            this.armExtensionMotor.setTargetPosition(armExtension + 100);
+        // get the direction that the motor will rotate in
+        // if only dpad_up is pressed, it moves forward
+        // if only dpad_down is pressed, it moves backward
+        int motorDirection = ((gamepad1.dpad_up) ? 1 : 0) - ((gamepad1.dpad_down) ? 1 : 0);
+
+        if (motorDirection != 0) {
+            // set the target position to the of the arm
+            this.armExtensionMotor.setTargetPosition(armExtension + 100 * motorDirection);
 
             // move at a set speed 
-            this.armExtensionMotor.setPower(this.ARM_EXTEND_SPEED);
+            this.armExtensionMotor.setPower(this.ARM_EXTEND_SPEED * motorDirection);
 
-            // extend the arm to its max length
-            this.armExtensionMotor.setMode(DcMotor.RunMode.RUN_TO_POSITION);
-
-        } else if (gamepad1.dpad_down) {// && armExtension > this.ARM_RETRACT_LIMIT) {
-            // if dpad_down is pressed and the arm
-            // is not fully retracted
-            // set the target position to the min length of the arm
-            this.armExtensionMotor.setTargetPosition(armExtension - 100);
-
-            // move at a set speed
-            this.armExtensionMotor.setPower(-this.ARM_EXTEND_SPEED);
-
-            // retract the arm to its min length
+            // set the arm to move to position
             this.armExtensionMotor.setMode(DcMotor.RunMode.RUN_TO_POSITION);
         }
     }
@@ -132,7 +124,7 @@ public class drivercontrol extends OpMode {
      */
     public void rotateArm() {
         double triggerVelocity = gamepad1.right_trigger - gamepad1.left_trigger;
-        double bumperVelocity = ((gamepad1.right_bumper) ? 1 : 0) - ((gamepad1.left_bumper) ? 1 : 0);
+        int bumperVelocity = ((gamepad1.right_bumper) ? 1 : 0) - ((gamepad1.left_bumper) ? 1 : 0);
 
         // how much the arm is rotated
         int armRotation = this.armRotationMotor.getCurrentPosition();
@@ -141,18 +133,26 @@ public class drivercontrol extends OpMode {
         // if the right or left triggers are pressed, respectively
         if (Math.abs(triggerVelocity) > 0) {
             // get the sign of triggerVelocity
-            int direction = (int) (Math.signum(triggerVelocity));
+            int motorDirection = (int) (Math.signum(triggerVelocity));
           
             // set the power of the motor
-            this.armRotationMotor.setPower(direction * this.ARM_ROTATIONAL_VELOCITY);
+            this.armRotationMotor.setPower(motorDirection * this.ARM_ROTATIONAL_VELOCITY);
         }
 
         // instantly raise or lower the arm 
         // if the right or left bumpers are pressed, respectively
         if (Math.abs(bumperVelocity) > 0) {
-            // move the motor to a set position
-            this.armRotationMotor.setTargetPosition(armRotation + 100 * bumperVelocity);
+            // set the target position to 1/4 if the left bumper is pressed
+            // set the target position to 3/4 if the right bumper is pressed
+            double position = 0.5 + (0.25 * bumperVelocity);            
+
+            // set the position
+            this.armRotationMotor.setTargetPosition(position * this.ARM_ROTATE_MAX);
+            
+            // set the power of armRotationMotor
             this.armRotationMotor.setPower(bumperVelocity * this.ARM_ROTATIONAL_VELOCITY);
+
+            // set the motor to run to position
             this.armRotationMotor.setMode(DcMotor.RunMode.RUN_TO_POSITION);
         }
     }
