@@ -21,19 +21,16 @@ public class drivercontrol extends OpMode {
     private final double ARM_EXTEND_SPEED = 0.5;
 
     // the DC motors for the wheels
-    private DcMotor leftWheelMotor, rightWheelMotor;
+    private final DcMotor leftWheelMotor, rightWheelMotor;
 
     // the DC motors for the arm
-    private DcMotor armRotationMotor, armExtensionMotor;
+    private final DcMotor armRotationMotor, armExtensionMotor;
 
     // the servo motors for the pincers of the claw
-    private Servo leftPincerServo, rightPincerServo;
+    private final Servo leftPincerServo, rightPincerServo;
 
     // the servo that rotates the claw back and forth
-    private Servo clawRotationServo;
-
-    // the current power of the wheels and arm
-    private double leftWheelPower, rightWheelPower, armPower;
+    private final Servo clawRotationServo;
 
     @Override
     public void init() {
@@ -58,11 +55,6 @@ public class drivercontrol extends OpMode {
 
         // set the servo position of the grabber rotator to 1.0
         this.clawRotationServo.setPosition(1.0);
-
-        this.leftWheelPower = 0;
-        this.rightWheelPower = 0;
-
-        this.armPower = 0;
     }
 
     @Override
@@ -74,7 +66,7 @@ public class drivercontrol extends OpMode {
         this.grabber();
     }
 
-    /*
+    /**
      * Controls wheel movement of the robot
      * Moves robot forward, backard, left, and right
      * according to left joystick
@@ -85,23 +77,23 @@ public class drivercontrol extends OpMode {
 
         // power levels
         // motor gear rotation is inversed
-        this.leftWheelPower = Range.clip(drive + turn, -1.0, 1.0);
-        this.rightWheelPower = Range.clip(drive - turn, -1.0, 1.0);
+        double leftWheelPower = Range.clip(drive + turn, -1.0, 1.0);
+        double rightWheelPower = Range.clip(drive - turn, -1.0, 1.0);
 
-        this.leftWheelMotor.setPower(this.leftWheelPower);
-        this.rightWheelMotor.setPower(this.rightWheelPower);
+        this.leftWheelMotor.setPower(leftWheelPower);
+        this.rightWheelMotor.setPower(rightWheelPower);
     }
 
-    /*
+    /**
      * Controls arm movement of the robot,
      * including both rotation and extension
      */
     public void moveArm() {
-        extendArm();
-        rotateArm();
+        this.extendArm();
+        this.rotateArm();
     }
 
-    /*
+    /**
      * extends the arm back and forth
      */ 
     public void extendArm() {
@@ -133,7 +125,7 @@ public class drivercontrol extends OpMode {
         }
     }
 
-    /*
+    /**
      * Rotates the arm up and down
      */
     public void rotateArm() {
@@ -156,15 +148,20 @@ public class drivercontrol extends OpMode {
 
         // instantly raises arm
         if (Math.abs(bumperVelocity) > 0) {
+            // signum returns the sign of the value
+            double direction = Math.signum(bumperVelocity);
+
             // set the power of the motor
-            this.armRotationMotor.setTargetPosition(armRotation + 100);
+            this.armRotationMotor.setTargetPosition(armRotation + 100 * direction);
             this.armRotationMotor.setPower(this.ARM_ROTATIONAL_VELOCITY);
             this.armRotationMotor.setMode(DcMotor.RunMode.RUN_TO_POSITION);
         }
     }
 
-    // Moves the grabber back and forth
-    // Also closes and opens the claw
+    /**
+     * Moves the grabber back and forth
+     * Also closes and opens the claw
+     */
     public void grabber() {
         // if the left bumper is pressed, release the claw
         if (gamepad1.b) {
