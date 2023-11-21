@@ -147,12 +147,9 @@ public class drivercontrol extends OpMode {
         // instantly raise or lower the arm 
         // if the right or left bumpers are pressed, respectively
         if (Math.abs(bumperVelocity) > 0) {
-            // get the sign of bumperVelocity
-            int direction = (int) (Math.signum(bumperVelocity));
-
             // move the motor to a set position
-            this.armRotationMotor.setTargetPosition(armRotation + 100 * direction);
-            this.armRotationMotor.setPower(direction * this.ARM_ROTATIONAL_VELOCITY);
+            this.armRotationMotor.setTargetPosition(armRotation + 100 * bumperVelocity);
+            this.armRotationMotor.setPower(bumperVelocity * this.ARM_ROTATIONAL_VELOCITY);
             this.armRotationMotor.setMode(DcMotor.RunMode.RUN_TO_POSITION);
         }
     }
