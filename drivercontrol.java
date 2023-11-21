@@ -130,7 +130,33 @@ public class drivercontrol extends OpMode {
     /**
      * Rotates the arm up and down
      */
-    public void rotateArm() {}
+    public void rotateArm(){
+        int position = armRotationMotor.getCurrentPosition();
+        if(gamepad1.left_bumper && position > ARM_ROTATE_MIN){
+            if(position - 199 < ARM_ROTATE_MIN){
+                this.armRotationMotor.setTargetPosition(ARM_ROTATE_MIN);
+
+            } else {
+                this.armRotationMotor.setTargetPosition(position - 100);
+            }
+
+            this.armRotationMotor.setPower(-1.0);
+            this.armRotationMotor.setMode(DcMotor.RunMode.RUN_TO_POSITION);
+
+        } else if(gamepad1.right_bumper && position < ARM_ROTATE_MAX){
+            if(position + 199 > ARM_ROTATE_MAX){
+                this.armRotationMotor.setTargetPosition(ARM_ROTATE_MAX);
+
+            } else {
+                this.armRotationMotor.setTargetPosition(position + 100);
+            }
+
+            this.armRotationMotor.setPower(1.0);
+            this.armRotationMotor.setMode(DcMotor.RunMode.RUN_TO_POSITION);
+        }
+
+
+    }
 
     /**
      * Rotates the arm up and down
