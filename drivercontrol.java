@@ -7,15 +7,15 @@ import com.qualcomm.robotcore.util.Range;
 @TeleOp(name = "Driver Control")
 public class drivercontrol extends OpMode {
     // constants for how far the arm can extend and retract
-    // private final int ARM_EXTEND_LIMIT;
-    // private final int ARM_RETRACT_LIMIT;
+    private final int ARM_EXTEND_LIMIT = 0;
+    private final int ARM_RETRACT_LIMIT = 0;
 
-    // // constants for how far the arm can rotate up and down
+    // constants for how far the arm can rotate up and down
     private final int ARM_ROTATE_MAX = 2000;
     private final int ARM_ROTATE_MIN = 0;
 
     // constant for the speed that the arm rotates with
-    private final double ARM_ROTATIONAL_VELOCITY = 0.5;
+    private final double ARM_ROTATIONAL_VELOCITY = 1;
 
     // constant for the speed that the arm extends and retracts with
     private final double ARM_EXTEND_SPEED = 0.5;
@@ -25,16 +25,16 @@ public class drivercontrol extends OpMode {
     private final double CLAW_CLOSE_POSITION = 0.1;
 
     // the DC motors for the wheels
-    private final DcMotor leftWheelMotor, rightWheelMotor;
+    private DcMotor leftWheelMotor, rightWheelMotor;
 
     // the DC motors for the arm
-    private final DcMotor armRotationMotor, armExtensionMotor;
+    private DcMotor armRotationMotor, armExtensionMotor;
 
     // the servo motors for the pincers of the claw
-    private final Servo pincerServo;
+    private Servo pincerServo;
 
     // the servo that rotates the claw back and forth
-    // private final Servo clawRotationServo;
+    private Servo clawRotationServo;
 
     @Override
     public void init() {
@@ -122,7 +122,12 @@ public class drivercontrol extends OpMode {
     /**
      * Rotates the arm up and down
      */
-    public void rotateArm() {
+    public void rotateArm() {}
+
+    /**
+     * Rotates the arm up and down
+     */
+    public void rotateArm2() {
         double triggerVelocity = gamepad1.right_trigger - gamepad1.left_trigger;
         int bumperVelocity = ((gamepad1.right_bumper) ? 1 : 0) - ((gamepad1.left_bumper) ? 1 : 0);
 
@@ -134,22 +139,34 @@ public class drivercontrol extends OpMode {
         if (Math.abs(triggerVelocity) > 0) {
             // get the sign of triggerVelocity
             int motorDirection = (int) (Math.signum(triggerVelocity));
+
+            // determines target position for motor to move to
+            // prevents moving beyond limits
+            double targetPos = this.ARM_ROTATE_MAX / 2 + this.ARM_ROTATE_MAX / 2 * motorDirection;
+            if (direction < 1 && targetPos < this.ARM_ROTATE_MIN) {
+                targetPos = this.ARM_ROTATE_MIN;
+                direction *= -1;
+            }  
+
+            else if (direction > 1 && targetPos > this.ARM_ROTATE_MAX) {
+                targetPos = this.ARM_ROTATE_MAX;
+                direction *= -1;
+            }
           
             // set the power of the motor
-            this.armRotationMotor.setPower(motorDirection * this.ARM_ROTATIONAL_VELOCITY);
+            this.armRotationMotor.setPower(direction * this.ARM_ROTATIONAL_VELOCITY);
+            this.armRotationMotor.setMode(DcMotor.RunMode.RUN_TO_POSITION);
         }
 
         // instantly raise or lower the arm 
         // if the right or left bumpers are pressed, respectively
         if (Math.abs(bumperVelocity) > 0) {
-            // set the target position to 1/4 if the left bumper is pressed
-            // set the target position to 3/4 if the right bumper is pressed
-            double position = 0.5 + (0.25 * bumperVelocity);            
+            // get the sign of triggerVelocity
+            int direction = (int) (Math.signum(bumperVelocity));
+            double targetPos = this.ARM_ROTATE_MAX / 2 + this.ARM_ROTATE_MAX / 2 * direction;
 
-            // set the position
-            this.armRotationMotor.setTargetPosition(position * this.ARM_ROTATE_MAX);
-            
-            // set the power of armRotationMotor
+            // move the motor to a set position
+            this.armRotationMotor.setTargetPosition(targetPos);
             this.armRotationMotor.setPower(bumperVelocity * this.ARM_ROTATIONAL_VELOCITY);
 
             // set the motor to run to position
