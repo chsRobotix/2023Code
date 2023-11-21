@@ -13,6 +13,7 @@ public class drivercontrol extends OpMode {
     // constants for how far the arm can rotate up and down
     private final int ARM_ROTATE_MAX = 2000;
     private final int ARM_ROTATE_MIN = 0;
+    private final int ARM_ROTATE_MID = (ARM_ROTATE_MAX + ARM_ROTATE_MIN) / 2;
 
     // constant for the speed that the arm rotates with
     private final double ARM_ROTATIONAL_VELOCITY = 1;
@@ -132,7 +133,7 @@ public class drivercontrol extends OpMode {
                 this.armRotationMotor.setTargetPosition(position - 100);
             }
 
-            this.armRotationMotor.setPower(-1.0);
+            this.armRotationMotor.setPower(-0.5);
             this.armRotationMotor.setMode(DcMotor.RunMode.RUN_TO_POSITION);
 
         } else if(gamepad1.right_bumper && position < ARM_ROTATE_MAX){
@@ -143,7 +144,7 @@ public class drivercontrol extends OpMode {
                 this.armRotationMotor.setTargetPosition(position + 100);
             }
 
-            this.armRotationMotor.setPower(1.0);
+            this.armRotationMotor.setPower(0.5);
             this.armRotationMotor.setMode(DcMotor.RunMode.RUN_TO_POSITION);
         }
 
@@ -169,18 +170,18 @@ public class drivercontrol extends OpMode {
             // determines target position for motor to move to
             // prevents moving beyond limits
             double targetPos = this.ARM_ROTATE_MAX / 2 + this.ARM_ROTATE_MAX / 2 * motorDirection;
-            if (direction < 1 && targetPos < this.ARM_ROTATE_MIN) {
+            if (motorDirection < 1 && targetPos < this.ARM_ROTATE_MIN) {
                 targetPos = this.ARM_ROTATE_MIN;
-                direction *= -1;
+                motorDirection *= -1;
             }  
 
-            else if (direction > 1 && targetPos > this.ARM_ROTATE_MAX) {
+            else if (motorDirection > 1 && targetPos > this.ARM_ROTATE_MAX) {
                 targetPos = this.ARM_ROTATE_MAX;
-                direction *= -1;
+                motorDirection *= -1;
             }
           
             // set the power of the motor
-            this.armRotationMotor.setPower(direction * this.ARM_ROTATIONAL_VELOCITY);
+            this.armRotationMotor.setPower(motorDirection * this.ARM_ROTATIONAL_VELOCITY);
             this.armRotationMotor.setMode(DcMotor.RunMode.RUN_TO_POSITION);
         }
 
@@ -222,5 +223,30 @@ public class drivercontrol extends OpMode {
             // rotate the claw downward 
             this.clawRotationServo.setPosition(1.0);
         } 
+    }
+
+    public void presetArmRotationPositions(){
+        if(gamepad2.a){
+            this.armRotationMotor.setTargetPosition(ARM_ROTATE_MIN);
+            this.armRotationMotor.setPower(-1.0);
+            this.armRotationMotor.setMode(DcMotor.RunMode.RUN_TO_POSITION);
+        }
+
+        if(gamepad2.b){
+            this.armRotationMotor.setTargetPosition(ARM_ROTATE_MID);
+            if(this.armRotationMotor.getCurrentPosition() < ARM_ROTATE_MID) {
+                this.armRotationMotor.setPower(1.0);
+
+            } else if(this.armRotationMotor.getCurrentPosition() > ARM_ROTATE_MID){
+                this.armRotationMotor.setPower(-1.0);
+            }
+            this.armRotationMotor.setMode(DcMotor.RunMode.RUN_TO_POSITION);
+        }
+
+        if(gamepad2.y){
+            this.armRotationMotor.setTargetPosition(ARM_ROTATE_MAX);
+            this.armRotationMotor.setPower(1.0);
+            this.armRotationMotor.setMode(DcMotor.RunMode.RUN_TO_POSITION);
+        }
     }
 }
