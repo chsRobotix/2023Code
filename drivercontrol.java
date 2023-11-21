@@ -27,7 +27,7 @@ public class drivercontrol extends OpMode {
     private final DcMotor armRotationMotor, armExtensionMotor;
 
     // the servo motors for the pincers of the claw
-    private final Servo leftPincerServo, rightPincerServo;
+    private final Servo pincerServo;
 
     // the servo that rotates the claw back and forth
     private final Servo clawRotationServo;
@@ -41,8 +41,7 @@ public class drivercontrol extends OpMode {
         this.armRotationMotor = hardwareMap.get(DcMotor.class, "arm_rotator");
         this.armExtensionMotor = hardwareMap.get(DcMotor.class, "arm_extender");
 
-        this.leftPincerServo = hardwareMap.get(Servo.class, "left_pincer_servo");
-        this.rightPincerServo = hardwareMap.get(Servo.class, "right_pincer_servo");
+        this.leftPincerServo = hardwareMap.get(Servo.class, "pincer_servo");
 
         // setting the direction of the motors
         // rightWheelMotor and armRotationMotor are forward by default
@@ -165,12 +164,10 @@ public class drivercontrol extends OpMode {
     public void grabber() {
         // if the left bumper is pressed, release the claw
         if (gamepad1.b) {
-            this.leftPincerServo.setPosition(1.0);
-            this.rightPincerServo.setPosition(1.0);
+            this.pincerServo.setPosition(1.0);
 
         } else if (gamepad1.x) { // if the right bumper is pressed, close the claw to half
-            this.leftPincerServo.setPosition(0.5);
-            this.rightPincerServo.setPosition(0.5);
+            this.pincerServo.setPosition(0.5);
         }
 
         // if the y button is pressed
