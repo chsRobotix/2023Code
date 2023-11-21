@@ -130,7 +130,12 @@ public class drivercontrol extends OpMode {
     /**
      * Rotates the arm up and down
      */
-    public void rotateArm() {
+    public void rotateArm() {}
+
+    /**
+     * Rotates the arm up and down
+     */
+    public void rotateArm2() {
         double triggerVelocity = gamepad1.right_trigger - gamepad1.left_trigger;
         double bumperVelocity = ((gamepad1.right_bumper) ? 1 : 0) - ((gamepad1.left_bumper) ? 1 : 0);
 
