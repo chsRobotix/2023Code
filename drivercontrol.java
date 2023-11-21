@@ -11,7 +11,7 @@ public class drivercontrol extends OpMode {
     private final int ARM_RETRACT_LIMIT = 0;
 
     // constants for how far the arm can rotate up and down
-    private final int ARM_ROTATE_MAX = 2000;
+    private final int ARM_ROTATE_MAX = 1000;
     private final int ARM_ROTATE_MIN = 0;
 
     // constant for the speed that the arm rotates with
@@ -105,7 +105,7 @@ public class drivercontrol extends OpMode {
         // get the direction that the motor will rotate in
         // if only dpad_up is pressed, it moves forward
         // if only dpad_down is pressed, it moves backward
-        int motorDirection = ((gamepad1.dpad_up) ? 1 : 0) - ((gamepad1.dpad_down) ? 1 : 0);
+        int motorDirection = ((gamepad2.dpad_up) ? 1 : 0) - ((gamepad2.dpad_down) ? 1 : 0);
 
         if (motorDirection != 0) {
             // set the target position to the of the arm
@@ -128,8 +128,8 @@ public class drivercontrol extends OpMode {
      * Rotates the arm up and down
      */
     public void rotateArm2() {
-        double triggerVelocity = gamepad1.right_trigger - gamepad1.left_trigger;
-        int bumperVelocity = ((gamepad1.right_bumper) ? 1 : 0) - ((gamepad1.left_bumper) ? 1 : 0);
+        double triggerVelocity = gamepad2.right_trigger - gamepad2.left_trigger;
+        int bumperVelocity = ((gamepad2.right_bumper) ? 1 : 0) - ((gamepad2.left_bumper) ? 1 : 0);
 
         // how much the arm is rotated
         int armRotation = this.armRotationMotor.getCurrentPosition();
@@ -143,12 +143,12 @@ public class drivercontrol extends OpMode {
             // determines target position for motor to move to
             // prevents moving beyond limits
             double targetPos = this.ARM_ROTATE_MAX / 2 + this.ARM_ROTATE_MAX / 2 * motorDirection;
-            if (direction < 1 && targetPos < this.ARM_ROTATE_MIN) {
+            if (direction < 0 && targetPos < this.ARM_ROTATE_MIN) {
                 targetPos = this.ARM_ROTATE_MIN;
                 direction *= -1;
             }  
 
-            else if (direction > 1 && targetPos > this.ARM_ROTATE_MAX) {
+            else if (direction > 0 && targetPos > this.ARM_ROTATE_MAX) {
                 targetPos = this.ARM_ROTATE_MAX;
                 direction *= -1;
             }
@@ -179,20 +179,22 @@ public class drivercontrol extends OpMode {
      * Also closes and opens the claw
      */
     public void grabber() {
-        // if the B button is pressed, open the claw
-        if (gamepad1.b) {
+        // if the left bumper is pressed, open the claw
+        if (gamepad2.left_bumper) {
             this.pincerServo.setPosition(this.CLAW_OPEN_POSITION);
 
-        } else if (gamepad1.x) { // if the X button is pressed, close the claw
+        } else if (gamepad2.right_bumper) { // if the right bumper is pressed, close the claw
             this.pincerServo.setPosition(this.CLAW_CLOSE_POSITION);
         }
 
-        // if the Y button is pressed
-        if (gamepad1.y) {
+        double trigger = gamepad2.right_trigger - gamepad2.left_trigger;
+
+        // if the right trigger is pressed
+        if (gamepad2.right_trigger > 0 && gamepad2.left_trigger ) {
             // rotate the claw upward
             this.clawRotationServo.setPosition(0.0);
 
-        } else if (gamepad1.a) { // if the A button is pressed
+        } else if (gamepad2.a) { // if the A button is pressed
             // rotate the claw downward 
             this.clawRotationServo.setPosition(1.0);
         } 
