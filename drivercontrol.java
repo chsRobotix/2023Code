@@ -27,7 +27,7 @@ public class drivercontrol extends OpMode {
     private final DcMotor armRotationMotor, armExtensionMotor;
 
     // the servo motors for the pincers of the claw
-    private final Servo leftPincerServo, rightPincerServo;
+    private final Servo pincerServo;
 
     // the servo that rotates the claw back and forth
     private final Servo clawRotationServo;
@@ -41,8 +41,7 @@ public class drivercontrol extends OpMode {
         this.armRotationMotor = hardwareMap.get(DcMotor.class, "arm_rotator");
         this.armExtensionMotor = hardwareMap.get(DcMotor.class, "arm_extender");
 
-        this.leftPincerServo = hardwareMap.get(Servo.class, "left_pincer_servo");
-        this.rightPincerServo = hardwareMap.get(Servo.class, "right_pincer_servo");
+        this.leftPincerServo = hardwareMap.get(Servo.class, "pincer_servo");
 
         // setting the direction of the motors
         // rightWheelMotor and armRotationMotor are forward by default
