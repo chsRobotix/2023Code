@@ -143,28 +143,33 @@ public class drivercontrol extends OpMode {
         // how much the arm is rotated
         int armRotation = this.armRotationMotor.getCurrentPosition();
 
-        // gradually raise the arm
+        // gradually raise or lower the arm 
+        // if the right or left triggers are pressed, respectively
         if (Math.abs(triggerVelocity) > 0) {
-            // signum returns the sign of the value
+            // get the sign of triggerVelocity
             int direction = (int) (Math.signum(triggerVelocity));
           
             // set the power of the motor
+            this.armRotationMotor.setPower(direction * this.ARM_ROTATIONAL_VELOCITY);
+        }
+
+        // instantly raise or lower the arm 
+        // if the right or left bumpers are pressed, respectively
+        if (Math.abs(bumperVelocity) > 0) {
+            // get the sign of bumperVelocity
+            int direction = (int) (Math.signum(bumperVelocity));
+
+            // move the motor to a set position
             this.armRotationMotor.setTargetPosition(armRotation + 100 * direction);
             this.armRotationMotor.setPower(direction * this.ARM_ROTATIONAL_VELOCITY);
             this.armRotationMotor.setMode(DcMotor.RunMode.RUN_TO_POSITION);
         }
-
-        // instantly raises arm
-        if (Math.abs(bumperVelocity) > 0) {
-            // set the power of the motor
-            this.armRotationMotor.setTargetPosition(armRotation + 100);
-            this.armRotationMotor.setPower(this.ARM_ROTATIONAL_VELOCITY);
-            this.armRotationMotor.setMode(DcMotor.RunMode.RUN_TO_POSITION);
-        }
     }
 
-    // Moves the grabber back and forth
-    // Also closes and opens the claw
+    /* 
+     * Moves the grabber back and forth
+     * Also closes and opens the claw
+    */ 
     public void grabber() {
         // if the left bumper is pressed, release the claw
         if (gamepad1.b) {
