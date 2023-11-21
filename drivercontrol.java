@@ -20,6 +20,10 @@ public class drivercontrol extends OpMode {
     // constant for the speed that the arm extends and retracts with
     private final double ARM_EXTEND_SPEED = 0.5;
 
+    // constants for the open and closed positions of the claw
+    private final double CLAW_OPEN_POSITION = 0.2;
+    private final double CLAW_CLOSE_POSITION = 0.1;
+
     // the DC motors for the wheels
     private final DcMotor leftWheelMotor, rightWheelMotor;
 
@@ -41,7 +45,7 @@ public class drivercontrol extends OpMode {
         this.armRotationMotor = hardwareMap.get(DcMotor.class, "arm_rotator");
         this.armExtensionMotor = hardwareMap.get(DcMotor.class, "arm_extender");
 
-        this.leftPincerServo = hardwareMap.get(Servo.class, "pincer_servo");
+        this.pincerServo = hardwareMap.get(Servo.class, "pincer_servo");
 
         // setting the direction of the motors
         // rightWheelMotor and armRotationMotor are forward by default
@@ -49,8 +53,7 @@ public class drivercontrol extends OpMode {
 
         // setting the two pincer servo positions to 1, which is upright, aka not
         // pressing the claw
-        this.leftPincerServo.setPosition(1.0);
-        this.rightPincerServo.setPosition(1.0);
+        this.pincerServo.setPosition(this.CLAW_OPEN_POSITION);
 
         // set the servo position of the grabber rotator to 1.0
         this.clawRotationServo.setPosition(1.0);
@@ -147,12 +150,9 @@ public class drivercontrol extends OpMode {
         // instantly raise or lower the arm 
         // if the right or left bumpers are pressed, respectively
         if (Math.abs(bumperVelocity) > 0) {
-            // get the sign of bumperVelocity
-            int direction = (int) (Math.signum(bumperVelocity));
-
             // move the motor to a set position
-            this.armRotationMotor.setTargetPosition(armRotation + 100 * direction);
-            this.armRotationMotor.setPower(direction * this.ARM_ROTATIONAL_VELOCITY);
+            this.armRotationMotor.setTargetPosition(armRotation + 100 * bumperVelocity);
+            this.armRotationMotor.setPower(bumperVelocity * this.ARM_ROTATIONAL_VELOCITY);
             this.armRotationMotor.setMode(DcMotor.RunMode.RUN_TO_POSITION);
         }
     }
@@ -162,22 +162,22 @@ public class drivercontrol extends OpMode {
      * Also closes and opens the claw
      */
     public void grabber() {
-        // if the left bumper is pressed, release the claw
+        // if the B button is pressed, open the claw
         if (gamepad1.b) {
-            this.pincerServo.setPosition(1.0);
+            this.pincerServo.setPosition(this.CLAW_OPEN_POSITION);
 
-        } else if (gamepad1.x) { // if the right bumper is pressed, close the claw to half
-            this.pincerServo.setPosition(0.5);
+        } else if (gamepad1.x) { // if the X button is pressed, close the claw
+            this.pincerServo.setPosition(this.CLAW_CLOSE_POSITION);
         }
 
-        // if the y button is pressed
+        // if the Y button is pressed
         if (gamepad1.y) {
-            // move the claws to position 0.0
+            // rotate the claw upward
             this.clawRotationServo.setPosition(0.0);
 
-        } else if (gamepad1.a) { // if the b button is pressed
-            // move the claw to position 1.0
+        } else if (gamepad1.a) { // if the A button is pressed
+            // rotate the claw downward 
             this.clawRotationServo.setPosition(1.0);
-        }
+        } 
     }
 }
