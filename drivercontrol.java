@@ -98,7 +98,7 @@ public class drivercontrol extends OpMode {
 
     /**
      * extends the arm back and forth
-     */ 
+     */
     public void extendArm() {
         // get how far the arm is extended
         int armExtension = this.armExtensionMotor.getCurrentPosition();
@@ -112,7 +112,7 @@ public class drivercontrol extends OpMode {
             // set the target position to the of the arm
             this.armExtensionMotor.setTargetPosition(armExtension + 100 * motorDirection);
 
-            // move at a set speed 
+            // move at a set speed
             this.armExtensionMotor.setPower(this.ARM_EXTEND_SPEED * motorDirection);
 
             // set the arm to move to position
@@ -123,10 +123,10 @@ public class drivercontrol extends OpMode {
     /**
      * Rotates the arm up and down
      */
-    public void rotateArm(){
+    public void rotateArm() {
         int position = armRotationMotor.getCurrentPosition();
-        if(gamepad1.left_bumper && position > ARM_ROTATE_MIN){
-            if(position - 199 < ARM_ROTATE_MIN){
+        if (gamepad1.left_bumper && position > ARM_ROTATE_MIN) {
+            if (position - 199 < ARM_ROTATE_MIN) {
                 this.armRotationMotor.setTargetPosition(ARM_ROTATE_MIN);
 
             } else {
@@ -136,8 +136,8 @@ public class drivercontrol extends OpMode {
             this.armRotationMotor.setPower(-0.5);
             this.armRotationMotor.setMode(DcMotor.RunMode.RUN_TO_POSITION);
 
-        } else if(gamepad1.right_bumper && position < ARM_ROTATE_MAX){
-            if(position + 199 > ARM_ROTATE_MAX){
+        } else if (gamepad1.right_bumper && position < ARM_ROTATE_MAX) {
+            if (position + 199 > ARM_ROTATE_MAX) {
                 this.armRotationMotor.setTargetPosition(ARM_ROTATE_MAX);
 
             } else {
@@ -147,8 +147,6 @@ public class drivercontrol extends OpMode {
             this.armRotationMotor.setPower(0.5);
             this.armRotationMotor.setMode(DcMotor.RunMode.RUN_TO_POSITION);
         }
-
-
     }
 
     /**
@@ -161,7 +159,7 @@ public class drivercontrol extends OpMode {
         // how much the arm is rotated
         int armRotation = this.armRotationMotor.getCurrentPosition();
 
-        // gradually raise or lower the arm 
+        // gradually raise or lower the arm
         // if the right or left triggers are pressed, respectively
         if (Math.abs(triggerVelocity) > 0) {
             // get the sign of triggerVelocity
@@ -173,19 +171,19 @@ public class drivercontrol extends OpMode {
             if (motorDirection < 1 && targetPos < this.ARM_ROTATE_MIN) {
                 targetPos = this.ARM_ROTATE_MIN;
                 motorDirection *= -1;
-            }  
+            }
 
             else if (motorDirection > 1 && targetPos > this.ARM_ROTATE_MAX) {
                 targetPos = this.ARM_ROTATE_MAX;
                 motorDirection *= -1;
             }
-          
+
             // set the power of the motor
             this.armRotationMotor.setPower(motorDirection * this.ARM_ROTATIONAL_VELOCITY);
             this.armRotationMotor.setMode(DcMotor.RunMode.RUN_TO_POSITION);
         }
 
-        // instantly raise or lower the arm 
+        // instantly raise or lower the arm
         // if the right or left bumpers are pressed, respectively
         if (Math.abs(bumperVelocity) > 0) {
             // get the sign of triggerVelocity
@@ -217,35 +215,36 @@ public class drivercontrol extends OpMode {
         double trigger = gamepad2.right_trigger - gamepad2.left_trigger;
 
         // if the right trigger is pressed
-        if (gamepad2.right_trigger > 0 && gamepad2.left_trigger ) {
+        if (gamepad2.right_trigger > 0 && gamepad2.left_trigger) {
             // rotate the claw upward
             this.clawRotationServo.setPosition(0.0);
 
         } else if (gamepad2.a) { // if the A button is pressed
-            // rotate the claw downward 
+            // rotate the claw downward
             this.clawRotationServo.setPosition(1.0);
-        } 
+        }
     }
 
-    public void presetArmRotationPositions(){
-        if(gamepad2.a){
+    public void presetArmRotationPositions() {
+        if (gamepad2.a) {
             this.armRotationMotor.setTargetPosition(ARM_ROTATE_MIN);
             this.armRotationMotor.setPower(-1.0);
             this.armRotationMotor.setMode(DcMotor.RunMode.RUN_TO_POSITION);
         }
 
-        if(gamepad2.b){
+        if (gamepad2.b) {
             this.armRotationMotor.setTargetPosition(ARM_ROTATE_MID);
-            if(this.armRotationMotor.getCurrentPosition() < ARM_ROTATE_MID) {
+            if (this.armRotationMotor.getCurrentPosition() < ARM_ROTATE_MID) {
                 this.armRotationMotor.setPower(1.0);
 
-            } else if(this.armRotationMotor.getCurrentPosition() > ARM_ROTATE_MID){
+            } else if (this.armRotationMotor.getCurrentPosition() > ARM_ROTATE_MID) {
                 this.armRotationMotor.setPower(-1.0);
             }
+
             this.armRotationMotor.setMode(DcMotor.RunMode.RUN_TO_POSITION);
         }
 
-        if(gamepad2.y){
+        if (gamepad2.y) {
             this.armRotationMotor.setTargetPosition(ARM_ROTATE_MAX);
             this.armRotationMotor.setPower(1.0);
             this.armRotationMotor.setMode(DcMotor.RunMode.RUN_TO_POSITION);
