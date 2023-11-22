@@ -11,12 +11,12 @@ public class drivercontrol extends OpMode {
     private final int ARM_RETRACT_LIMIT = 0;
 
     // constants for how far the arm can rotate up and down
-    private final int ARM_ROTATE_MAX = 1000;
+    private final int ARM_ROTATE_MAX = 2000;
     private final int ARM_ROTATE_MIN = 0;
-    private final int ARM_ROTATE_MID = (ARM_ROTATE_MAX + ARM_ROTATE_MIN) / 2;
+    private final int ARM_ROTATE_MID = (this.ARM_ROTATE_MAX + this.ARM_ROTATE_MIN) / 2;
 
     // constant for the speed that the arm rotates with
-    private final double ARM_ROTATIONAL_VELOCITY = 1;
+    private final double ARM_ROTATIONAL_VELOCITY = 100;
 
     // constant for the speed that the arm extends and retracts with
     private final double ARM_EXTEND_SPEED = 0.5;
@@ -88,8 +88,7 @@ public class drivercontrol extends OpMode {
     }
 
     /**
-     * Controls arm movement of the robot,
-     * including both rotation and extension
+     * Controls arm movement of the robot, including both rotation and extension
      */
     public void moveArm() {
         this.extendArm();
@@ -97,7 +96,7 @@ public class drivercontrol extends OpMode {
     }
 
     /**
-     * extends the arm back and forth
+     * Extends the arm back and forth with the dpad on the controller
      */
     public void extendArm() {
         // get how far the arm is extended
@@ -106,7 +105,7 @@ public class drivercontrol extends OpMode {
         // get the direction that the motor will rotate in
         // if only dpad_up is pressed, it moves forward
         // if only dpad_down is pressed, it moves backward
-        int motorDirection = ((gamepad2.dpad_up) ? 1 : 0) - ((gamepad2.dpad_down) ? 1 : 0);
+        int motorDirection = ((gamepad1.dpad_up) ? 1 : 0) - ((gamepad1.dpad_down) ? 1 : 0);
 
         if (motorDirection != 0) {
             // set the target position to the of the arm
@@ -121,80 +120,96 @@ public class drivercontrol extends OpMode {
     }
 
     /**
-     * Rotates the arm up and down
+     * Rotates the arm up and down with bumpers on controller
      */
     public void rotateArm() {
-        int position = armRotationMotor.getCurrentPosition();
-        if (gamepad1.left_bumper && position > ARM_ROTATE_MIN) {
-            if (position - 199 < ARM_ROTATE_MIN) {
-                this.armRotationMotor.setTargetPosition(ARM_ROTATE_MIN);
+        // gets the bumper direction from right and left bumperes
+        // 1 for raising arm from min rotation; -1 for lowering arm to min rotation
+        int bumperDirection = ((gamepad1.right_bumper) ? 1 : 0) - ((gamepad1.left_bumper) ? 1 : 0);
 
-            } else {
-                this.armRotationMotor.setTargetPosition(position - 100);
-            }
-
-            this.armRotationMotor.setPower(-0.5);
-            this.armRotationMotor.setMode(DcMotor.RunMode.RUN_TO_POSITION);
-
-        } else if (gamepad1.right_bumper && position < ARM_ROTATE_MAX) {
-            if (position + 199 > ARM_ROTATE_MAX) {
-                this.armRotationMotor.setTargetPosition(ARM_ROTATE_MAX);
-
-            } else {
-                this.armRotationMotor.setTargetPosition(position + 100);
-            }
-
-            this.armRotationMotor.setPower(0.5);
-            this.armRotationMotor.setMode(DcMotor.RunMode.RUN_TO_POSITION);
+        // does not calculate further if bumpers are not pressed
+        // or if both bumpers are pressed simultaneously
+        if (bumperDirection == 0) {
+            return;
         }
+
+        // current rotational position of arm
+        int position = armRotationMotor.getCurrentPosition();
+
+        // determines the rotational location of the arm after movement
+        int targetPosition = position + this.ARM_ROTATIONAL_VELOCITY * bumperDirection;
+
+        // checks if the target position overshoots arm limiters
+        // prevents targeting beyond limiters
+        if (targetPosition < this.ARM_ROTATE_MIN)
+            targetPosition = this.ARM_ROTATE_MIN;
+
+        if (targetPosition > this.ARM_ROTATE_MAX)
+            targetPosition = this.ARM_ROTATE_MAX;
+
+        // set the target position to the of the arm
+        this.armRotationMotor.setTargetPosition(targetPosition);
+
+        // move at a set speed
+        this.armRotationMotor.setPower(0.5 * bumperDirection);
+
+        // set the arm to move to position
+        this.armRotationMotor.setMode(DcMotor.RunMode.RUN_TO_POSITION);
+
+        /*
+         * if (gamepad1.left_bumper && position > this.ARM_ROTATE_MIN) {
+         * if (position - 199 < this.ARM_ROTATE_MIN) {
+         * this.armRotationMotor.setTargetPosition(this.ARM_ROTATE_MIN);
+         *
+         * } else {
+         * this.armRotationMotor.setTargetPosition(position - 100);
+         * }
+         *
+         * this.armRotationMotor.setPower(-0.5);
+         * this.armRotationMotor.setMode(DcMotor.RunMode.RUN_TO_POSITION);
+         *
+         * } else if (gamepad1.right_bumper && position < this.ARM_ROTATE_MAX) {
+         * if (position + 199 > this.ARM_ROTATE_MAX) {
+         * this.armRotationMotor.setTargetPosition(this.ARM_ROTATE_MAX);
+         *
+         * } else {
+         * this.armRotationMotor.setTargetPosition(position + 100);
+         * }
+         *
+         * this.armRotationMotor.setPower(0.5);
+         * this.armRotationMotor.setMode(DcMotor.RunMode.RUN_TO_POSITION);
+         * }
+         */
     }
 
     /**
-     * Rotates the arm up and down
+     * Moves the arm to hard-coded positions of min, mid, and max
+     * using buttons on the controller
      */
-    public void rotateArm2() {
-        double triggerVelocity = gamepad2.right_trigger - gamepad2.left_trigger;
-        int bumperVelocity = ((gamepad2.right_bumper) ? 1 : 0) - ((gamepad2.left_bumper) ? 1 : 0);
-
-        // how much the arm is rotated
-        int armRotation = this.armRotationMotor.getCurrentPosition();
-
-        // gradually raise or lower the arm
-        // if the right or left triggers are pressed, respectively
-        if (Math.abs(triggerVelocity) > 0) {
-            // get the sign of triggerVelocity
-            int motorDirection = (int) (Math.signum(triggerVelocity));
-
-            // determines target position for motor to move to
-            // prevents moving beyond limits
-            double targetPos = this.ARM_ROTATE_MAX / 2 + this.ARM_ROTATE_MAX / 2 * motorDirection;
-            if (motorDirection < 1 && targetPos < this.ARM_ROTATE_MIN) {
-                targetPos = this.ARM_ROTATE_MIN;
-                motorDirection *= -1;
-            }
-
-            else if (motorDirection > 1 && targetPos > this.ARM_ROTATE_MAX) {
-                targetPos = this.ARM_ROTATE_MAX;
-                motorDirection *= -1;
-            }
-
-            // set the power of the motor
-            this.armRotationMotor.setPower(motorDirection * this.ARM_ROTATIONAL_VELOCITY);
+    public void presetArmRotationPositions() {
+        if (gamepad2.a) {
+            // moves arm to minimum rotation position
+            this.armRotationMotor.setTargetPosition(this.ARM_ROTATE_MIN);
+            this.armRotationMotor.setPower(-1.0);
             this.armRotationMotor.setMode(DcMotor.RunMode.RUN_TO_POSITION);
         }
 
-        // instantly raise or lower the arm
-        // if the right or left bumpers are pressed, respectively
-        if (Math.abs(bumperVelocity) > 0) {
-            // get the sign of triggerVelocity
-            int direction = (int) (Math.signum(bumperVelocity));
-            double targetPos = this.ARM_ROTATE_MAX / 2 + this.ARM_ROTATE_MAX / 2 * direction;
+        if (gamepad2.b) {
+            // determines which direction to move
+            // if below mid rotation position, motorDirection = 1
+            // if above mid rotation position, motorDirection = -1
+            int motorDirection = Math.signum(this.ARM_ROTATE_MID - this.armRotationMotor.getCurrentPosition);
 
-            // move the motor to a set position
-            this.armRotationMotor.setTargetPosition(targetPos);
-            this.armRotationMotor.setPower(bumperVelocity * this.ARM_ROTATIONAL_VELOCITY);
+            // moves arm to mid rotation position
+            this.armRotationMotor.setTargetPosition(this.ARM_ROTATE_MID);
+            this.armRotationMotor.setPower(1.0 * motorDirection);
+            this.armRotationMotor.setMode(DcMotor.RunMode.RUN_TO_POSITION);
+        }
 
-            // set the motor to run to position
+        if (gamepad2.y) {
+            // moves arm to maximum rotation position
+            this.armRotationMotor.setTargetPosition(this.ARM_ROTATE_MAX);
+            this.armRotationMotor.setPower(1.0);
             this.armRotationMotor.setMode(DcMotor.RunMode.RUN_TO_POSITION);
         }
     }
@@ -204,50 +219,22 @@ public class drivercontrol extends OpMode {
      * Also closes and opens the claw
      */
     public void grabber() {
-        // if the left bumper is pressed, open the claw
-        if (gamepad2.left_bumper) {
+        // if the B button is pressed, open the claw
+        if (gamepad1.b) {
             this.pincerServo.setPosition(this.CLAW_OPEN_POSITION);
 
-        } else if (gamepad2.right_bumper) { // if the right bumper is pressed, close the claw
+        } else if (gamepad1.x) { // if the X button is pressed, close the claw
             this.pincerServo.setPosition(this.CLAW_CLOSE_POSITION);
         }
 
-        double trigger = gamepad2.right_trigger - gamepad2.left_trigger;
-
-        // if the right trigger is pressed
-        if (gamepad2.right_trigger > 0 && gamepad2.left_trigger) {
+        // if the Y button is pressed
+        if (gamepad1.y) {
             // rotate the claw upward
             this.clawRotationServo.setPosition(0.0);
 
-        } else if (gamepad2.a) { // if the A button is pressed
+        } else if (gamepad1.a) { // if the A button is pressed
             // rotate the claw downward
             this.clawRotationServo.setPosition(1.0);
-        }
-    }
-
-    public void presetArmRotationPositions() {
-        if (gamepad2.a) {
-            this.armRotationMotor.setTargetPosition(ARM_ROTATE_MIN);
-            this.armRotationMotor.setPower(-1.0);
-            this.armRotationMotor.setMode(DcMotor.RunMode.RUN_TO_POSITION);
-        }
-
-        if (gamepad2.b) {
-            this.armRotationMotor.setTargetPosition(ARM_ROTATE_MID);
-            if (this.armRotationMotor.getCurrentPosition() < ARM_ROTATE_MID) {
-                this.armRotationMotor.setPower(1.0);
-
-            } else if (this.armRotationMotor.getCurrentPosition() > ARM_ROTATE_MID) {
-                this.armRotationMotor.setPower(-1.0);
-            }
-
-            this.armRotationMotor.setMode(DcMotor.RunMode.RUN_TO_POSITION);
-        }
-
-        if (gamepad2.y) {
-            this.armRotationMotor.setTargetPosition(ARM_ROTATE_MAX);
-            this.armRotationMotor.setPower(1.0);
-            this.armRotationMotor.setMode(DcMotor.RunMode.RUN_TO_POSITION);
         }
     }
 }
