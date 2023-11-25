@@ -2,6 +2,11 @@ package org.firstinspires.ftc.teamcode;
 
 import com.qualcomm.robotcore.eventloop.opmode.*;
 import com.qualcomm.robotcore.hardware.*;
+import org.firstinspires.ftc.robotcore.external.hardware.camera.BuiltinCameraDirection;
+import org.firstinspires.ftc.robotcore.external.hardware.camera.WebcamName;
+import org.firstinspires.ftc.robotcore.external.tfod.Recognition;
+import org.firstinspires.ftc.vision.VisionPortal;
+import org.firstinspires.ftc.vision.tfod.TfodProcessor;
 
 @Autonomous(name = "Autonomous")
 public class autonomous extends LinearOpMode {
@@ -58,15 +63,12 @@ public class autonomous extends LinearOpMode {
         // set the servo position of the grabber rotator to 1.0
         this.clawRotationServo.setPosition(1.0);
 
-        // wait for the player to press start
-        waitForStart();
-
         // drive forward and backwards to test
         setWheelPower(1.0);
 
         sleep(1000);
 
-        setWheelPower(0.0);
+        setWheelPower(-1.0);
 
         telemetry.addData("", "Done running!");
     }
