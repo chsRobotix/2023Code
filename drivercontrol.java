@@ -75,7 +75,7 @@ public class drivercontrol extends OpMode {
      * according to left joystick of the gamepad1 
      */
     public void movement() {
-        double turn = gamepad1.left_stick_x;
+        double turn = gamepad1.right_stick_x;
         double drive = gamepad1.left_stick_y;
 
         // power levels
@@ -100,7 +100,7 @@ public class drivercontrol extends OpMode {
      * Extends the arm back and forth with the dpad on the gamepad2
      */
     public void extendArm() {
-        // get how far the arm is extended
+        // get how far the arm isextended
         int armExtension = this.armExtensionMotor.getCurrentPosition();
 
         // get the direction that the motor will rotate in
@@ -139,7 +139,7 @@ public class drivercontrol extends OpMode {
         // current rotational position of arm
         int position = armRotationMotor.getCurrentPosition();
 
-        if (gamepad1.left_bumper && position > this.ARM_ROTATE_MIN) {
+        if (gamepad2.left_bumper && position > this.ARM_ROTATE_MIN) {
             if (position - 199 < this.ARM_ROTATE_MIN) {
                 this.armRotationMotor.setTargetPosition(this.ARM_ROTATE_MIN);
 
@@ -150,7 +150,7 @@ public class drivercontrol extends OpMode {
             this.armRotationMotor.setPower(-0.5);
             this.armRotationMotor.setMode(DcMotor.RunMode.RUN_TO_POSITION);
 
-        } else if (gamepad1.right_bumper && position < this.ARM_ROTATE_MAX) {
+        } else if (gamepad2.right_bumper && position < this.ARM_ROTATE_MAX) {
             if (position + 199 > this.ARM_ROTATE_MAX) {
                 this.armRotationMotor.setTargetPosition(this.ARM_ROTATE_MAX);
 
@@ -224,19 +224,19 @@ public class drivercontrol extends OpMode {
      */
     public void grabber() {
         // if the B button is pressed, open the claw
-        if (gamepad1.b) {
+        if (gamepad2.b) {
             this.pincerServo.setPosition(this.CLAW_OPEN_POSITION);
 
-        } else if (gamepad1.x) { // if the X button is pressed, close the claw
+        } else if (gamepad2.x) { // if the X button is pressed, close the claw
             this.pincerServo.setPosition(this.CLAW_CLOSE_POSITION);
         }
 
         // if the Y button is pressed
-        if (gamepad1.y) {
+        if (gamepad2.y) {
             // rotate the claw upward
             this.clawRotationServo.setPosition(0.0);
 
-        } else if (gamepad1.a) { // if the A button is pressed
+        } else if (gamepad2.a) { // if the A button is pressed
             // rotate the claw downward
             this.clawRotationServo.setPosition(1.0);
         }
