@@ -138,6 +138,31 @@ public class drivercontrol extends OpMode {
         // current rotational position of arm
         int position = armRotationMotor.getCurrentPosition();
 
+        if (gamepad1.left_bumper && position > this.ARM_ROTATE_MIN) {
+            if (position - 199 < this.ARM_ROTATE_MIN) {
+                this.armRotationMotor.setTargetPosition(this.ARM_ROTATE_MIN);
+
+            } else {
+                this.armRotationMotor.setTargetPosition(position - 100);
+            }
+
+            this.armRotationMotor.setPower(-0.5);
+            this.armRotationMotor.setMode(DcMotor.RunMode.RUN_TO_POSITION);
+
+        } else if (gamepad1.right_bumper && position < this.ARM_ROTATE_MAX) {
+            if (position + 199 > this.ARM_ROTATE_MAX) {
+                this.armRotationMotor.setTargetPosition(this.ARM_ROTATE_MAX);
+
+            } else {
+                this.armRotationMotor.setTargetPosition(position + 100);
+            }
+
+            this.armRotationMotor.setPower(0.5);
+            this.armRotationMotor.setMode(DcMotor.RunMode.RUN_TO_POSITION);
+        }
+        
+        return;
+
         // determines the rotational location of the arm after movement
         int targetPosition = position + this.ARM_ROTATIONAL_VELOCITY * bumperDirection;
 
@@ -158,30 +183,7 @@ public class drivercontrol extends OpMode {
         // set the arm to move to position
         this.armRotationMotor.setMode(DcMotor.RunMode.RUN_TO_POSITION);
 
-        /*
-         * if (gamepad1.left_bumper && position > this.ARM_ROTATE_MIN) {
-         * if (position - 199 < this.ARM_ROTATE_MIN) {
-         * this.armRotationMotor.setTargetPosition(this.ARM_ROTATE_MIN);
-         *
-         * } else {
-         * this.armRotationMotor.setTargetPosition(position - 100);
-         * }
-         *
-         * this.armRotationMotor.setPower(-0.5);
-         * this.armRotationMotor.setMode(DcMotor.RunMode.RUN_TO_POSITION);
-         *
-         * } else if (gamepad1.right_bumper && position < this.ARM_ROTATE_MAX) {
-         * if (position + 199 > this.ARM_ROTATE_MAX) {
-         * this.armRotationMotor.setTargetPosition(this.ARM_ROTATE_MAX);
-         *
-         * } else {
-         * this.armRotationMotor.setTargetPosition(position + 100);
-         * }
-         *
-         * this.armRotationMotor.setPower(0.5);
-         * this.armRotationMotor.setMode(DcMotor.RunMode.RUN_TO_POSITION);
-         * }
-         */
+        
     }
 
     /**
