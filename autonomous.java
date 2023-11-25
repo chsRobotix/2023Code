@@ -65,9 +65,7 @@ public class autonomous extends LinearOpMode {
 
         // drive forward and backwards to test
         setWheelPower(1.0);
-
         sleep(1000);
-
         setWheelPower(-1.0);
 
         telemetry.addData("", "Done running!");

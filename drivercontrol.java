@@ -72,7 +72,7 @@ public class drivercontrol extends OpMode {
     /**
      * Controls wheel movement of the robot
      * Moves robot forward, backard, left, and right
-     * according to left joystick
+     * according to left joystick of the gamepad1 
      */
     public void movement() {
         double turn = gamepad1.left_stick_x;
@@ -93,10 +93,11 @@ public class drivercontrol extends OpMode {
     public void moveArm() {
         this.extendArm();
         this.rotateArm();
+        this.presetArmRotationPositions();
     }
 
     /**
-     * Extends the arm back and forth with the dpad on the controller
+     * Extends the arm back and forth with the dpad on the gamepad2
      */
     public void extendArm() {
         // get how far the arm is extended
@@ -122,7 +123,7 @@ public class drivercontrol extends OpMode {
     }
 
     /**
-     * Rotates the arm up and down with bumpers on controller
+     * Rotates the arm up and down with bumpers on gamepad2
      */
     public void rotateArm() {
         // gets the bumper direction from right and left bumperes
@@ -160,7 +161,7 @@ public class drivercontrol extends OpMode {
             this.armRotationMotor.setPower(0.5);
             this.armRotationMotor.setMode(DcMotor.RunMode.RUN_TO_POSITION);
         }
-        
+
         return;
 
         // determines the rotational location of the arm after movement
@@ -183,12 +184,11 @@ public class drivercontrol extends OpMode {
         // set the arm to move to position
         this.armRotationMotor.setMode(DcMotor.RunMode.RUN_TO_POSITION);
 
-        
     }
 
     /**
      * Moves the arm to hard-coded positions of min, mid, and max
-     * using buttons on the controller
+     * using buttons on gamepad2
      */
     public void presetArmRotationPositions() {
         if (gamepad2.a) {
