@@ -107,7 +107,9 @@ public class drivercontrol extends OpMode {
         // if only dpad_down is pressed, it moves backward
         int motorDirection = ((gamepad1.dpad_up) ? 1 : 0) - ((gamepad1.dpad_down) ? 1 : 0);
 
-        if (motorDirection != 0) {
+        if (motorDirection != 0
+                && armExtension < this.ARM_EXTEND_LIMIT
+                && armExtension > this.ARM_RETRACT_LIMIT) {
             // set the target position to the of the arm
             this.armExtensionMotor.setTargetPosition(armExtension + 100 * motorDirection);
 
