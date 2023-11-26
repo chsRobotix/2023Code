@@ -71,13 +71,14 @@ public class drivercontrol extends OpMode {
 
     /**
      * Controls wheel movement of the robot
-     * Moves robot forward, backard, left, and right
-     * according to left joystick of the gamepad1 
+     * Moves robot forward and backard according to left joystick of the gamepad1 
+     * Turns robot left and right according to right joystick of the gamepad1 
+     * 
      */
     public void movement() {
-        double turn = gamepad1.right_stick_x;
         double drive = gamepad1.left_stick_y;
-
+        double turn = gamepad1.right_stick_x;
+        
         // power levels
         // motor gear rotation is inversed
         double leftWheelPower = Range.clip(drive + turn, -1.0, 1.0);
@@ -93,23 +94,26 @@ public class drivercontrol extends OpMode {
     public void moveArm() {
         this.extendArm();
         this.rotateArm();
-        this.presetArmRotationPositions();
+        
     }
 
     /**
      * Extends the arm back and forth with the dpad on the gamepad2
      */
     public void extendArm() {
-        // get how far the arm isextended
+        // get how far the arm is extended
         int armExtension = this.armExtensionMotor.getCurrentPosition();
 
         // get the direction that the motor will rotate in
         // if only dpad_up is pressed, it moves forward
         // if only dpad_down is pressed, it moves backward
-        int motorDirection = ((gamepad1.dpad_up) ? 1 : 0) - ((gamepad1.dpad_down) ? 1 : 0);
+        int motorDirection = ((gamepad2.dpad_up) ? 1 : 0) - ((gamepad2.dpad_down) ? 1 : 0);
 
-        if (motorDirection != 0
-                && armExtension < this.ARM_EXTEND_LIMIT
+        if (motorDirection == 0) {
+            return;
+        }
+
+        if (armExtension < this.ARM_EXTEND_LIMIT
                 && armExtension > this.ARM_RETRACT_LIMIT) {
             // set the target position to the of the arm
             this.armExtensionMotor.setTargetPosition(armExtension + 100 * motorDirection);
@@ -126,46 +130,22 @@ public class drivercontrol extends OpMode {
      * Rotates the arm up and down with bumpers on gamepad2
      */
     public void rotateArm() {
-        // gets the bumper direction from right and left bumperes
-        // 1 for raising arm from min rotation; -1 for lowering arm to min rotation
-        int bumperDirection = ((gamepad1.right_bumper) ? 1 : 0) - ((gamepad1.left_bumper) ? 1 : 0);
+        this.presetArmRotationPositions();
+
+        // gets the bumper direction from right joystick of gamepad 2
+        int rotateDirection = (int) Math.signum(gamepad2.right_stick_x);
 
         // does not calculate further if bumpers are not pressed
         // or if both bumpers are pressed simultaneously
-        if (bumperDirection == 0) {
+        if (rotateDirection == 0) {
             return;
         }
 
         // current rotational position of arm
         int position = armRotationMotor.getCurrentPosition();
 
-        if (gamepad2.left_bumper && position > this.ARM_ROTATE_MIN) {
-            if (position - 199 < this.ARM_ROTATE_MIN) {
-                this.armRotationMotor.setTargetPosition(this.ARM_ROTATE_MIN);
-
-            } else {
-                this.armRotationMotor.setTargetPosition(position - 100);
-            }
-
-            this.armRotationMotor.setPower(-0.5);
-            this.armRotationMotor.setMode(DcMotor.RunMode.RUN_TO_POSITION);
-
-        } else if (gamepad2.right_bumper && position < this.ARM_ROTATE_MAX) {
-            if (position + 199 > this.ARM_ROTATE_MAX) {
-                this.armRotationMotor.setTargetPosition(this.ARM_ROTATE_MAX);
-
-            } else {
-                this.armRotationMotor.setTargetPosition(position + 100);
-            }
-
-            this.armRotationMotor.setPower(0.5);
-            this.armRotationMotor.setMode(DcMotor.RunMode.RUN_TO_POSITION);
-        }
-
-        return;
-
         // determines the rotational location of the arm after movement
-        int targetPosition = position + this.ARM_ROTATIONAL_VELOCITY * bumperDirection;
+        int targetPosition = position + this.ARM_ROTATIONAL_VELOCITY * rotateDirection;
 
         // checks if the target position overshoots arm limiters
         // prevents targeting beyond limiters
@@ -179,7 +159,7 @@ public class drivercontrol extends OpMode {
         this.armRotationMotor.setTargetPosition(targetPosition);
 
         // move at a set speed
-        this.armRotationMotor.setPower(0.5 * bumperDirection);
+        this.armRotationMotor.setPower(0.5 * rotateDirection);
 
         // set the arm to move to position
         this.armRotationMotor.setMode(DcMotor.RunMode.RUN_TO_POSITION);
@@ -223,20 +203,28 @@ public class drivercontrol extends OpMode {
      * Also closes and opens the claw
      */
     public void grabber() {
-        // if the B button is pressed, open the claw
-        if (gamepad2.b) {
+        // gets the bumper direction from right and left bumpers of gamepad 2
+        // 1 for closing grabber; -1 for opening grabber
+        int bumperDirection = ((gamepad2.right_bumper) ? 1 : 0) - ((gamepad2.left_bumper) ? 1 : 0);
+
+        // gets the bumper direction from right and left triggers of gamepad 2
+        // 1 for rotating claw upward; 1 for rotating claw downward
+        int triggerDirection = Math.signum(gamepad2.right_trigger - gamepad2.left_trigger);
+
+        if (bumperDirection > 0) {
+            // opens claw if right bumper is pressed
             this.pincerServo.setPosition(this.CLAW_OPEN_POSITION);
 
-        } else if (gamepad2.x) { // if the X button is pressed, close the claw
+        } else if (bumperDirection < 0) { 
+            // closes claw if left bumper is pressed
             this.pincerServo.setPosition(this.CLAW_CLOSE_POSITION);
         }
 
-        // if the Y button is pressed
-        if (gamepad2.y) {
+        if (triggerDirection > 0) {
             // rotate the claw upward
             this.clawRotationServo.setPosition(0.0);
 
-        } else if (gamepad2.a) { // if the A button is pressed
+        } else if (triggerDirection < 0) {
             // rotate the claw downward
             this.clawRotationServo.setPosition(1.0);
         }
