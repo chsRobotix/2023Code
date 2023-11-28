@@ -78,4 +78,12 @@ public class autonomous extends LinearOpMode {
         this.leftWheelMotor.setPower(wheelPower);
         this.rightWheelMotor.setPower(wheelPower);
     }
+
+    /*
+     * Turns the robot a certain number of degrees
+     * Negative is left
+     * Positive is right
+     */
+    public void turn(double degrees) {
+    }
 }

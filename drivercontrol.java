@@ -71,14 +71,14 @@ public class drivercontrol extends OpMode {
 
     /**
      * Controls wheel movement of the robot
-     * Moves robot forward and backard according to left joystick of the gamepad1 
-     * Turns robot left and right according to right joystick of the gamepad1 
+     * Moves robot forward and backard according to left joystick of the gamepad1
+     * Turns robot left and right according to right joystick of the gamepad1
      * 
      */
     public void movement() {
         double drive = gamepad1.left_stick_y;
         double turn = gamepad1.right_stick_x;
-        
+
         // power levels
         // motor gear rotation is inversed
         double leftWheelPower = Range.clip(drive + turn, -1.0, 1.0);
@@ -94,7 +94,6 @@ public class drivercontrol extends OpMode {
     public void moveArm() {
         this.extendArm();
         this.rotateArm();
-        
     }
 
     /**
@@ -215,7 +214,7 @@ public class drivercontrol extends OpMode {
             // opens claw if right bumper is pressed
             this.pincerServo.setPosition(this.CLAW_OPEN_POSITION);
 
-        } else if (bumperDirection < 0) { 
+        } else if (bumperDirection < 0) {
             // closes claw if left bumper is pressed
             this.pincerServo.setPosition(this.CLAW_CLOSE_POSITION);
         }
