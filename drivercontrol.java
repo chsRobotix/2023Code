@@ -56,8 +56,6 @@ public class drivercontrol extends OpMode {
         // setting the two pincer servo positions to open
         this.pincerServo.setPosition(this.CLAW_OPEN_POSITION);
 
-
-
         // set the servo position of the grabber rotator to 1.0
         this.clawRotationServo.setPosition(1.0);
     }
@@ -127,15 +125,21 @@ public class drivercontrol extends OpMode {
         }
     }*/
 
-    /*
+    /**
      * Rotates arm outward and inward
      */
     public void rotateArm() {
         // get the current position of the arm
         int position = armRotationMotor.getCurrentPosition();
+
+        // if the right stick is pressed down and the arm has not reached its min
         if (gamepad2.right_stick_y < 0 && position > ARM_ROTATE_MIN) {
-            if(position - 199 < ARM_ROTATE_MIN){
+            // rotate the arm inward
+
+            // prevent the arm from exceeding its min
+            if (position - 200 < ARM_ROTATE_MIN) {
                 this.armRotationMotor.setTargetPosition(ARM_ROTATE_MIN);
+
             } else {
                 this.armRotationMotor.setTargetPosition(position - 100);
             }
@@ -144,8 +148,12 @@ public class drivercontrol extends OpMode {
             this.armRotationMotor.setMode(DcMotor.RunMode.RUN_TO_POSITION);
 
         } else if (gamepad2.right_stick_y > 0 && position < ARM_ROTATE_MAX) {
-            if(position + 199 > ARM_ROTATE_MAX){
+            // if the right stick is pressed up and the arm has reached its max
+            // rotate the arm outward
+            // prevent the arm from exceeding its max
+            if (position + 200 > ARM_ROTATE_MAX) {
                 this.armRotationMotor.setTargetPosition(ARM_ROTATE_MAX);
+
             } else {
                 this.armRotationMotor.setTargetPosition(position + 100);
             }
@@ -159,25 +167,32 @@ public class drivercontrol extends OpMode {
      * Moves the arm to hard-coded positions of min, mid, and max
      * using buttons on gamepad2
      */
-    public void presetArmRotationPositions(){
-        if(gamepad2.a){
+    public void presetArmRotationPositions() {
+        // if the A button is pressed,
+        // move the arm to the minimum position
+        if (gamepad2.a) {
             this.armRotationMotor.setTargetPosition(ARM_ROTATE_MIN);
             this.armRotationMotor.setPower(-1.0);
             this.armRotationMotor.setMode(DcMotor.RunMode.RUN_TO_POSITION);
         }
 
-        if(gamepad2.b){
+        // if the B button is pressed
+        // move the arm to the midpoint
+        if (gamepad2.b) {
             this.armRotationMotor.setTargetPosition(ARM_ROTATE_MID);
-            if(this.armRotationMotor.getCurrentPosition() < ARM_ROTATE_MID) {
+            if (this.armRotationMotor.getCurrentPosition() < ARM_ROTATE_MID) {
                 this.armRotationMotor.setPower(1.0);
 
-            } else if(this.armRotationMotor.getCurrentPosition() > ARM_ROTATE_MID){
+            } else if (this.armRotationMotor.getCurrentPosition() > ARM_ROTATE_MID) {
                 this.armRotationMotor.setPower(-1.0);
             }
+
             this.armRotationMotor.setMode(DcMotor.RunMode.RUN_TO_POSITION);
         }
 
-        if(gamepad2.y){
+        // if the Y button is pressed,
+        // move teh arm to its max
+        if (gamepad2.y) {
             this.armRotationMotor.setTargetPosition(ARM_ROTATE_MAX);
             this.armRotationMotor.setPower(1.0);
             this.armRotationMotor.setMode(DcMotor.RunMode.RUN_TO_POSITION);
@@ -192,6 +207,7 @@ public class drivercontrol extends OpMode {
         // if the left bumper is pressed, open the claw
         if (gamepad2.left_bumper) {
             this.pincerServo.setPosition(this.CLAW_OPEN_POSITION);
+
         } else if (gamepad2.right_bumper) { // if the right bumper is pressed, close the claw
             this.pincerServo.setPosition(this.CLAW_CLOSE_POSITION);
         }
@@ -201,6 +217,7 @@ public class drivercontrol extends OpMode {
             // rotate the claw upward
             double currClawPosition = this.clawRotationServo.getPosition();
             this.clawRotationServo.setPosition(currClawPosition -0.001);
+
         } else if (gamepad2.right_trigger > 0) { // if the right trigger is pressed
             // rotate the claw downward
             double currClawPosition = this.clawRotationServo.getPosition();
