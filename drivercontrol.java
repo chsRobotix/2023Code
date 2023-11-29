@@ -38,7 +38,7 @@ public class drivercontrol extends OpMode {
     private Servo clawRotationServo;
 
     // the servo that launches the airplane
-    private Servo airplaneServo;
+    private Servo airplaneLauncherServo;
 
     @Override
     public void init() {
@@ -52,7 +52,7 @@ public class drivercontrol extends OpMode {
         this.pincerServo = hardwareMap.get(Servo.class, "pincer_servo");
         this.clawRotationServo = hardwareMap.get(Servo.class, "pincer_rotation_servo");
 
-        // this.airplaneServo = hardwareMap.get(Servo.class, "airplane_launcher");
+        this.airplaneLauncherServo = hardwareMap.get(Servo.class, "airplane_launcher");
 
         // setting the direction of the motors
         // rightWheelMotor and armRotationMotor are forward by default
@@ -63,6 +63,9 @@ public class drivercontrol extends OpMode {
 
         // set the servo position of the grabber rotator to 1.0
         this.clawRotationServo.setPosition(1.0);
+
+        // set the servo position of airplaneLauncherServo to 0.0
+        this.airplaneLauncherServo.setPosition(0.0);
     }
 
     @Override
@@ -146,6 +149,7 @@ public class drivercontrol extends OpMode {
                 this.armRotationMotor.setTargetPosition(ARM_ROTATE_MIN);
 
             } else {
+                // move the arm inward by 100
                 this.armRotationMotor.setTargetPosition(position - 100);
             }
 
@@ -155,11 +159,13 @@ public class drivercontrol extends OpMode {
         } else if (gamepad2.right_stick_y > 0 && position < ARM_ROTATE_MAX) {
             // if the right stick is pressed up and the arm has reached its max
             // rotate the arm outward
+
             // prevent the arm from exceeding its max
             if (position + 200 > ARM_ROTATE_MAX) {
                 this.armRotationMotor.setTargetPosition(ARM_ROTATE_MAX);
 
             } else {
+                // rotate the arm outward by 100
                 this.armRotationMotor.setTargetPosition(position + 100);
             }
 
@@ -230,9 +236,9 @@ public class drivercontrol extends OpMode {
         }
     }
 
-    /*public void airplaneLauncher() {
+    public void airplaneLauncher() {
         if (gamepad1.y) {
-
+            this.airplaneLauncherServo.setPosition(0.5);
         }
-    }*/
+    }
 }
