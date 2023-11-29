@@ -23,7 +23,7 @@ public class drivercontrol extends OpMode {
 
     // constants for the open and closed positions of the claw
     private final double CLAW_OPEN_POSITION = 0.2;
-    private final double CLAW_CLOSE_POSITION = 0.1;
+    private final double CLAW_CLOSE_POSITION = 0.075;
 
     // the DC motors for the wheels
     private DcMotor leftWheelMotor, rightWheelMotor;
@@ -37,6 +37,9 @@ public class drivercontrol extends OpMode {
     // the servo that rotates the claw back and forth
     private Servo clawRotationServo;
 
+    // the servo that launches the airplane
+    private Servo airplaneServo;
+
     @Override
     public void init() {
         // assigning the motors variables to the configured names on the driver hub
@@ -48,6 +51,8 @@ public class drivercontrol extends OpMode {
 
         this.pincerServo = hardwareMap.get(Servo.class, "pincer_servo");
         this.clawRotationServo = hardwareMap.get(Servo.class, "pincer_rotation_servo");
+
+        // this.airplaneServo = hardwareMap.get(Servo.class, "airplane_launcher");
 
         // setting the direction of the motors
         // rightWheelMotor and armRotationMotor are forward by default
@@ -63,7 +68,7 @@ public class drivercontrol extends OpMode {
     @Override
     public void loop() {
         telemetry.update(); // call-back to android console
-        telemetry.addData("left bumper", gamepad2.left_bumper);
+
         this.movement();
         this.moveArm();
         this.grabber();
@@ -216,7 +221,7 @@ public class drivercontrol extends OpMode {
         if (gamepad2.left_trigger > 0) {
             // rotate the claw upward
             double currClawPosition = this.clawRotationServo.getPosition();
-            this.clawRotationServo.setPosition(currClawPosition -0.001);
+            this.clawRotationServo.setPosition(currClawPosition - 0.001);
 
         } else if (gamepad2.right_trigger > 0) { // if the right trigger is pressed
             // rotate the claw downward
@@ -224,4 +229,10 @@ public class drivercontrol extends OpMode {
             this.clawRotationServo.setPosition(currClawPosition + 0.001);
         }
     }
+
+    /*public void airplaneLauncher() {
+        if (gamepad1.y) {
+
+        }
+    }*/
 }
