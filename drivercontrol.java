@@ -12,13 +12,13 @@ public class drivercontrol extends OpMode {
 
     /* arm rotation */
     // constants for how far the arm can rotate outward and inward
-    private final int ARM_ROTATE_MAX = ARM_ROTATIONAL_SPEED2000;
+    private final int ARM_ROTATE_MAX = 2000;
     private final int ARM_ROTATE_MIN = 0;
     private final int ARM_ROTATE_MID = (this.ARM_ROTATE_MAX + this.ARM_ROTATE_MIN) / 2;
     private final int ARM_ROTATE_SPEED = 100;
 
     // the DC motors for the arm
-    private DcMotor armRotationMotor, 
+    private DcMotor armRotationMotor;
 
     /* arm extension */
     // constants for how far the arm can extend and retract
@@ -176,6 +176,7 @@ public class drivercontrol extends OpMode {
         // if only dpad_up is pressed, it moves forward
         // if only dpad_down is pressed, it moves backward
         int motorDirection = ((gamepad2.dpad_up) ? 1 : 0) - ((gamepad2.dpad_down) ? 1 : 0);
+
         if (motorDirection == 0) {
             return;
         }
@@ -204,10 +205,7 @@ public class drivercontrol extends OpMode {
         this.armExtensionMotor.setTargetPosition(position + (ARM_ROTATE_SPEED / 4) * direction);
         this.armExtensionMotor.setPower(0.1 * direction);
         this.armExtensionMotor.setMode(DcMotor.RunMode.RUN_TO_POSITION);
-
     }
-
-    
 
     /**
      * Moves the grabber up and down
@@ -224,6 +222,7 @@ public class drivercontrol extends OpMode {
         }
 
         double currClawPosition = this.clawRotationServo.getPosition();
+        
         if (gamepad2.left_trigger > 0) {
             // if the left trigger is pressed, rotate the claw upward
             this.clawRotationServo.setPosition(currClawPosition - 0.003);
