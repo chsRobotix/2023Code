@@ -6,10 +6,6 @@ import com.qualcomm.robotcore.util.Range;
 
 @TeleOp(name = "Driver Control")
 public class drivercontrol extends OpMode {
-    // constants for how far the arm can extend and retract
-    private final int ARM_EXTEND_LIMIT = 0;
-    private final int ARM_RETRACT_LIMIT = 0;
-
     // constants for how far the arm can rotate outward and inward
     private final int ARM_ROTATE_MAX = 2000;
     private final int ARM_ROTATE_MIN = 0;
@@ -26,7 +22,7 @@ public class drivercontrol extends OpMode {
     private final double CLAW_CLOSE_POSITION = 0.075;
 
     // loading and firing position for airplane launcher
-    private final double AIRPLANE_LOADING_POSITION = 1.0;
+    private final double AIRPLANE_LOADED_POSITION = 1.0;
     private final double AIRPLANE_FIRING_POSITION = 0.5;
 
     // the DC motors for the wheels
@@ -61,7 +57,6 @@ public class drivercontrol extends OpMode {
         // setting the direction of the motors
         // rightWheelMotor and armRotationMotor are forward by default
         this.leftWheelMotor.setDirection(DcMotorSimple.Direction.REVERSE);
-        // this.armRotationMotor.setDirection(DcMotorSimple.Direction.REVERSE);
         this.armExtensionMotor.setDirection(DcMotorSimple.Direction.REVERSE);
 
         // setting the two pincer servo positions to open
@@ -71,7 +66,7 @@ public class drivercontrol extends OpMode {
         this.clawRotationServo.setPosition(0.0);
 
         // load the airplane launcher
-        this.airplaneLauncherServo.setPosition(AIRPLANE_LOADING_POSITION);
+        this.airplaneLauncherServo.setPosition(AIRPLANE_LOADED_POSITION);
 
         this.armRotationMotor.resetDeviceConfigurationForOpMode();
 
@@ -79,7 +74,6 @@ public class drivercontrol extends OpMode {
         // locking
         // while it's being rotation (issue discovered during testing)
         this.armExtensionMotor.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.FLOAT);
-
     }
 
     @Override
@@ -91,8 +85,6 @@ public class drivercontrol extends OpMode {
         this.grabber();
         this.presetGrabberRotationPositions();
         this.airplaneLauncher();
-        telemetry.addData("Arm rotation position ", armRotationMotor.getCurrentPosition());
-        telemetry.addData("right stick y ", gamepad2.right_stick_y);
     }
 
     /**
@@ -157,10 +149,12 @@ public class drivercontrol extends OpMode {
 
     public void extendArm() {
         int position = armExtensionMotor.getCurrentPosition();
+
         if (gamepad2.dpad_up) {
             this.armExtensionMotor.setTargetPosition(position + 50);
             this.armExtensionMotor.setPower(0.3);
             this.armExtensionMotor.setMode(DcMotor.RunMode.RUN_TO_POSITION);
+
         } else if (gamepad2.dpad_down) {
             this.armExtensionMotor.setTargetPosition(position - 50);
             this.armExtensionMotor.setPower(-0.3);
@@ -293,7 +287,7 @@ public class drivercontrol extends OpMode {
             this.armExtensionMotor.setTargetPosition(position + 25);
             this.armExtensionMotor.setPower(0.1);
             this.armExtensionMotor.setMode(DcMotor.RunMode.RUN_TO_POSITION);
-            
+
         } else { // if the arm is being rotated inward, retract the arm inward too
             this.armExtensionMotor.setTargetPosition(position - 25);
             this.armExtensionMotor.setPower(-0.1);
