@@ -4,6 +4,8 @@ import com.qualcomm.robotcore.eventloop.opmode.*;
 import com.qualcomm.robotcore.hardware.*;
 import com.qualcomm.robotcore.util.Range;
 
+import org.firstinspires.ftc.robotcontroller.external.samples.SensorTouch;
+
 @TeleOp(name = "Driver Control")
 public class drivercontrol extends OpMode {
     // constants for how far the arm can extend and retract
@@ -44,6 +46,9 @@ public class drivercontrol extends OpMode {
     // the servo that launches the airplane
     private Servo airplaneLauncherServo;
 
+    //private TouchSensor armExtensionMin;
+    private TouchSensor armExtensionMax;
+
     @Override
     public void init() {
         // assigning the motors variables to the configured names on the driver hub
@@ -57,6 +62,9 @@ public class drivercontrol extends OpMode {
         this.clawRotationServo = hardwareMap.get(Servo.class, "pincer_rotation_servo");
 
         this.airplaneLauncherServo = hardwareMap.get(Servo.class, "airplane_launcher");
+
+        this.armExtensionMax = hardwareMap.get(TouchSensor.class, "armExtensionMax");
+        //this.armExtensionMin = hardwareMap.get(TouchSensor.class, "armExtensionMin");
 
         // setting the direction of the motors
         // rightWheelMotor and armRotationMotor are forward by default
@@ -91,8 +99,9 @@ public class drivercontrol extends OpMode {
         this.grabber();
         this.presetGrabberRotationPositions();
         this.airplaneLauncher();
-        telemetry.addData("Arm rotation position ", armRotationMotor.getCurrentPosition());
-        telemetry.addData("right stick y ", gamepad2.right_stick_y);
+        //telemetry.addData("Arm rotation position ", armRotationMotor.getCurrentPosition());
+        //telemetry.addData("right stick y ", gamepad2.right_stick_y);
+        telemetry.addData("Sensor is pressed: ", armExtensionMax.isPressed());
     }
 
     /**
@@ -153,11 +162,11 @@ public class drivercontrol extends OpMode {
 
     public void extendArm(){
         int position = armExtensionMotor.getCurrentPosition();
-        if(gamepad2.dpad_up){
+        if(gamepad2.dpad_up){ //  && !armExtensionMax.isPressed()
             this.armExtensionMotor.setTargetPosition(position + 50);
             this.armExtensionMotor.setPower(0.3);
             this.armExtensionMotor.setMode(DcMotor.RunMode.RUN_TO_POSITION);
-        } else if(gamepad2.dpad_down){
+        } else if(gamepad2.dpad_down ){ // && !armExtensionMin.isPressed()
             this.armExtensionMotor.setTargetPosition(position - 50);
             this.armExtensionMotor.setPower(-0.3);
             this.armExtensionMotor.setMode(DcMotor.RunMode.RUN_TO_POSITION);
@@ -303,4 +312,6 @@ public class drivercontrol extends OpMode {
             this.clawRotationServo.setPosition(1.0);
         }
     }
+
+
 }
