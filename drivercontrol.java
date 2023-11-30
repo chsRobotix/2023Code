@@ -25,6 +25,10 @@ public class drivercontrol extends OpMode {
     private final double CLAW_OPEN_POSITION = 0.2;
     private final double CLAW_CLOSE_POSITION = 0.075;
 
+    // starting and ending position for airplane launcher
+    private final double AIRPLANE_STARTING_POSITION = 1.0;
+    private final double AIRPLANE_ENDING_POSITION = 0.5;
+
     // the DC motors for the wheels
     private DcMotor leftWheelMotor, rightWheelMotor;
 
@@ -64,8 +68,8 @@ public class drivercontrol extends OpMode {
         // set the servo position of the grabber rotator to 1.0
         this.clawRotationServo.setPosition(1.0);
 
-        // set the servo position of airplaneLauncherServo to 0.0
-        this.airplaneLauncherServo.setPosition(0.0);
+        this.airplaneLauncherServo.setPosition(AIRPLANE_STARTING_POSITION);
+
     }
 
     @Override
@@ -75,6 +79,8 @@ public class drivercontrol extends OpMode {
         this.movement();
         this.moveArm();
         this.grabber();
+        this.airplaneLauncher();
+        telemetry.addData("airplane launcher position: ", airplaneLauncherServo.getPosition());
     }
 
     /**
@@ -238,7 +244,7 @@ public class drivercontrol extends OpMode {
 
     public void airplaneLauncher() {
         if (gamepad1.y) {
-            this.airplaneLauncherServo.setPosition(0.5);
+            this.airplaneLauncherServo.setPosition(AIRPLANE_ENDING_POSITION);
         }
     }
 }
