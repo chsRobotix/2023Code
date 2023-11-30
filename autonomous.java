@@ -89,7 +89,6 @@ public class autonomous extends LinearOpMode {
 
         // create a VisionPortal
         VisionPortal.Builder builder = new VisionPortal.Builder();
-
     }
 
     /*

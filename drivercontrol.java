@@ -11,17 +11,17 @@ public class drivercontrol extends OpMode {
     private final int ARM_ROTATE_MIN = 0;
     private final int ARM_ROTATE_MID = (this.ARM_ROTATE_MAX + this.ARM_ROTATE_MIN) / 2;
 
-    // constant for the speed that the arm rotates with
-    private final double ARM_ROTATIONAL_VELOCITY = 100;
+    // constant for the power that the arm rotates with
+    private final double ARM_ROTATION_SPEED = 0.1;
 
-    // constant for the speed that the arm extends and retracts with
-    private final double ARM_EXTEND_SPEED = 0.5;
+    // constant for the power that the arm extends and retracts with
+    private final double ARM_EXTENSION_SPEED = 0.3;
 
     // constants for the open and closed positions of the claw
     private final double CLAW_OPEN_POSITION = 0.2;
     private final double CLAW_CLOSE_POSITION = 0.075;
 
-    // loading and firing position for airplane launcher
+    // loaded and firing position for airplane launcher
     private final double AIRPLANE_LOADED_POSITION = 1.0;
     private final double AIRPLANE_FIRING_POSITION = 0.5;
 
@@ -152,12 +152,12 @@ public class drivercontrol extends OpMode {
 
         if (gamepad2.dpad_up) {
             this.armExtensionMotor.setTargetPosition(position + 50);
-            this.armExtensionMotor.setPower(0.3);
+            this.armExtensionMotor.setPower(this.ARM_EXTENSION_SPEED);
             this.armExtensionMotor.setMode(DcMotor.RunMode.RUN_TO_POSITION);
 
         } else if (gamepad2.dpad_down) {
             this.armExtensionMotor.setTargetPosition(position - 50);
-            this.armExtensionMotor.setPower(-0.3);
+            this.armExtensionMotor.setPower(-this.ARM_EXTENSION_SPEED);
             this.armExtensionMotor.setMode(DcMotor.RunMode.RUN_TO_POSITION);
         }
     }
@@ -182,7 +182,7 @@ public class drivercontrol extends OpMode {
                 this.armRotationMotor.setTargetPosition(position - 100);
             }
 
-            this.armRotationMotor.setPower(-0.1);
+            this.armRotationMotor.setPower(-this.ARM_ROTATION_SPEED);
             this.armRotationMotor.setMode(DcMotor.RunMode.RUN_TO_POSITION);
             this.extendArmInResponse(false);
 
@@ -199,7 +199,7 @@ public class drivercontrol extends OpMode {
                 this.armRotationMotor.setTargetPosition(position + 100);
             }
 
-            this.armRotationMotor.setPower(0.1);
+            this.armRotationMotor.setPower(this.ARM_ROTATION_SPEED);
             this.armRotationMotor.setMode(DcMotor.RunMode.RUN_TO_POSITION);
             this.extendArmInResponse(true);
         }
