@@ -25,10 +25,10 @@ public class drivercontrol extends OpMode {
 
     // constants for the open and closed positions of the claw
     private final double CLAW_OPEN_POSITION = 0.2;
-    private final double CLAW_CLOSE_POSITION = 0.075;
-
     // starting and ending position for airplane launcher
     private final double AIRPLANE_STARTING_POSITION = 1.0;
+    private final double CLAW_CLOSE_POSITION = 0.075;
+
     private final double AIRPLANE_ENDING_POSITION = 0.5;
 
     // the DC motors for the wheels
