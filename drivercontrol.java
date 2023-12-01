@@ -34,6 +34,9 @@ public class drivercontrol extends OpMode {
     private final double CLAW_OPEN_POSITION = 0.2;
     private final double CLAW_CLOSE_POSITION = 0.075;
 
+    // constants for how fast the claw rotates
+    private final double CLAW_ROTATE_SPEED = 0.003;
+
     // the servo that rotates the claw back and forth
     private Servo clawRotationServo;
 
@@ -90,7 +93,6 @@ public class drivercontrol extends OpMode {
         this.movement();
         this.moveArm();
         this.grabber();
-        this.presetGrabberRotationPositions();
         this.airplaneLauncher();
     }
 
@@ -140,7 +142,7 @@ public class drivercontrol extends OpMode {
                 this.armRotationMotor.setTargetPosition(ARM_ROTATE_MIN);
 
             } else {
-                // move the arm inward by 100
+                // move the arm inward by ARM_ROTATE_SPEED
                 this.armRotationMotor.setTargetPosition(target_position);
             }
 
@@ -154,7 +156,7 @@ public class drivercontrol extends OpMode {
                 this.armRotationMotor.setTargetPosition(ARM_ROTATE_MAX);
 
             } else {
-                // rotate the arm outward by 100
+                // rotate the arm outward by ARM_ROTATE_SPEED
                 this.armRotationMotor.setTargetPosition(target_position);
             }
 
@@ -212,6 +214,8 @@ public class drivercontrol extends OpMode {
      * Also closes and opens the claw
      */
     public void grabber() {
+        this.presetGrabberRotationPositions();
+
         if (gamepad2.left_bumper) {
             // if the left bumper is pressed, open the claw
             this.pincerServo.setPosition(this.CLAW_OPEN_POSITION);
@@ -222,7 +226,7 @@ public class drivercontrol extends OpMode {
         }
 
         double currClawPosition = this.clawRotationServo.getPosition();
-        
+
         if (gamepad2.left_trigger > 0) {
             // if the left trigger is pressed, rotate the claw upward
             this.clawRotationServo.setPosition(currClawPosition - 0.003);
