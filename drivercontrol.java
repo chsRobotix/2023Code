@@ -16,26 +16,22 @@ public class drivercontrol extends OpMode {
     // constants for how far the arm can rotate outward and inward
     private final int ARM_ROTATE_MAX = 2000;
     private final int ARM_ROTATE_MIN = 0;
-    private final int ARM_ROTATE_MID = (this.ARM_ROTATE_MAX + this.ARM_ROTATE_MIN) / 2;
-    private final int ARM_ROTATE_SPEED = 100;
+    private final int ARM_ROTATE_SPEED = 50;
 
     // the DC motors for the arm
     private DcMotor armRotationMotor;
 
     /* arm extension */
-    // constants for how far the arm can extend and retract
-    private final int ARM_EXTEND_LIMIT = 0;
-    private final int ARM_RETRACT_LIMIT = 0;
-
     // constant for the speed that the arm extends and retracts with
-    private final double ARM_EXTEND_SPEED = 50;
+    private final int ARM_EXTEND_SPEED = 50;
     private DcMotor armExtensionMotor;
+    private DigitalChannel armExtensionMin;
+    private DigitalChannel armExtensionMax;
 
     /* claw */
     // constants for the open and closed positions of the claw
     private final double CLAW_OPEN_POSITION = 1.0;
-    private final double CLAW_CLOSE_POSITION = 0.0;
-
+    private final double CLAW_CLOSE_POSITION = 0.075;
 
     // constants for how fast the claw rotates
     private final double CLAW_ROTATE_SPEED = 0.003;
@@ -53,9 +49,6 @@ public class drivercontrol extends OpMode {
 
     // the servo that launches the airplane
     private Servo airplaneLauncherServo;
-
-    private DigitalChannel armExtensionMin;
-    private DigitalChannel armExtensionMax;
 
     @Override
     public void init() {
@@ -94,6 +87,7 @@ public class drivercontrol extends OpMode {
         /* claw */
         // setting the two pincer servo positions to open
         this.pincerServo = hardwareMap.get(Servo.class, "pincer_servo");
+
         this.pincerServo.setPosition(this.CLAW_CLOSE_POSITION);
 
         // set the servo position of the grabber rotator to prevent ground collision
@@ -118,7 +112,7 @@ public class drivercontrol extends OpMode {
 
     /**
      * Controls wheel movement of the robot
-     * Moves robot forward and backard according to left joystick of the gamepad1
+     * Moves robot forward and backward according to left joystick of the gamepad1
      * Turns robot left and right according to right joystick of the gamepad1
      * 
      */
@@ -139,8 +133,8 @@ public class drivercontrol extends OpMode {
      * Controls arm movement of the robot, including both rotation and extension
      */
     public void moveArm() {
-        this.extendArm();
         this.rotateArm();
+        this.extendArm();
     }
 
     public void extendArm() {
@@ -151,14 +145,14 @@ public class drivercontrol extends OpMode {
         // if dpad_up is pressed and the max switch has not been hit
         // extend the arm
         if (gamepad2.dpad_up && armExtensionMax.getState()) {
-            this.armExtensionMotor.setTargetPosition(position + 50);
+            this.armExtensionMotor.setTargetPosition(position + ARM_EXTEND_SPEED);
             this.armExtensionMotor.setPower(0.3);
             this.armExtensionMotor.setMode(DcMotor.RunMode.RUN_TO_POSITION);
 
         } else if (gamepad2.dpad_down && armExtensionMin.getState()) {
             // if dpad_up is pressed and the max switch has not been hit
             // retract the arm
-            this.armExtensionMotor.setTargetPosition(position - 50);
+            this.armExtensionMotor.setTargetPosition(position - ARM_EXTEND_SPEED);
             this.armExtensionMotor.setPower(-0.3);
             this.armExtensionMotor.setMode(DcMotor.RunMode.RUN_TO_POSITION);
         }
@@ -171,40 +165,64 @@ public class drivercontrol extends OpMode {
         // get the current position of the arm
         int position = armRotationMotor.getCurrentPosition();
 
-        // if the right stick is pressed down and the arm has not reached its min
         if (gamepad2.right_stick_y > 0 && position > ARM_ROTATE_MIN) {
+            // if the right stick is pressed down and the arm has not reached its min
             // rotate the arm inward
-
-            // prevent the arm from exceeding its min
-            if (position - 200 < ARM_ROTATE_MIN) {
+            if (position - ARM_ROTATE_SPEED < ARM_ROTATE_MIN) {
+                // prevent the arm from exceeding its min
                 this.armRotationMotor.setTargetPosition(ARM_ROTATE_MIN);
 
             } else {
-                // move the arm inward by 100
-                this.armRotationMotor.setTargetPosition(position - 25);
+                // move the arm inward by ARM_ROTATE_SPEED
+                this.armRotationMotor.setTargetPosition(position - ARM_ROTATE_SPEED);
             }
 
             this.armRotationMotor.setPower(-0.15);
             this.armRotationMotor.setMode(DcMotor.RunMode.RUN_TO_POSITION);
+
             this.extendArmInResponse(false);
 
         } else if (gamepad2.right_stick_y < 0 && position < ARM_ROTATE_MAX) {
             // if the right stick is pressed up and the arm has reached its max
             // rotate the arm outward
-
-            // prevent the arm from exceeding its max
-            if (position + 200 > ARM_ROTATE_MAX) {
+            if (position + ARM_ROTATE_SPEED > ARM_ROTATE_MAX) {
+                // prevent the arm from exceeding its max
                 this.armRotationMotor.setTargetPosition(ARM_ROTATE_MAX);
 
             } else {
                 // rotate the arm outward by 25
-                this.armRotationMotor.setTargetPosition(position + 25);
+                this.armRotationMotor.setTargetPosition(position + ARM_ROTATE_SPEED);
             }
 
             this.armRotationMotor.setPower(0.15);
             this.armRotationMotor.setMode(DcMotor.RunMode.RUN_TO_POSITION);
+
             this.extendArmInResponse(true);
         }
+    }
+
+    /**
+     * As the arm rotates outward, it also retracts inward and vice versa
+     * To counterbalance, the arm extends or retracts accordingly to the rotation
+     * 
+     * @param isRotatingOutward whether the arm is rotating outwards
+     */
+    public void extendArmInResponse(boolean isRotatingOutward) {
+        int position = armExtensionMotor.getCurrentPosition();
+
+        // if the arm is being rotated outward, 
+        // extend the arm outward too
+        if (isRotatingOutward) {
+            this.armExtensionMotor.setTargetPosition(position + 25);
+            this.armExtensionMotor.setPower(0.1);
+            
+        } else { // if the arm is being rotated inward,
+            // retract the arm inward too
+            this.armExtensionMotor.setTargetPosition(position - 25);
+            this.armExtensionMotor.setPower(-0.1);
+        }
+
+        this.armExtensionMotor.setMode(DcMotor.RunMode.RUN_TO_POSITION);
     }
 
     /**
@@ -216,25 +234,33 @@ public class drivercontrol extends OpMode {
 
         // if the left bumper is pressed, open the claw
         if (gamepad2.left_bumper) {
+            // if the left bumper is pressed, open the claw
             this.pincerServo.setPosition(this.CLAW_OPEN_POSITION);
 
-        } else if (gamepad2.right_bumper) { // if the right bumper is pressed, close the claw
+        } else if (gamepad2.right_bumper) {
+            // if the right bumper is pressed, close the claw
             this.pincerServo.setPosition(this.CLAW_CLOSE_POSITION);
         }
+
+        // get the current position of the claw rotation servo
+        double currClawPosition = this.clawRotationServo.getPosition();
 
         // if the left trigger is pressed
         if (gamepad2.left_trigger > 0) {
             // rotate the claw upward
-            double currClawPosition = this.clawRotationServo.getPosition();
             this.clawRotationServo.setPosition(currClawPosition - this.CLAW_ROTATE_SPEED);
 
-        } else if (gamepad2.right_trigger > 0) { // if the right trigger is pressed
+        } else if (gamepad2.right_trigger > 0) {
+            // if the right trigger is pressed
             // rotate the claw downward
-            double currClawPosition = this.clawRotationServo.getPosition();
             this.clawRotationServo.setPosition(currClawPosition + this.CLAW_ROTATE_SPEED);
         }
     }
 
+    /**
+     * Allows the driver to move the claw to two set positions:
+     * up and down
+     */
     public void presetGrabberRotationPositions() {
         // if Y Button is pressed,
         // rotate the claw upward
@@ -248,6 +274,9 @@ public class drivercontrol extends OpMode {
         }
     }
 
+    /**
+     * Launches airplane at a fixed angle
+     */
     public void airplaneLauncher() {
         // if Y button is pressed
         // move the hook backward to release the rubber band
@@ -255,33 +284,4 @@ public class drivercontrol extends OpMode {
             this.airplaneLauncherServo.setPosition(AIRPLANE_FIRING_POSITION);
         }
     }
-
-    // As the arm rotates outward, the arm extends inward and vice versa.
-    // Extends arm accordingly to counteract this side effect
-    public void extendArmInResponse(boolean isMovingOutward) {
-        int position = armExtensionMotor.getCurrentPosition();
-
-        // if the arm is being rotated outward,
-        // extend the arm outward too
-        if (isMovingOutward) {
-            this.armExtensionMotor.setTargetPosition(position + 25);
-            this.armExtensionMotor.setPower(0.1);
-            this.armExtensionMotor.setMode(DcMotor.RunMode.RUN_TO_POSITION);
-
-        } else { // if the arm is being rotated inward,
-            // retract the arm inward too
-            this.armExtensionMotor.setTargetPosition(position - 25);
-            this.armExtensionMotor.setPower(-0.1);
-            this.armExtensionMotor.setMode(DcMotor.RunMode.RUN_TO_POSITION);
-        }
-    }
-
-    /*public void goToGrabbingPosition(){
-        if(gamepad2.x){
-            this.clawRotationServo.setPosition();
-            this.armRotationMotor.setTargetPosition();
-            this.armRotationMotor.setTargetPosition(-0.1);
-            this.armRotationMotor.setMode(DcMotor.RunMode.RUN_TO_POSITION);
-        }
-    }*/
 }
