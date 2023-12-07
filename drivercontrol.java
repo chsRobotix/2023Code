@@ -9,7 +9,7 @@ import org.firstinspires.ftc.robotcontroller.external.samples.SensorTouch;
 @TeleOp(name = "Driver Control")
 public class drivercontrol extends OpMode {
     /* wheel movement */
-    // constants for the sensitivity of turning
+    // constant for the sensitivity of turning
     private final double TURNING_SENSITIVITY = 0.5;
 
     // the DC motors for the wheels
@@ -31,9 +31,9 @@ public class drivercontrol extends OpMode {
     // DC motor for extending the arm
     private DcMotor armExtensionMotor;
 
-    // the limit switches of the robot
-    private DigitalChannel armExtensionMin;
-    private DigitalChannel armExtensionMax;
+    // the limit switches for arm extension and retraction
+    private DigitalChannel armExtensionSwitch;
+    private DigitalChannel armRetractionSwitch;
 
     /* claw */
     // constants for the open and closed positions of the claw
@@ -43,11 +43,15 @@ public class drivercontrol extends OpMode {
     // constants for how fast the claw rotates
     private final double CLAW_ROTATE_SPEED = 0.003;
 
-    // the servo that rotates the claw back and forth
-    private Servo clawRotationServo;
-
     // the servo motors for the pincers of the claw
     private Servo pincerServo;
+
+    // the limit switches for the pincers of the claw
+    private DigitalChannel clawOpenSwitch;
+    private DigitalChannel clawCloseSwtich;
+
+    // the servo that rotates the claw back and forth
+    private Servo clawRotationServo;
 
     /* airplane */
     // starting and ending position for airplane launcher
@@ -64,19 +68,8 @@ public class drivercontrol extends OpMode {
         this.leftWheelMotor = hardwareMap.get(DcMotor.class, "left_motor");
         this.rightWheelMotor = hardwareMap.get(DcMotor.class, "right_motor");
 
-        this.armRotationMotor = hardwareMap.get(DcMotor.class, "arm_rotator");
-        this.armExtensionMotor = hardwareMap.get(DcMotor.class, "arm_extender");
-
-        this.pincerServo = hardwareMap.get(Servo.class, "pincer_servo");
-        this.clawRotationServo = hardwareMap.get(Servo.class, "pincer_rotation_servo");
-
-        this.airplaneLauncherServo = hardwareMap.get(Servo.class, "airplane_launcher");
-
-        this.armExtensionMax = hardwareMap.get(DigitalChannel.class, "armExtensionMax");
-        this.armExtensionMin = hardwareMap.get(DigitalChannel.class, "armExtensionMin");
-
         // setting the direction of the motors
-        // rightWheelMotor and armRotationMotor are forward by default
+        // rightWheelMotor is forward by default
         this.leftWheelMotor.setDirection(DcMotorSimple.Direction.REVERSE);
 
         /* arm rotation */
@@ -91,6 +84,9 @@ public class drivercontrol extends OpMode {
         // prevents arm from retracting during rotation
         this.armExtensionMotor.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.FLOAT);
 
+        this.armRetractionSwitch = hardwareMap.get(DigitalChannel.class, "armExtensionMax");
+        this.armExtensionSwitch = hardwareMap.get(DigitalChannel.class, "armExtensionMin");
+
         /* claw */
         // setting the two pincer servo positions to open
         this.pincerServo = hardwareMap.get(Servo.class, "pincer_servo");
@@ -99,7 +95,7 @@ public class drivercontrol extends OpMode {
 
         // set the servo position of the grabber rotator to prevent ground collision
         this.clawRotationServo = hardwareMap.get(Servo.class, "pincer_rotation_servo");
-        this.clawRotationServo.setPosition(0);
+        this.clawRotationServo.setPosition(0.0);
 
         /* airplane */
         // set the servo position of airplaneLauncherServo to stretch rubber band
@@ -151,11 +147,11 @@ public class drivercontrol extends OpMode {
 
         // if dpad_up is pressed and the max switch has not been hit
         // extend the arm
-        if (gamepad2.dpad_up && armExtensionMax.getState()) {
+        if (gamepad2.dpad_up && armRetractionSwitch.getState()) {
             this.armExtensionMotor.setTargetPosition(position + ARM_EXTEND_SPEED);
             this.armExtensionMotor.setPower(0.5);
 
-        } else if (gamepad2.dpad_down && armExtensionMin.getState()) {
+        } else if (gamepad2.dpad_down && armExtensionSwitch.getState()) {
             // if dpad_up is pressed and the max switch has not been hit
             // retract the arm
             this.armExtensionMotor.setTargetPosition(position - ARM_EXTEND_SPEED);
@@ -220,12 +216,12 @@ public class drivercontrol extends OpMode {
         // if the arm is being rotated outward, 
         // extend the arm outward too
         if (isRotatingOutward) {
-            this.armExtensionMotor.setTargetPosition(position + 25);
+            this.armExtensionMotor.setTargetPosition(position + ARM_EXTEND_SPEED / 2);
             this.armExtensionMotor.setPower(0.1);
             
         } else { // if the arm is being rotated inward,
             // retract the arm inward too
-            this.armExtensionMotor.setTargetPosition(position - 25);
+            this.armExtensionMotor.setTargetPosition(position - ARM_EXTEND_SPEED / 2);
             this.armExtensionMotor.setPower(-0.1);
         }
 
