@@ -9,6 +9,9 @@ import org.firstinspires.ftc.robotcontroller.external.samples.SensorTouch;
 @TeleOp(name = "Driver Control")
 public class drivercontrol extends OpMode {
     /* wheel movement */
+    // constants for the sensitivity of turning
+    private final double TURNING_SENSITIVITY = 0.5;
+
     // the DC motors for the wheels
     private DcMotor leftWheelMotor, rightWheelMotor;
 
@@ -24,7 +27,11 @@ public class drivercontrol extends OpMode {
     /* arm extension */
     // constant for the speed that the arm extends and retracts with
     private final int ARM_EXTEND_SPEED = 50;
+
+    // DC motor for extending the arm
     private DcMotor armExtensionMotor;
+
+    // the limit switches of the robot
     private DigitalChannel armExtensionMin;
     private DigitalChannel armExtensionMax;
 
@@ -118,7 +125,7 @@ public class drivercontrol extends OpMode {
      */
     public void movement() {
         double drive = gamepad1.left_stick_y;
-        double turn = gamepad1.right_stick_x / 2;
+        double turn = gamepad1.right_stick_x * TURNING_SENSITIVITY;
 
         // power levels
         // motor gear rotation is inverse
@@ -146,16 +153,16 @@ public class drivercontrol extends OpMode {
         // extend the arm
         if (gamepad2.dpad_up && armExtensionMax.getState()) {
             this.armExtensionMotor.setTargetPosition(position + ARM_EXTEND_SPEED);
-            this.armExtensionMotor.setPower(0.3);
-            this.armExtensionMotor.setMode(DcMotor.RunMode.RUN_TO_POSITION);
+            this.armExtensionMotor.setPower(0.5);
 
         } else if (gamepad2.dpad_down && armExtensionMin.getState()) {
             // if dpad_up is pressed and the max switch has not been hit
             // retract the arm
             this.armExtensionMotor.setTargetPosition(position - ARM_EXTEND_SPEED);
-            this.armExtensionMotor.setPower(-0.3);
-            this.armExtensionMotor.setMode(DcMotor.RunMode.RUN_TO_POSITION);
+            this.armExtensionMotor.setPower(-0.5);
         }
+
+        this.armExtensionMotor.setMode(DcMotor.RunMode.RUN_TO_POSITION);
     }
 
     /**
@@ -190,7 +197,7 @@ public class drivercontrol extends OpMode {
                 this.armRotationMotor.setTargetPosition(ARM_ROTATE_MAX);
 
             } else {
-                // rotate the arm outward by 25
+                // rotate the arm outward by ARM_ROTATE_SPEED
                 this.armRotationMotor.setTargetPosition(position + ARM_ROTATE_SPEED);
             }
 
