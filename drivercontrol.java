@@ -40,15 +40,15 @@ public class drivercontrol extends OpMode {
     private final double CLAW_OPEN_POSITION = 1.0;
     private final double CLAW_CLOSE_POSITION = 0.075;
 
-    // constants for how fast the claw rotates
-    private final double CLAW_ROTATE_SPEED = 0.003;
-
     // the servo motors for the pincers of the claw
     private Servo pincerServo;
 
     // the limit switches for the pincers of the claw
     private DigitalChannel clawOpenSwitch;
     private DigitalChannel clawCloseSwtich;
+
+    // constants for how fast the claw rotates
+    private final double CLAW_ROTATE_SPEED = 0.003;
 
     // the servo that rotates the claw back and forth
     private Servo clawRotationServo;
