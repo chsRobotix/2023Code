@@ -11,6 +11,8 @@ import org.firstinspires.ftc.vision.tfod.TfodProcessor;
 
 @Autonomous(name = "Autonomous")
 public class autonomous extends LinearOpMode {
+    private Robot robot;
+
     // variables for the vision system
     // Variable to store and instance of the TensorFlow Object Detection(TFOD)
     // processor.
@@ -21,27 +23,7 @@ public class autonomous extends LinearOpMode {
 
     @Override
     public void runOpMode() {
-        Robot robot = new Robot();
-
-        // assigning the motors variables to the configured names on the driver hub
-        this.leftWheelMotor = hardwareMap.get(DcMotor.class, "left_motor");
-        this.rightWheelMotor = hardwareMap.get(DcMotor.class, "right_motor");
-
-        this.armRotationMotor = hardwareMap.get(DcMotor.class, "arm_rotator");
-        this.armExtensionMotor = hardwareMap.get(DcMotor.class, "arm_extender");
-
-        this.pincerServo = hardwareMap.get(Servo.class, "pincer_servo");
-
-        // setting the direction of the motors
-        // rightWheelMotor and armRotationMotor are forward by default
-        this.leftWheelMotor.setDirection(DcMotorSimple.Direction.REVERSE);
-
-        // setting the two pincer servo positions to 1, which is upright, aka not
-        // pressing the claw
-        this.pincerServo.setPosition(this.CLAW_OPEN_POSITION);
-
-        // set the servo position of the grabber rotator to 1.0
-        this.clawRotationServo.setPosition(1.0);
+        robot = new Robot();
 
         // drive forward and backwards to test
         setWheelPower(1.0);
@@ -66,8 +48,8 @@ public class autonomous extends LinearOpMode {
      * Set the power of the wheels to the same value
      */
     public void setWheelPower(double wheelPower) {
-        this.leftWheelMotor.setPower(wheelPower);
-        this.rightWheelMotor.setPower(wheelPower);
+        robot.leftWheelMotor.setPower(wheelPower);
+        robot.rightWheelMotor.setPower(wheelPower);
     }
 
     /*

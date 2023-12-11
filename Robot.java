@@ -46,6 +46,14 @@ public class Robot {
     // the servo that rotates the claw back and forth
     public Servo clawRotationServo;    
 
+    /* airplane */
+    // starting and ending position for airplane launcher
+    private final double AIRPLANE_LOADED_POSITION = 1.0;
+    private final double AIRPLANE_FIRING_POSITION = 0.5;
+
+    // the servo that launches the airplane
+    private Servo airplaneLauncherServo;
+
     public Robot() {
         /* wheel movement */
         // assigning the motors variables to the configured names on the driver hub
@@ -80,5 +88,10 @@ public class Robot {
         // set the servo position of the grabber rotator to prevent ground collision
         this.clawRotationServo = hardwareMap.get(Servo.class, "pincer_rotation_servo");
         this.clawRotationServo.setPosition(0.0);
+
+        /* airplane */
+        // set the servo position of airplaneLauncherServo to stretch rubber band
+        this.airplaneLauncherServo = hardwareMap.get(Servo.class, "airplane_launcher");
+        this.airplaneLauncherServo.setPosition(this.AIRPLANE_LOADED_POSITION);
     }
 }
