@@ -38,7 +38,7 @@ public class Robot {
 
     // the limit switches for the pincers of the claw
     public DigitalChannel clawOpenSwitch;
-    public DigitalChannel clawCloseSwtich;
+    public DigitalChannel clawCloseSwitch;
 
     // constants for how fast the claw rotates
     public final double CLAW_ROTATE_SPEED = 0.003;
@@ -82,7 +82,7 @@ public class Robot {
         /* claw */
         pincerServo = hardwareMap.get(Servo.class, "pincer_servo");
         clawOpenSwitch = hardwareMap.get(Servo.class, "claw_max");
-        claw
+        clawCloseSwitch = hardwareMap.get(Servo.class, "claw_min");
 
         pincerServo.setPosition(this.CLAW_CLOSE_POSITION);
 
