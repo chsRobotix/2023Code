@@ -64,11 +64,11 @@ public class drivercontrol extends OpMode {
 
         // if dpad_up is pressed and the max switch has not been hit
         // extend the arm
-        if (gamepad2.dpad_up && armRetractionSwitch.getState()) {
+        if (gamepad2.dpad_up && robot.armRetractionSwitch.getState()) {
             robot.armExtensionMotor.setTargetPosition(position + robot.ARM_EXTEND_SPEED);
             robot.armExtensionMotor.setPower(0.4);
 
-        } else if (gamepad2.dpad_down && armExtensionSwitch.getState()) {
+        } else if (gamepad2.dpad_down && robot.armExtensionSwitch.getState()) {
             // if dpad_up is pressed and the max switch has not been hit
             // retract the arm
             robot.armExtensionMotor.setTargetPosition(position - robot.ARM_EXTEND_SPEED);
@@ -128,7 +128,7 @@ public class drivercontrol extends OpMode {
      * @param isRotatingOutward whether the arm is rotating outwards
      */
     public void extendArmInResponse(boolean isRotatingOutward) {
-        int position = armExtensionMotor.getCurrentPosition();
+        int position = robot.armExtensionMotor.getCurrentPosition();
 
         // if the arm is being rotated outward, 
         // extend the arm outward too

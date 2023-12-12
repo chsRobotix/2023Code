@@ -1,5 +1,8 @@
-import com.qualcomm.robotcore.hardware.*;
+package org.firstinspires.ftc.teamcode;
 
+import com.qualcomm.robotcore.eventloop.opmode.*;
+import com.qualcomm.robotcore.hardware.*;
+import com.qualcomm.robotcore.util.Range;
 /*
  * Allows drivercontrol and autonomous to share constants and motors
  */
@@ -48,11 +51,11 @@ public class Robot {
 
     /* airplane */
     // starting and ending position for airplane launcher
-    private final double AIRPLANE_LOADED_POSITION = 1.0;
-    private final double AIRPLANE_FIRING_POSITION = 0.5;
+    public final double AIRPLANE_LOADED_POSITION = 1.0;
+    public final double AIRPLANE_FIRING_POSITION = 0.5;
 
     // the servo that launches the airplane
-    private Servo airplaneLauncherServo;
+    public Servo airplaneLauncherServo;
 
     public Robot() {
         /* wheel movement */
