@@ -43,6 +43,8 @@ public class drivercontrol extends OpMode {
     // the servo motors for the pincers of the claw
     private Servo pincerServo;
 
+    private Servo testServo;
+
     // the limit switches for the pincers of the claw
     private DigitalChannel clawOpenSwitch;
     private DigitalChannel clawCloseSwtich;
@@ -90,6 +92,10 @@ public class drivercontrol extends OpMode {
         /* claw */
         // setting the two pincer servo positions to open
         this.pincerServo = hardwareMap.get(Servo.class, "pincer_servo");
+        this.testServo = hardwareMap.get(Servo.class, "test");
+
+        testServo.setPosition(0.0);
+        testServo.setPosition(1.0);
 
         this.pincerServo.setPosition(this.CLAW_CLOSE_POSITION);
 
