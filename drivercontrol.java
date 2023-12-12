@@ -43,8 +43,6 @@ public class drivercontrol extends OpMode {
     // the servo motors for the pincers of the claw
     private Servo pincerServo;
 
-    private Servo testServo;
-
     // the limit switches for the pincers of the claw
     private DigitalChannel clawOpenSwitch;
     private DigitalChannel clawCloseSwtich;
@@ -92,10 +90,7 @@ public class drivercontrol extends OpMode {
         /* claw */
         // setting the two pincer servo positions to open
         this.pincerServo = hardwareMap.get(Servo.class, "pincer_servo");
-        this.testServo = hardwareMap.get(Servo.class, "test");
 
-        testServo.setPosition(0.0);
-        testServo.setPosition(1.0);
 
         this.pincerServo.setPosition(this.CLAW_CLOSE_POSITION);
 
@@ -117,6 +112,7 @@ public class drivercontrol extends OpMode {
         this.moveArm();
         this.grabber();
         this.airplaneLauncher();
+
     }
 
     /**
@@ -156,15 +152,14 @@ public class drivercontrol extends OpMode {
         if (gamepad2.dpad_up && armRetractionSwitch.getState()) {
             this.armExtensionMotor.setTargetPosition(position + ARM_EXTEND_SPEED);
             this.armExtensionMotor.setPower(0.5);
-
+            this.armExtensionMotor.setMode(DcMotor.RunMode.RUN_TO_POSITION);
         } else if (gamepad2.dpad_down && armExtensionSwitch.getState()) {
             // if dpad_up is pressed and the max switch has not been hit
             // retract the arm
             this.armExtensionMotor.setTargetPosition(position - ARM_EXTEND_SPEED);
             this.armExtensionMotor.setPower(-0.5);
+            this.armExtensionMotor.setMode(DcMotor.RunMode.RUN_TO_POSITION);
         }
-
-        this.armExtensionMotor.setMode(DcMotor.RunMode.RUN_TO_POSITION);
     }
 
     /**
@@ -224,14 +219,15 @@ public class drivercontrol extends OpMode {
         if (isRotatingOutward) {
             this.armExtensionMotor.setTargetPosition(position + ARM_EXTEND_SPEED / 2);
             this.armExtensionMotor.setPower(0.1);
+            this.armExtensionMotor.setMode(DcMotor.RunMode.RUN_TO_POSITION);
             
         } else { // if the arm is being rotated inward,
             // retract the arm inward too
             this.armExtensionMotor.setTargetPosition(position - ARM_EXTEND_SPEED / 2);
             this.armExtensionMotor.setPower(-0.1);
+            this.armExtensionMotor.setMode(DcMotor.RunMode.RUN_TO_POSITION);
         }
 
-        this.armExtensionMotor.setMode(DcMotor.RunMode.RUN_TO_POSITION);
     }
 
     /**
@@ -293,4 +289,5 @@ public class drivercontrol extends OpMode {
             this.airplaneLauncherServo.setPosition(AIRPLANE_FIRING_POSITION);
         }
     }
+
 }
