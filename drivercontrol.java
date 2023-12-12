@@ -58,10 +58,11 @@ public class drivercontrol extends OpMode {
     }
 
     public void extendArm() {
+        // get curreent position of motor
         int position = robot.armExtensionMotor.getCurrentPosition();
+
         // armExtensionMax.getState() returns true when it is not being pressed
         // this will only run if the limit switch for the max arm extension has not been touched
-
         // if dpad_up is pressed and the max switch has not been hit
         // extend the arm
         if (gamepad2.dpad_up && robot.armRetractionSwitch.getState()) {

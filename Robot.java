@@ -42,7 +42,7 @@ public class Robot {
 
     // the limit switches for the pincers of the claw
     public DigitalChannel clawOpenSwitch;
-    public DigitalChannel clawCloseSwtich;
+    public DigitalChannel clawCloseSwitch;
 
     // constants for how fast the claw rotates
     public final double CLAW_ROTATE_SPEED = 0.003;
@@ -61,41 +61,42 @@ public class Robot {
     public Robot() {
         /* wheel movement */
         // assigning the motors variables to the configured names on the driver hub
-        this.leftWheelMotor = hardwareMap.get(DcMotor.class, "left_motor");
-        this.rightWheelMotor = hardwareMap.get(DcMotor.class, "right_motor");
+        leftWheelMotor = hardwareMap.get(DcMotor.class, "left_motor");
+        rightWheelMotor = hardwareMap.get(DcMotor.class, "right_motor");
 
         // setting the direction of the motors
         // rightWheelMotor is forward by default
-        this.leftWheelMotor.setDirection(DcMotorSimple.Direction.REVERSE);
+        leftWheelMotor.setDirection(DcMotorSimple.Direction.REVERSE);
 
         /* arm rotation */
-        this.armRotationMotor = hardwareMap.get(DcMotor.class, "arm_rotator");
-        this.armRotationMotor.resetDeviceConfigurationForOpMode();
+        armRotationMotor = hardwareMap.get(DcMotor.class, "arm_rotator");
+        armRotationMotor.resetDeviceConfigurationForOpMode();
 
         /* arm extension */
-        this.armExtensionMotor = hardwareMap.get(DcMotor.class, "arm_extender");
-        this.armExtensionMotor.setDirection(DcMotorSimple.Direction.REVERSE);
+        armExtensionMotor = hardwareMap.get(DcMotor.class, "arm_extender");
+        armExtensionMotor.setDirection(DcMotorSimple.Direction.REVERSE);
 
         // allows extension motor to coast while not in use
         // prevents arm from retracting during rotation
-        this.armExtensionMotor.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.FLOAT);
+        armExtensionMotor.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.FLOAT);
 
-        this.armRetractionSwitch = hardwareMap.get(DigitalChannel.class, "armExtensionMax");
-        this.armExtensionSwitch = hardwareMap.get(DigitalChannel.class, "armExtensionMin");
+        armRetractionSwitch = hardwareMap.get(DigitalChannel.class, "armExtensionMax");
+        armExtensionSwitch = hardwareMap.get(DigitalChannel.class, "armExtensionMin");
 
         /* claw */
-        // setting the two pincer servo positions to open
-        this.pincerServo = hardwareMap.get(Servo.class, "pincer_servo");
+        pincerServo = hardwareMap.get(Servo.class, "pincer_servo");
+        clawOpenSwitch = hardwareMap.get(Servo.class, "claw_max");
+        clawCloseSwitch = hardwareMap.get(Servo.class, "claw_min");
 
-        this.pincerServo.setPosition(this.CLAW_CLOSE_POSITION);
+        pincerServo.setPosition(this.CLAW_CLOSE_POSITION);
 
         // set the servo position of the grabber rotator to prevent ground collision
-        this.clawRotationServo = hardwareMap.get(Servo.class, "pincer_rotation_servo");
-        this.clawRotationServo.setPosition(0.0);
+        clawRotationServo = hardwareMap.get(Servo.class, "pincer_rotation_servo");
+        clawRotationServo.setPosition(0.0);
 
         /* airplane */
         // set the servo position of airplaneLauncherServo to stretch rubber band
-        this.airplaneLauncherServo = hardwareMap.get(Servo.class, "airplane_launcher");
-        this.airplaneLauncherServo.setPosition(this.AIRPLANE_LOADED_POSITION);
+        airplaneLauncherServo = hardwareMap.get(Servo.class, "airplane_launcher");
+        airplaneLauncherServo.setPosition(this.AIRPLANE_LOADED_POSITION);
     }
 }
