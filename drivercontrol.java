@@ -6,7 +6,7 @@ import com.qualcomm.robotcore.util.Range;
 
 import org.firstinspires.ftc.robotcontroller.external.samples.SensorTouch;
 
-@TeleOp(name = "Driver Control")
+@TeleOp(name = "Test Control")
 public class drivercontrol extends OpMode {
     private Robot robot;
 
