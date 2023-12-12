@@ -153,6 +153,7 @@ public class drivercontrol extends OpMode {
             this.armExtensionMotor.setTargetPosition(position + ARM_EXTEND_SPEED);
             this.armExtensionMotor.setPower(0.5);
             this.armExtensionMotor.setMode(DcMotor.RunMode.RUN_TO_POSITION);
+
         } else if (gamepad2.dpad_down && armExtensionSwitch.getState()) {
             // if dpad_up is pressed and the max switch has not been hit
             // retract the arm
@@ -227,7 +228,6 @@ public class drivercontrol extends OpMode {
             this.armExtensionMotor.setPower(-0.1);
             this.armExtensionMotor.setMode(DcMotor.RunMode.RUN_TO_POSITION);
         }
-
     }
 
     /**
