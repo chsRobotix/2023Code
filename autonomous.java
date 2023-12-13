@@ -13,7 +13,8 @@ import org.firstinspires.ftc.vision.tfod.TfodProcessor;
 public class autonomous extends LinearOpMode {
     private Robot robot;
 
-    // variables for the vision system
+    /* variables for the vision system */
+
     // Variable to store and instance of the TensorFlow Object Detection(TFOD)
     // processor.
     private TfodProcessor tfod;
@@ -33,7 +34,7 @@ public class autonomous extends LinearOpMode {
         telemetry.addData("", "Done running!");
     }
 
-    /*
+    /**
      * Inititialize the variables for Tfod
      */
     public void initTfod() {
@@ -44,7 +45,7 @@ public class autonomous extends LinearOpMode {
         VisionPortal.Builder builder = new VisionPortal.Builder();
     }
 
-    /*
+    /**
      * Set the power of the wheels to the same value
      */
     public void setWheelPower(double wheelPower) {
@@ -52,7 +53,7 @@ public class autonomous extends LinearOpMode {
         robot.rightWheelMotor.setPower(wheelPower);
     }
 
-    /*
+    /**
      * Turns the robot a certain number of degrees
      * Negative is left
      * Positive is right
