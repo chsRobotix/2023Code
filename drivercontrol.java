@@ -40,6 +40,9 @@ public class drivercontrol extends OpMode {
     private final double CLAW_OPEN_POSITION = 1.0;
     private final double CLAW_CLOSE_POSITION = 0.075;
 
+    // constant for how fast the claw opens and closes
+    
+
     // the servo motors for the pincers of the claw
     private Servo pincerServo;
 
@@ -220,14 +223,14 @@ public class drivercontrol extends OpMode {
         if (isRotatingOutward) {
             this.armExtensionMotor.setTargetPosition(position + ARM_EXTEND_SPEED / 2);
             this.armExtensionMotor.setPower(0.1);
-            this.armExtensionMotor.setMode(DcMotor.RunMode.RUN_TO_POSITION);
             
         } else { // if the arm is being rotated inward,
             // retract the arm inward too
             this.armExtensionMotor.setTargetPosition(position - ARM_EXTEND_SPEED / 2);
             this.armExtensionMotor.setPower(-0.1);
-            this.armExtensionMotor.setMode(DcMotor.RunMode.RUN_TO_POSITION);
         }
+
+        this.armExtensionMotor.setMode(DcMotor.RunMode.RUN_TO_POSITION);
     }
 
     /**
@@ -236,6 +239,9 @@ public class drivercontrol extends OpMode {
      */
     public void grabber() {
         this.presetGrabberRotationPositions();
+
+        // get the current position of the servo that opens and closes the claw
+        double currentClawOpenPosition = pincerServo.getPosition();
 
         // if the left bumper is pressed, open the claw
         if (gamepad2.left_bumper) {
@@ -248,17 +254,17 @@ public class drivercontrol extends OpMode {
         }
 
         // get the current position of the claw rotation servo
-        double currClawPosition = this.clawRotationServo.getPosition();
+        double currentClawRotationPosition = this.clawRotationServo.getPosition();
 
         // if the left trigger is pressed
         if (gamepad2.left_trigger > 0) {
             // rotate the claw upward
-            this.clawRotationServo.setPosition(currClawPosition - this.CLAW_ROTATE_SPEED);
+            this.clawRotationServo.setPosition(currentClawRotationPosition - this.CLAW_ROTATE_SPEED);
 
         } else if (gamepad2.right_trigger > 0) {
             // if the right trigger is pressed
             // rotate the claw downward
-            this.clawRotationServo.setPosition(currClawPosition + this.CLAW_ROTATE_SPEED);
+            this.clawRotationServo.setPosition(currentClawRotationPosition + this.CLAW_ROTATE_SPEED);
         }
     }
 
