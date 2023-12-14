@@ -68,15 +68,16 @@ public class drivercontrol extends OpMode {
         if (gamepad2.dpad_up && robot.armRetractionSwitch.getState()) {
             robot.armExtensionMotor.setTargetPosition(position + robot.ARM_EXTEND_SPEED);
             robot.armExtensionMotor.setPower(0.4);
+            this.armExtensionMotor.setMode(DcMotor.RunMode.RUN_TO_POSITION);
 
         } else if (gamepad2.dpad_down && robot.armExtensionSwitch.getState()) {
             // if dpad_up is pressed and the max switch has not been hit
             // retract the arm
             robot.armExtensionMotor.setTargetPosition(position - robot.ARM_EXTEND_SPEED);
             robot.armExtensionMotor.setPower(-0.4);
+            this.armExtensionMotor.setMode(DcMotor.RunMode.RUN_TO_POSITION);
         }
 
-        robot.armExtensionMotor.setMode(DcMotor.RunMode.RUN_TO_POSITION);
     }
 
     /**
@@ -164,17 +165,17 @@ public class drivercontrol extends OpMode {
         }
 
         // get the current position of the claw rotation servo
-        double currClawPosition = robot.clawRotationServo.getPosition();
+        double currentClawPosition = this.clawRotationServo.getPosition();
 
         // if the left trigger is pressed
         if (gamepad2.left_trigger > 0) {
             // rotate the claw upward
-            robot.clawRotationServo.setPosition(currClawPosition - robot.CLAW_ROTATE_SPEED);
+            this.clawRotationServo.setPosition(currentClawPosition - robot.CLAW_ROTATE_SPEED);
 
         } else if (gamepad2.right_trigger > 0) {
             // if the right trigger is pressed
             // rotate the claw downward
-            robot.clawRotationServo.setPosition(currClawPosition + robot.CLAW_ROTATE_SPEED);
+            this.clawRotationServo.setPosition(currentClawPosition + robot.CLAW_ROTATE_SPEED);
         }
     }
 
@@ -205,4 +206,5 @@ public class drivercontrol extends OpMode {
             robot.airplaneLauncherServo.setPosition(robot.AIRPLANE_FIRING_POSITION);
         }
     }
+
 }
