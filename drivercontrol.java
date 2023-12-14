@@ -38,7 +38,7 @@ public class drivercontrol extends OpMode {
     /* claw */
     // constants for the open and closed positions of the claw
     private final double CLAW_OPEN_POSITION = 1.0;
-    private final double CLAW_CLOSE_POSITION = 0.075;
+    private final double CLAW_CLOSE_POSITION = 0.2;
 
     // constant for how fast the claw opens and closes
     
@@ -282,7 +282,7 @@ public class drivercontrol extends OpMode {
      * Launches airplane at a fixed angle
      */
     public void airplaneLauncher() {
-        // if Y button is pressed
+        // if Y button is presse
         // move the hook backward to release the rubber band
         if (gamepad1.y) {
             this.airplaneLauncherServo.setPosition(AIRPLANE_FIRING_POSITION);
