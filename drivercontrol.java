@@ -17,7 +17,7 @@ public class drivercontrol extends OpMode {
     @Override
     public void init() {
         // create a robot object to initialize the robot
-        robot = new Robot();
+        robot = new Robot(hardwareMap);
     }
 
     @Override
