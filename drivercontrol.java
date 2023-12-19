@@ -6,12 +6,15 @@ import com.qualcomm.robotcore.util.Range;
 
 import org.firstinspires.ftc.robotcontroller.external.samples.SensorTouch;
 
-@TeleOp(name = "Driver Control")
+@TeleOp(name = "Test Control")
 public class drivercontrol extends OpMode {
+    private Robot robot;
+
     /* wheel movement */
     // constant for the sensitivity of turning
     private final double TURNING_SENSITIVITY = 0.5;
 
+<<<<<<< HEAD
     // the DC motors for the wheels
     private DcMotor leftWheelMotor, rightWheelMotor;
 
@@ -60,58 +63,22 @@ public class drivercontrol extends OpMode {
     // the servo that launches the airplane
     private Servo airplaneLauncherServo;
 
+=======
+>>>>>>> 7038a12093e36f8ca1cbe1082a4a0678264694e3
     @Override
     public void init() {
-        /* wheel movement */
-        // assigning the motors variables to the configured names on the driver hub
-        this.leftWheelMotor = hardwareMap.get(DcMotor.class, "left_motor");
-        this.rightWheelMotor = hardwareMap.get(DcMotor.class, "right_motor");
-
-        // setting the direction of the motors
-        // rightWheelMotor is forward by default
-        this.leftWheelMotor.setDirection(DcMotorSimple.Direction.REVERSE);
-
-        /* arm rotation */
-        this.armRotationMotor = hardwareMap.get(DcMotor.class, "arm_rotator");
-        this.armRotationMotor.resetDeviceConfigurationForOpMode();
-
-        /* arm extension */
-        this.armExtensionMotor = hardwareMap.get(DcMotor.class, "arm_extender");
-        this.armExtensionMotor.setDirection(DcMotorSimple.Direction.REVERSE);
-
-        // allows extension motor to coast while not in use
-        // prevents arm from retracting during rotation
-        this.armExtensionMotor.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.FLOAT);
-
-        this.armRetractionSwitch = hardwareMap.get(DigitalChannel.class, "armExtensionMax");
-        this.armExtensionSwitch = hardwareMap.get(DigitalChannel.class, "armExtensionMin");
-
-        /* claw */
-        // setting the two pincer servo positions to open
-        this.pincerServo = hardwareMap.get(Servo.class, "pincer_servo");
-
-
-        this.pincerServo.setPosition(this.CLAW_CLOSE_POSITION);
-
-        // set the servo position of the grabber rotator to prevent ground collision
-        this.clawRotationServo = hardwareMap.get(Servo.class, "pincer_rotation_servo");
-        this.clawRotationServo.setPosition(0.0);
-
-        /* airplane */
-        // set the servo position of airplaneLauncherServo to stretch rubber band
-        this.airplaneLauncherServo = hardwareMap.get(Servo.class, "airplane_launcher");
-        this.airplaneLauncherServo.setPosition(this.AIRPLANE_LOADED_POSITION);
+        // create a robot object to initialize the robot
+        robot = new Robot(hardwareMap);
     }
 
     @Override
     public void loop() {
         telemetry.update(); // call-back to android console
 
-        this.movement();
-        this.moveArm();
-        this.grabber();
-        this.airplaneLauncher();
-
+        movement();
+        moveArm();
+        grabber();
+        airplaneLauncher();
     }
 
     /**
@@ -129,37 +96,39 @@ public class drivercontrol extends OpMode {
         double leftWheelPower = Range.clip(drive + turn, -1.0, 1.0);
         double rightWheelPower = Range.clip(drive - turn, -1.0, 1.0);
 
-        this.leftWheelMotor.setPower(leftWheelPower);
-        this.rightWheelMotor.setPower(rightWheelPower);
+        robot.leftWheelMotor.setPower(leftWheelPower);
+        robot.rightWheelMotor.setPower(rightWheelPower);
     }
 
     /**
      * Controls arm movement of the robot, including both rotation and extension
      */
     public void moveArm() {
-        this.rotateArm();
-        this.extendArm();
+        rotateArm();
+        extendArm();
     }
 
     public void extendArm() {
-        int position = armExtensionMotor.getCurrentPosition();
+        // get curreent position of motor
+        int position = robot.armExtensionMotor.getCurrentPosition();
+
         // armExtensionMax.getState() returns true when it is not being pressed
         // this will only run if the limit switch for the max arm extension has not been touched
-
         // if dpad_up is pressed and the max switch has not been hit
         // extend the arm
-        if (gamepad2.dpad_up && armRetractionSwitch.getState()) {
-            this.armExtensionMotor.setTargetPosition(position + ARM_EXTEND_SPEED);
-            this.armExtensionMotor.setPower(0.5);
-            this.armExtensionMotor.setMode(DcMotor.RunMode.RUN_TO_POSITION);
+        if (gamepad2.dpad_up && robot.armRetractionSwitch.getState()) {
+            robot.armExtensionMotor.setTargetPosition(position + robot.ARM_EXTEND_SPEED);
+            robot.armExtensionMotor.setPower(0.4);
+            robot.armExtensionMotor.setMode(DcMotor.RunMode.RUN_TO_POSITION);
 
-        } else if (gamepad2.dpad_down && armExtensionSwitch.getState()) {
+        } else if (gamepad2.dpad_down && robot.armExtensionSwitch.getState()) {
             // if dpad_up is pressed and the max switch has not been hit
             // retract the arm
-            this.armExtensionMotor.setTargetPosition(position - ARM_EXTEND_SPEED);
-            this.armExtensionMotor.setPower(-0.5);
-            this.armExtensionMotor.setMode(DcMotor.RunMode.RUN_TO_POSITION);
+            robot.armExtensionMotor.setTargetPosition(position - robot.ARM_EXTEND_SPEED);
+            robot.armExtensionMotor.setPower(-0.4);
+            robot.armExtensionMotor.setMode(DcMotor.RunMode.RUN_TO_POSITION);
         }
+
     }
 
     /**
@@ -167,41 +136,41 @@ public class drivercontrol extends OpMode {
      */
     public void rotateArm() {
         // get the current position of the arm
-        int position = armRotationMotor.getCurrentPosition();
+        int position = robot.armRotationMotor.getCurrentPosition();
 
-        if (gamepad2.right_stick_y > 0 && position > ARM_ROTATE_MIN) {
+        if (gamepad2.right_stick_y > 0 && position > robot.ARM_ROTATE_MIN) {
             // if the right stick is pressed down and the arm has not reached its min
             // rotate the arm inward
-            if (position - ARM_ROTATE_SPEED < ARM_ROTATE_MIN) {
+            if (position - robot.ARM_ROTATE_SPEED < robot.ARM_ROTATE_MIN) {
                 // prevent the arm from exceeding its min
-                this.armRotationMotor.setTargetPosition(ARM_ROTATE_MIN);
+                robot.armRotationMotor.setTargetPosition(robot.ARM_ROTATE_MIN);
 
             } else {
                 // move the arm inward by ARM_ROTATE_SPEED
-                this.armRotationMotor.setTargetPosition(position - ARM_ROTATE_SPEED);
+                robot.armRotationMotor.setTargetPosition(position - robot.ARM_ROTATE_SPEED);
             }
 
-            this.armRotationMotor.setPower(-0.15);
-            this.armRotationMotor.setMode(DcMotor.RunMode.RUN_TO_POSITION);
+            robot.armRotationMotor.setPower(-0.15);
+            robot.armRotationMotor.setMode(DcMotor.RunMode.RUN_TO_POSITION);
 
-            this.extendArmInResponse(false);
+            extendArmInResponse(false);
 
-        } else if (gamepad2.right_stick_y < 0 && position < ARM_ROTATE_MAX) {
+        } else if (gamepad2.right_stick_y < 0 && position < robot.ARM_ROTATE_MAX) {
             // if the right stick is pressed up and the arm has reached its max
             // rotate the arm outward
-            if (position + ARM_ROTATE_SPEED > ARM_ROTATE_MAX) {
+            if (position + robot.ARM_ROTATE_SPEED > robot.ARM_ROTATE_MAX) {
                 // prevent the arm from exceeding its max
-                this.armRotationMotor.setTargetPosition(ARM_ROTATE_MAX);
+                robot.armRotationMotor.setTargetPosition(robot.ARM_ROTATE_MAX);
 
             } else {
                 // rotate the arm outward by ARM_ROTATE_SPEED
-                this.armRotationMotor.setTargetPosition(position + ARM_ROTATE_SPEED);
+                robot.armRotationMotor.setTargetPosition(position + robot.ARM_ROTATE_SPEED);
             }
 
-            this.armRotationMotor.setPower(0.15);
-            this.armRotationMotor.setMode(DcMotor.RunMode.RUN_TO_POSITION);
+            robot.armRotationMotor.setPower(0.15);
+            robot.armRotationMotor.setMode(DcMotor.RunMode.RUN_TO_POSITION);
 
-            this.extendArmInResponse(true);
+            extendArmInResponse(true);
         }
     }
 
@@ -212,21 +181,21 @@ public class drivercontrol extends OpMode {
      * @param isRotatingOutward whether the arm is rotating outwards
      */
     public void extendArmInResponse(boolean isRotatingOutward) {
-        int position = armExtensionMotor.getCurrentPosition();
+        int position = robot.armExtensionMotor.getCurrentPosition();
 
         // if the arm is being rotated outward, 
         // extend the arm outward too
         if (isRotatingOutward) {
-            this.armExtensionMotor.setTargetPosition(position + ARM_EXTEND_SPEED / 2);
-            this.armExtensionMotor.setPower(0.1);
+            robot.armExtensionMotor.setTargetPosition(position + robot.ARM_EXTEND_SPEED / 2);
+            robot.armExtensionMotor.setPower(0.1);
             
         } else { // if the arm is being rotated inward,
             // retract the arm inward too
-            this.armExtensionMotor.setTargetPosition(position - ARM_EXTEND_SPEED / 2);
-            this.armExtensionMotor.setPower(-0.1);
+            robot.armExtensionMotor.setTargetPosition(position - robot.ARM_EXTEND_SPEED / 2);
+            robot.armExtensionMotor.setPower(-0.1);
         }
 
-        this.armExtensionMotor.setMode(DcMotor.RunMode.RUN_TO_POSITION);
+        robot.armExtensionMotor.setMode(DcMotor.RunMode.RUN_TO_POSITION);
     }
 
     /**
@@ -234,30 +203,30 @@ public class drivercontrol extends OpMode {
      * Also closes and opens the claw
      */
     public void grabber() {
-        this.presetGrabberRotationPositions();
+        presetGrabberRotationPositions();
 
         // if the left bumper is pressed, open the claw
         if (gamepad2.left_bumper) {
             // if the left bumper is pressed, open the claw
-            this.pincerServo.setPosition(this.CLAW_OPEN_POSITION);
+            robot.pincerServo.setPosition(robot.CLAW_OPEN_POSITION);
 
         } else if (gamepad2.right_bumper) {
             // if the right bumper is pressed, close the claw
-            this.pincerServo.setPosition(this.CLAW_CLOSE_POSITION);
+            robot.pincerServo.setPosition(robot.CLAW_CLOSE_POSITION);
         }
 
         // get the current position of the claw rotation servo
-        double currentClawPosition = this.clawRotationServo.getPosition();
+        double currentClawPosition = robot.clawRotationServo.getPosition();
 
         // if the left trigger is pressed
         if (gamepad2.left_trigger > 0) {
             // rotate the claw upward
-            this.clawRotationServo.setPosition(currentClawPosition - this.CLAW_ROTATE_SPEED);
+            robot.clawRotationServo.setPosition(currentClawPosition - robot.CLAW_ROTATE_SPEED);
 
         } else if (gamepad2.right_trigger > 0) {
             // if the right trigger is pressed
             // rotate the claw downward
-            this.clawRotationServo.setPosition(currentClawPosition + this.CLAW_ROTATE_SPEED);
+            robot.clawRotationServo.setPosition(currentClawPosition + robot.CLAW_ROTATE_SPEED);
         }
     }
 
@@ -269,12 +238,12 @@ public class drivercontrol extends OpMode {
         // if Y Button is pressed,
         // rotate the claw upward
         if (gamepad2.y) {
-            this.clawRotationServo.setPosition(0.0);
+            robot.clawRotationServo.setPosition(0.0);
 
         } else if(gamepad2.a) {
             // if A button is pressed,
             // rotate the claw downward
-            this.clawRotationServo.setPosition(1.0);
+            robot.clawRotationServo.setPosition(1.0);
         }
     }
 
@@ -285,7 +254,7 @@ public class drivercontrol extends OpMode {
         // if Y button is presse
         // move the hook backward to release the rubber band
         if (gamepad1.y) {
-            this.airplaneLauncherServo.setPosition(AIRPLANE_FIRING_POSITION);
+            robot.airplaneLauncherServo.setPosition(robot.AIRPLANE_FIRING_POSITION);
         }
     }
 
