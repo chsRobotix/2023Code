@@ -24,7 +24,7 @@ public class autonomous extends LinearOpMode {
 
     @Override
     public void runOpMode() {
-        robot = new Robot(hardwareMap);
+        robot = new Robot();
 
         // drive forward and backwards to test
         setWheelPower(1.0);
