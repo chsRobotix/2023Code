@@ -24,6 +24,9 @@ public class drivercontrol extends OpMode {
     // the DC motors for the arm
     private DcMotor armRotationMotor;
 
+    // limit switch for arm rotation min
+    private DigitalChannel armRotationMinSwitch;
+
     /* arm extension */
     // constant for the speed that the arm extends and retracts with
     private final int ARM_EXTEND_SPEED = 50;
@@ -43,15 +46,15 @@ public class drivercontrol extends OpMode {
     // the servo motors for the pincers of the claw
     private Servo pincerServo;
 
-    // the limit switches for the pincers of the claw
-    private DigitalChannel clawOpenSwitch;
-    private DigitalChannel clawCloseSwtich;
-
     // constants for how fast the claw rotates
     private final double CLAW_ROTATE_SPEED = 0.003;
 
     // the servo that rotates the claw back and forth
     private Servo clawRotationServo;
+
+    // preset positions for claw rotations
+    private double clawRotationLowestPosition = 1.0;
+    private double clawRotationHighestPosition = 0.0;
 
     /* airplane */
     // starting and ending position for airplane launcher
@@ -75,6 +78,7 @@ public class drivercontrol extends OpMode {
         /* arm rotation */
         armRotationMotor = hardwareMap.get(DcMotor.class, "arm_rotator");
         armRotationMotor.resetDeviceConfigurationForOpMode();
+        armRotationMinSwitch = hardwareMap.get(DigitalChannel.class, "armRotationMin");
 
         /* arm extension */
         armExtensionMotor = hardwareMap.get(DcMotor.class, "arm_extender");
@@ -94,7 +98,7 @@ public class drivercontrol extends OpMode {
 
         // set the servo position of the grabber rotator to prevent ground collision
         clawRotationServo = hardwareMap.get(Servo.class, "pincer_rotation_servo");
-        clawRotationServo.setPosition(0.0);
+        clawRotationServo.setPosition(1.0);
 
         /* airplane */
         // set the servo position of airplaneLauncherServo to stretch rubber band
@@ -168,7 +172,7 @@ public class drivercontrol extends OpMode {
         // get the current position of the arm
         int position = armRotationMotor.getCurrentPosition();
 
-        if (gamepad2.right_stick_y > 0 && position > ARM_ROTATE_MIN) {
+        if (gamepad2.right_stick_y > 0 && armRotationMinSwitch.getState()) {
             // if the right stick is pressed down and the arm has not reached its min
             // rotate the arm inward
             if (position - ARM_ROTATE_SPEED < ARM_ROTATE_MIN) {
@@ -273,12 +277,12 @@ public class drivercontrol extends OpMode {
         // if Y Button is pressed,
         // rotate the claw upward
         if (gamepad2.y) {
-            clawRotationServo.setPosition(0.0);
+            clawRotationServo.setPosition(clawRotationHighestPosition);
 
         } else if(gamepad2.a) {
             // if A button is pressed,
             // rotate the claw downward
-            clawRotationServo.setPosition(1.0);
+            clawRotationServo.setPosition(clawRotationLowestPosition);
         }
     }
 

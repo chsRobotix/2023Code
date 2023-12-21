@@ -11,10 +11,6 @@ import org.firstinspires.ftc.vision.tfod.TfodProcessor;
 
 @Autonomous(name = "Autonomous")
 public class autonomous extends LinearOpMode {
-    /* wheel movement */
-    // constant for the sensitivity of turning
-    private final double TURNING_SENSITIVITY = 0.5;
-
     // the DC motors for the wheels
     private DcMotor leftWheelMotor, rightWheelMotor;
 
@@ -45,10 +41,6 @@ public class autonomous extends LinearOpMode {
 
     // the servo motors for the pincers of the claw
     private Servo pincerServo;
-
-    // the limit switches for the pincers of the claw
-    private DigitalChannel clawOpenSwitch;
-    private DigitalChannel clawCloseSwtich;
 
     // constants for how fast the claw rotates
     private final double CLAW_ROTATE_SPEED = 0.003;
