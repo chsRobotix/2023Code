@@ -40,9 +40,6 @@ public class drivercontrol extends OpMode {
     private final double CLAW_OPEN_POSITION = 1.0;
     private final double CLAW_CLOSE_POSITION = 0.075;
 
-    // constant for how fast the claw opens and closes
-    
-
     // the servo motors for the pincers of the claw
     private Servo pincerServo;
 
