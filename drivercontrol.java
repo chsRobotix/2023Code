@@ -6,7 +6,7 @@ import com.qualcomm.robotcore.util.Range;
 
 import org.firstinspires.ftc.robotcontroller.external.samples.SensorTouch;
 
-@TeleOp(name = "Test Control")
+@TeleOp(name = "Driver Control")
 public class drivercontrol extends OpMode {
     /* wheel movement */
     // constant for the sensitivity of turning
