@@ -21,6 +21,8 @@ public class drivercontrol extends OpMode {
     private final int ARM_ROTATE_MIN = 0;
     private final int ARM_ROTATE_SPEED = 50;
 
+    private int armRotate
+
     // the DC motors for the arm
     private DcMotor armRotationMotor;
 
@@ -206,6 +208,8 @@ public class drivercontrol extends OpMode {
 
             extendArmInResponse(true);
         }
+
+        telemetry.addData("Total ticks: ", )
     }
 
     /**
