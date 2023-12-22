@@ -21,7 +21,7 @@ public class drivercontrol extends OpMode {
     private final int ARM_ROTATE_MIN = 0;
     private final int ARM_ROTATE_SPEED = 50;
 
-    private int armRotate
+    private int armRotateTicks = 0;
 
     // the DC motors for the arm
     private DcMotor armRotationMotor;
@@ -80,7 +80,7 @@ public class drivercontrol extends OpMode {
         /* arm rotation */
         armRotationMotor = hardwareMap.get(DcMotor.class, "arm_rotator");
         armRotationMotor.resetDeviceConfigurationForOpMode();
-        armRotationMinSwitch = hardwareMap.get(DigitalChannel.class, "armRotationMin");
+        // armRotationMinSwitch = hardwareMap.get(DigitalChannel.class, "armRotationMin");
 
         /* arm extension */
         armExtensionMotor = hardwareMap.get(DcMotor.class, "arm_extender");
@@ -100,12 +100,11 @@ public class drivercontrol extends OpMode {
 
         // set the servo position of the grabber rotator to prevent ground collision
         clawRotationServo = hardwareMap.get(Servo.class, "pincer_rotation_servo");
-        clawRotationServo.setPosition(1.0);
+        clawRotationServo.setPosition(0.0);
 
         /* airplane */
         // set the servo position of airplaneLauncherServo to stretch rubber band
         airplaneLauncherServo = hardwareMap.get(Servo.class, "airplane_launcher");
-        airplaneLauncherServo.setPosition(this.AIRPLANE_LOADED_POSITION);
     }
 
     @Override
@@ -146,7 +145,7 @@ public class drivercontrol extends OpMode {
     }
 
     public void extendArm() {
-        // get curreent position of motor
+        // get current position of motor
         int position = armExtensionMotor.getCurrentPosition();
 
         // armExtensionMax.getState() returns true when it is not being pressed
@@ -209,7 +208,7 @@ public class drivercontrol extends OpMode {
             extendArmInResponse(true);
         }
 
-        telemetry.addData("Total ticks: ", )
+        telemetry.addData("Current arm position ", position);
     }
 
     /**
@@ -294,7 +293,7 @@ public class drivercontrol extends OpMode {
      * Launches airplane at a fixed angle
      */
     public void airplaneLauncher() {
-        // if Y button is presse
+        // if Y button is pressed
         // move the hook backward to release the rubber band
         if (gamepad1.y) {
             airplaneLauncherServo.setPosition(AIRPLANE_FIRING_POSITION);
