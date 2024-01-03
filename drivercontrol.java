@@ -80,6 +80,7 @@ public class drivercontrol extends OpMode {
         /* arm rotation */
         armRotationMotor = hardwareMap.get(DcMotor.class, "arm_rotator");
         armRotationMotor.resetDeviceConfigurationForOpMode();
+
         // armRotationMinSwitch = hardwareMap.get(DigitalChannel.class, "armRotationMin");
 
         /* arm extension */
@@ -100,7 +101,8 @@ public class drivercontrol extends OpMode {
 
         // set the servo position of the grabber rotator to prevent ground collision
         clawRotationServo = hardwareMap.get(Servo.class, "pincer_rotation_servo");
-        clawRotationServo.setPosition(0.0);
+        clawRotationServo.setPosition
+                (0.0);
 
         /* airplane */
         // set the servo position of airplaneLauncherServo to stretch rubber band
@@ -173,7 +175,7 @@ public class drivercontrol extends OpMode {
         // get the current position of the arm
         int position = armRotationMotor.getCurrentPosition();
 
-        if (gamepad2.right_stick_y > 0 && armRotationMinSwitch.getState()) {
+        if (gamepad2.right_stick_y > 0 /*&& armRotationMinSwitch.getState()*/) {
             // if the right stick is pressed down and the arm has not reached its min
             // rotate the arm inward
             if (position - ARM_ROTATE_SPEED < ARM_ROTATE_MIN) {
@@ -190,7 +192,7 @@ public class drivercontrol extends OpMode {
 
             extendArmInResponse(false);
 
-        } else if (gamepad2.right_stick_y < 0 && position < ARM_ROTATE_MAX) {
+        } else if (gamepad2.right_stick_y < 0 /*&& position < ARM_ROTATE_MAX*/) {
             // if the right stick is pressed up and the arm has reached its max
             // rotate the arm outward
             if (position + ARM_ROTATE_SPEED > ARM_ROTATE_MAX) {
@@ -208,7 +210,7 @@ public class drivercontrol extends OpMode {
             extendArmInResponse(true);
         }
 
-        telemetry.addData("Current arm position ", position);
+        telemetry.addData("Current arm position: ", position);
     }
 
     /**
