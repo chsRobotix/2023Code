@@ -60,11 +60,14 @@ public class drivercontrol extends OpMode {
 
     /* airplane */
     // starting and ending position for airplane launcher
-    private final double AIRPLANE_LOADED_POSITION = 1.0;
+    private final double AIRPLANE_LOADED_POSITION = 0.0;
     private final double AIRPLANE_FIRING_POSITION = 0.5;
 
     // the servo that launches the airplane
     private Servo airplaneLauncherServo;
+
+    // limit siwtch on the claw preventing it from going down too much
+    private DigitalChannel pincerLimiter;
 
     @Override
     public void init() {
@@ -96,17 +99,17 @@ public class drivercontrol extends OpMode {
 
         /* claw */
         pincerServo = hardwareMap.get(Servo.class, "pincer_servo");
-
         pincerServo.setPosition(this.CLAW_CLOSE_POSITION);
 
         // set the servo position of the grabber rotator to prevent ground collision
         clawRotationServo = hardwareMap.get(Servo.class, "pincer_rotation_servo");
-        clawRotationServo.setPosition
-                (0.0);
+        clawRotationServo.setPosition(clawRotationLowestPosition);
 
-        /* airplane */
-        // set the servo position of airplaneLauncherServo to stretch rubber band
+        /* airplane launcher */
         airplaneLauncherServo = hardwareMap.get(Servo.class, "airplane_launcher");
+        airplaneLauncherServo.setPosition(AIRPLANE_LOADED_POSITION);
+
+        pincerLimiter = hardwareMap.get(DigitalChannel.class, "pincerLimiter");
     }
 
     @Override
@@ -116,7 +119,8 @@ public class drivercontrol extends OpMode {
         movement();
         moveArm();
         grabber();
-        airplaneLauncher();
+        //airplaneLauncher();
+        telemetry.addData( "Limit switch", pincerLimiter.getState());
     }
 
     /**
@@ -154,13 +158,13 @@ public class drivercontrol extends OpMode {
         // this will only run if the limit switch for the max arm extension has not been touched
         // if dpad_up is pressed and the max switch has not been hit
         // extend the arm
-        if (gamepad2.dpad_up && armRetractionSwitch.getState()) {
+        if (gamepad2.dpad_up && armRetractionSwitch.getState() && pincerLimiter.getState()) {
             armExtensionMotor.setTargetPosition(position + ARM_EXTEND_SPEED);
             armExtensionMotor.setPower(0.4);
             armExtensionMotor.setMode(DcMotor.RunMode.RUN_TO_POSITION);
 
         } else if (gamepad2.dpad_down && armExtensionSwitch.getState()) {
-            // if dpad_up is pressed and the max switch has not been hit
+            // if dpad_down is pressed and the min switch has not been hit
             // retract the arm
             armExtensionMotor.setTargetPosition(position - ARM_EXTEND_SPEED);
             armExtensionMotor.setPower(-0.4);
@@ -175,7 +179,7 @@ public class drivercontrol extends OpMode {
         // get the current position of the arm
         int position = armRotationMotor.getCurrentPosition();
 
-        if (gamepad2.right_stick_y > 0 /*&& armRotationMinSwitch.getState()*/) {
+        if (gamepad2.right_stick_y > 0 && pincerLimiter.getState()) {
             // if the right stick is pressed down and the arm has not reached its min
             // rotate the arm inward
             if (position - ARM_ROTATE_SPEED < ARM_ROTATE_MIN) {
@@ -192,7 +196,7 @@ public class drivercontrol extends OpMode {
 
             extendArmInResponse(false);
 
-        } else if (gamepad2.right_stick_y < 0 /*&& position < ARM_ROTATE_MAX*/) {
+        } else if (gamepad2.right_stick_y < 0 ) {
             // if the right stick is pressed up and the arm has reached its max
             // rotate the arm outward
             if (position + ARM_ROTATE_SPEED > ARM_ROTATE_MAX) {
