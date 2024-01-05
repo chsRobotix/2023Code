@@ -26,9 +26,6 @@ public class drivercontrol extends OpMode {
     // the DC motors for the arm
     private DcMotor armRotationMotor;
 
-    // limit switch for arm rotation min
-    private DigitalChannel armRotationMinSwitch;
-
     /* arm extension */
     // constant for the speed that the arm extends and retracts with
     private final int ARM_EXTEND_SPEED = 50;
@@ -84,7 +81,7 @@ public class drivercontrol extends OpMode {
         armRotationMotor = hardwareMap.get(DcMotor.class, "arm_rotator");
         armRotationMotor.resetDeviceConfigurationForOpMode();
 
-        // armRotationMinSwitch = hardwareMap.get(DigitalChannel.class, "armRotationMin");
+        pincerLimiter = hardwareMap.get(DigitalChannel.class, "pincerLimiter");
 
         /* arm extension */
         armExtensionMotor = hardwareMap.get(DcMotor.class, "arm_extender");
@@ -108,8 +105,6 @@ public class drivercontrol extends OpMode {
         /* airplane launcher */
         airplaneLauncherServo = hardwareMap.get(Servo.class, "airplane_launcher");
         airplaneLauncherServo.setPosition(AIRPLANE_LOADED_POSITION);
-
-        pincerLimiter = hardwareMap.get(DigitalChannel.class, "pincerLimiter");
     }
 
     @Override
@@ -127,7 +122,6 @@ public class drivercontrol extends OpMode {
      * Controls wheel movement of the robot
      * Moves robot forward and backward according to left joystick of the gamepad1
      * Turns robot left and right according to right joystick of the gamepad1
-     * 
      */
     public void movement() {
         double drive = gamepad1.left_stick_y;
