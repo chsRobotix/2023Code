@@ -32,7 +32,7 @@ public class drivercontrol extends OpMode {
 
     // DC motor for extending the arm
     private DcMotor armExtensionMotor;
-
+g
     // the limit switches for arm extension and retraction
     private DigitalChannel armExtensionSwitch;
     private DigitalChannel armRetractionSwitch;
@@ -204,9 +204,11 @@ public class drivercontrol extends OpMode {
 
             armRotationMotor.setPower(0.15);
             armRotationMotor.setMode(DcMotor.RunMode.RUN_TO_POSITION);
-
+);
             extendArmInResponse(true);
         }
+
+        adjustClawRotation();
 
         telemetry.addData("Current arm position: ", position);
     }
@@ -287,6 +289,19 @@ public class drivercontrol extends OpMode {
             // rotate the claw downward
             clawRotationServo.setPosition(clawRotationLowestPosition);
         }
+    }
+
+    /**
+     * Rotates the claw to be perpendicular to the ground when it is rotating outward
+     */
+    public void adjustClawRotation() {
+        // current position of arm
+        int armPosition = armRotationMotor.getCurrentPosition();
+
+        // the number of degrees that the arm rotated
+        double armRotationDegrees = armRotationTicks / 8.0;
+
+
     }
 
     /**
