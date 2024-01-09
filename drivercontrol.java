@@ -21,6 +21,9 @@ public class drivercontrol extends OpMode {
     private final int ARM_ROTATE_MIN = 0;
     private final int ARM_ROTATE_SPEED = 50;
 
+    // how many ticks it takes to rotate the arm by 1 degree
+    private final int TICKS_PER_ARM_ROTATE_DEGREE = 8;
+
     // the DC motors for the arm
     private DcMotor armRotationMotor;
 
@@ -78,6 +81,8 @@ public class drivercontrol extends OpMode {
         armRotationMotor = hardwareMap.get(DcMotor.class, "arm_rotator");
         armRotationMotor.resetDeviceConfigurationForOpMode();
 
+        // limiter switch at the end of the claw
+        // prevents arm from smashing against the ground
         pincerLimiter = hardwareMap.get(DigitalChannel.class, "pincerLimiter");
 
         /* arm extension */
