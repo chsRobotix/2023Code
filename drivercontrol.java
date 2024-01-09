@@ -21,8 +21,6 @@ public class drivercontrol extends OpMode {
     private final int ARM_ROTATE_MIN = 0;
     private final int ARM_ROTATE_SPEED = 50;
 
-    private int armRotateTicks = 0;
-
     // the DC motors for the arm
     private DcMotor armRotationMotor;
 
@@ -32,7 +30,7 @@ public class drivercontrol extends OpMode {
 
     // DC motor for extending the arm
     private DcMotor armExtensionMotor;
-g
+
     // the limit switches for arm extension and retraction
     private DigitalChannel armExtensionSwitch;
     private DigitalChannel armRetractionSwitch;
@@ -204,7 +202,7 @@ g
 
             armRotationMotor.setPower(0.15);
             armRotationMotor.setMode(DcMotor.RunMode.RUN_TO_POSITION);
-);
+
             extendArmInResponse(true);
         }
 
@@ -249,7 +247,6 @@ g
 
         // if the left bumper is pressed, open the claw
         if (gamepad2.left_bumper) {
-            // if the left bumper is pressed, open the claw
             pincerServo.setPosition(CLAW_OPEN_POSITION);
 
         } else if (gamepad2.right_bumper) {
@@ -264,12 +261,10 @@ g
         if (gamepad2.left_trigger > 0) {
             // rotate the claw upward
             this.clawRotationServo.setPosition(currentClawRotationPosition - this.CLAW_ROTATE_SPEED);
-            this.clawRotationServo.setPosition(currentClawRotationPosition - this.CLAW_ROTATE_SPEED);
 
         } else if (gamepad2.right_trigger > 0) {
             // if the right trigger is pressed
             // rotate the claw downward
-            this.clawRotationServo.setPosition(currentClawRotationPosition + this.CLAW_ROTATE_SPEED);
             this.clawRotationServo.setPosition(currentClawRotationPosition + this.CLAW_ROTATE_SPEED);
         }
     }
