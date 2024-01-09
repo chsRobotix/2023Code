@@ -31,9 +31,8 @@ public class drivercontrol extends OpMode {
     // DC motor for extending the arm
     private DcMotor armExtensionMotor;
 
-    // the limit switches for arm extension and retraction
-    private DigitalChannel armExtensionSwitch;
-    private DigitalChannel armRetractionSwitch;
+    // the limit switches to prevent the arm from extending or retracting too far
+    private DigitalChannel armExtensionSwitch, armRetractionSwitch;
 
     /* claw */
     // constants for the open and closed positions of the claw
