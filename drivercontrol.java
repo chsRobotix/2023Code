@@ -22,7 +22,7 @@ public class drivercontrol extends OpMode {
     private final int ARM_ROTATE_SPEED = 50;
 
     // how many ticks it takes to rotate the arm by 1 degree
-    private final int TICKS_PER_ARM_ROTATE_DEGREE = 8;
+    private final int TICKS_PER_ARM_ROTATION_DEGREE = 8;
 
     // the DC motors for the arm
     private DcMotor armRotationMotor;
@@ -50,9 +50,10 @@ public class drivercontrol extends OpMode {
     private final double CLAW_ROTATE_SPEED = 0.003;
 
     // claw auto-rotation will only work when the arm is below this threshold(in ticks) 
-    private final int autoRotateClawThreshold = 1000;
+    private final int AUTO_ROTATE_CLAW_THRESHOLD = 1000;
 
     // whether claw auto-rotation is enabled or not
+    // can be
     private boolean autoRotateClawEnabled = false;
 
     // the servo that rotates the claw back and forth
@@ -106,7 +107,7 @@ public class drivercontrol extends OpMode {
 
         /* claw */
         pincerServo = hardwareMap.get(Servo.class, "pincer_servo");
-        pincerServo.setPosition(this.CLAW_CLOSE_POSITION);
+        pincerServo.setPosition(CLAW_CLOSE_POSITION);
 
         // set the servo position of the grabber rotator to prevent ground collision
         clawRotationServo = hardwareMap.get(Servo.class, "pincer_rotation_servo");
@@ -278,6 +279,7 @@ public class drivercontrol extends OpMode {
 
         // if the X button is pressed
         if (gamepad2.b) {
+            // toggle autoRotateClawEnabled
             autoRotateClawEnabled = !autoRotateClawEnabled;
         }
         
@@ -309,9 +311,9 @@ public class drivercontrol extends OpMode {
         int armPosition = armRotationMotor.getCurrentPosition();
 
         // if the arm is low enough and autoRotateClaw is enabled()
-        if (armPosition < 1000 && autoRotateClawEnabled) {
+        if (armPosition < AUTO_ROTATE_CLAW_THRESHOLD && autoRotateClawEnabled) {
             // the number of degrees that the arm rotated from its starting position
-            double armRotationDegrees = armPosition / TICKS_PER_ARM_ROTATE_DEGREE;
+            double armRotationDegrees = armPosition / TICKS_PER_ARM_ROTATION_DEGREE;
 
             // how much the claw has to rotate to counteract the arm
             double clawRotationTicks = armRotationDegrees / 180;
