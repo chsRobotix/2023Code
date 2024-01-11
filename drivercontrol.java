@@ -49,30 +49,27 @@ public class drivercontrol extends OpMode {
     // constant for how fast the claw rotates
     private final double CLAW_ROTATE_SPEED = 0.003;
 
-    // claw auto-rotation will only work when the arm is below this threshold(in ticks) 
-    private final int autoRotateClawThreshold = 1000;
-
-    // whether claw auto-rotation is enabled or not
-    private boolean autoRotateClawEnabled = false;
-
     // the servo that rotates the claw back and forth
     private Servo clawRotationServo;
 
     // preset positions for claw rotations
-    private final double CLAW_ROTATION_LOWEST_POSITION = 1.0;
+    private final double CLAW_ROTATION_LOWEST_POSITION = 0.6;
     private final double CLAW_ROTATION_HIGHEST_POSITION = 0.0;
-    private final double CLAW_ROTATION_INIT_POSITION = 0.75;
+    private final double CLAW_ROTATION_INIT_POSITION = 0.6;
 
     /* airplane */
     // starting and ending position for airplane launcher
-    private final double AIRPLANE_LOADED_POSITION = 0.0;
-    private final double AIRPLANE_FIRING_POSITION = 0.5;
+    private final double AIRPLANE_LOADED_POSITION = 1.0 ;
+    private final double AIRPLANE_FIRING_POSITION = 0.0;
 
     // the servo that launches the airplane
     private Servo airplaneLauncherServo;
 
-    // limit siwtch on the claw preventing it from going down too much
+    // limit switch on the claw preventing it from going down too much
     private DigitalChannel pincerLimiter;
+
+    // sensors
+    //private AnalogInput potentiometer;
 
     @Override
     public void init() {
@@ -115,6 +112,9 @@ public class drivercontrol extends OpMode {
         /* airplane launcher */
         airplaneLauncherServo = hardwareMap.get(Servo.class, "airplane_launcher");
         airplaneLauncherServo.setPosition(AIRPLANE_LOADED_POSITION);
+
+        /* sensors */
+        //potentiometer = hardwareMap.get(AnalogInput.class, "potentiometer");
     }
 
     @Override
@@ -124,8 +124,15 @@ public class drivercontrol extends OpMode {
         movement();
         moveArm();
         grabber();
-        //airplaneLauncher();
+        grabPixelPosition();
+        airplaneLauncher();
+
         telemetry.addData( "Limit switch", pincerLimiter.getState());
+        telemetry.addData("Arm rotation position: ", armRotationMotor.getCurrentPosition());
+        telemetry.addData("Arm extension position: ", armExtensionMotor.getCurrentPosition());
+        telemetry.addData("Claw rotation position: ", clawRotationServo.getPosition());
+        telemetry.addData("Airplane launcher position: ", airplaneLauncherServo.getPosition());
+        //telemetry.addData("Potentiometer voltage: ", potentiometer.getVoltage());
     }
 
     /**
@@ -276,12 +283,6 @@ public class drivercontrol extends OpMode {
             this.clawRotationServo.setPosition(currentClawRotationPosition + this.CLAW_ROTATE_SPEED);
         }
 
-        // if the X button is pressed
-        if (gamepad2.b) {
-            autoRotateClawEnabled = !autoRotateClawEnabled;
-        }
-        
-        autoRotateClaw();
         presetGrabberRotationPositions();
     }
 
@@ -295,29 +296,10 @@ public class drivercontrol extends OpMode {
         if (gamepad2.y) {
             clawRotationServo.setPosition(CLAW_ROTATION_HIGHEST_POSITION);
 
-        } else if(gamepad2.a) {
+        } else if (gamepad2.a) {
             // if A button is pressed,
             // rotate the claw downward
             clawRotationServo.setPosition(CLAW_ROTATION_LOWEST_POSITION);
-        }
-    }
-
-    /**
-     * Rotates the claw to be perpendicular to the ground when it is rotating outward
-     */
-    public void autoRotateClaw() {
-        int armPosition = armRotationMotor.getCurrentPosition();
-
-        // if the arm is low enough and autoRotateClaw is enabled()
-        if (armPosition < 1000 && autoRotateClawEnabled) {
-            // the number of degrees that the arm rotated from its starting position
-            double armRotationDegrees = armPosition / TICKS_PER_ARM_ROTATE_DEGREE;
-
-            // how much the claw has to rotate to counteract the arm
-            double clawRotationTicks = armRotationDegrees / 180;
-
-            // set the claw to keep it perpendicular to the ground
-            clawRotationServo.setPosition(CLAW_ROTATION_INIT_POSITION - clawRotationTicks);
         }
     }
 
@@ -329,6 +311,22 @@ public class drivercontrol extends OpMode {
         // move the hook backward to release the rubber band
         if (gamepad1.y) {
             airplaneLauncherServo.setPosition(AIRPLANE_FIRING_POSITION);
+        }
+    }
+
+    public void grabPixelPosition(){
+        // if x is pressed go to pixel grabbing position
+        if(gamepad2.x){
+            armRotationMotor.setTargetPosition(0);
+            armRotationMotor.setPower(-0.2);
+            armExtensionMotor.setTargetPosition(0);
+            armExtensionMotor.setPower(-0.2);
+
+            armRotationMotor.setMode(DcMotor.RunMode.RUN_TO_POSITION);
+            armExtensionMotor.setMode(DcMotor.RunMode.RUN_TO_POSITION);
+
+            clawRotationServo.setPosition(CLAW_ROTATION_LOWEST_POSITION);
+
         }
     }
 
