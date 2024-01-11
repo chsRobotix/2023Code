@@ -22,7 +22,7 @@ public class drivercontrol extends OpMode {
     private final int ARM_ROTATE_SPEED = 50;
 
     // how many ticks it takes to rotate the arm by 1 degree
-    private final int TICKS_PER_ARM_ROTATE_DEGREE = 8;
+    private final int TICKS_PER_ARM_ROTATION_DEGREE = 8;
 
     // the DC motors for the arm
     private DcMotor armRotationMotor;
@@ -103,7 +103,7 @@ public class drivercontrol extends OpMode {
 
         /* claw */
         pincerServo = hardwareMap.get(Servo.class, "pincer_servo");
-        pincerServo.setPosition(this.CLAW_CLOSE_POSITION);
+        pincerServo.setPosition(CLAW_CLOSE_POSITION);
 
         // set the servo position of the grabber rotator to prevent ground collision
         clawRotationServo = hardwareMap.get(Servo.class, "pincer_rotation_servo");
@@ -314,9 +314,9 @@ public class drivercontrol extends OpMode {
         }
     }
 
-    public void grabPixelPosition(){
+    public void grabPixelPosition() {
         // if x is pressed go to pixel grabbing position
-        if(gamepad2.x){
+        if (gamepad2.x) {
             armRotationMotor.setTargetPosition(0);
             armRotationMotor.setPower(-0.2);
             armExtensionMotor.setTargetPosition(0);
@@ -326,8 +326,6 @@ public class drivercontrol extends OpMode {
             armExtensionMotor.setMode(DcMotor.RunMode.RUN_TO_POSITION);
 
             clawRotationServo.setPosition(CLAW_ROTATION_LOWEST_POSITION);
-
         }
     }
-
 }
