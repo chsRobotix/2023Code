@@ -55,7 +55,6 @@ public class drivercontrol extends OpMode {
     // preset positions for claw rotations
     private final double CLAW_ROTATION_LOWEST_POSITION = 0.6;
     private final double CLAW_ROTATION_HIGHEST_POSITION = 0.0;
-    private final double CLAW_ROTATION_INIT_POSITION = 0.6;
 
     /* airplane */
     // starting and ending position for airplane launcher
@@ -107,7 +106,7 @@ public class drivercontrol extends OpMode {
 
         // set the servo position of the grabber rotator to prevent ground collision
         clawRotationServo = hardwareMap.get(Servo.class, "pincer_rotation_servo");
-        clawRotationServo.setPosition(CLAW_ROTATION_INIT_POSITION);
+        clawRotationServo.setPosition(CLAW_ROTATION_LOWEST_POSITION);
 
         /* airplane launcher */
         airplaneLauncherServo = hardwareMap.get(Servo.class, "airplane_launcher");
@@ -325,6 +324,7 @@ public class drivercontrol extends OpMode {
             armRotationMotor.setPower(-0.2);
             armRotationMotor.setMode(DcMotor.RunMode.RUN_TO_POSITION);
 
+            // rotate the claw back to its initial position
             clawRotationServo.setPosition(CLAW_ROTATION_LOWEST_POSITION);
         }
     }
