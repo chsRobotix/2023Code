@@ -317,13 +317,13 @@ public class drivercontrol extends OpMode {
     public void grabPixelPosition() {
         // if x is pressed go to pixel grabbing position
         if (gamepad2.x) {
+            armExtensionMotor.setTargetPosition(0);
+            armExtensionMotor.setPower(-0.8);
+            armExtensionMotor.setMode(DcMotor.RunMode.RUN_TO_POSITION);
+
             armRotationMotor.setTargetPosition(0);
             armRotationMotor.setPower(-0.2);
-            armExtensionMotor.setTargetPosition(0);
-            armExtensionMotor.setPower(-0.2);
-
             armRotationMotor.setMode(DcMotor.RunMode.RUN_TO_POSITION);
-            armExtensionMotor.setMode(DcMotor.RunMode.RUN_TO_POSITION);
 
             clawRotationServo.setPosition(CLAW_ROTATION_LOWEST_POSITION);
         }
