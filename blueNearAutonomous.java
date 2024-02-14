@@ -9,8 +9,8 @@ import org.firstinspires.ftc.robotcore.external.tfod.Recognition;
 import org.firstinspires.ftc.vision.VisionPortal;
 import org.firstinspires.ftc.vision.tfod.TfodProcessor;
 
-@Autonomous(name = "Autonomous")
-public class autonomous extends LinearOpMode {
+@Autonomous(name = "Blue Near Autonomous")
+public class blueNearAutonomous extends LinearOpMode {
     // the DC motors for the wheels
     private DcMotor leftWheelMotor, rightWheelMotor;
 
