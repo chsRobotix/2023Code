@@ -2,6 +2,7 @@ package org.firstinspires.ftc.teamcode;
 
 import com.qualcomm.robotcore.eventloop.opmode.*;
 import com.qualcomm.robotcore.hardware.*;
+import org.firstinspires.ftc.vision.*;
 
 public class Hardware {
     private OpMode opMode;
@@ -65,8 +66,17 @@ public class Hardware {
     // sensors
     //public AnalogInput potentiometer;
 
+    /* vision system */
+    // Variable to store and instance of the TensorFlow Object Detection(TFOD)
+    // processor.
+//    public TfodProcessor tfod;
+
+    // variable to store an instane of VisionPortal
+    public VisionPortal visionPortal;
+
     public Hardware(OpMode opMode) {
         this.opMode = opMode;
+        init();
     }
 
     /**
