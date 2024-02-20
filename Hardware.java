@@ -128,4 +128,25 @@ public class Hardware {
         opMode.telemetry.addData("Hardware.java: ", "Initialized hardware");
         opMode.telemetry.update();
     }
+
+    /**
+     * Set the power of the wheels to the same value
+     *
+     * @param wheelPower Specifies the wheel power.
+     *                   Positive drives the robot forward. Negative drives it backward.
+     */
+    public void drive(double wheelPower) {
+        leftWheelMotor.setPower(-wheelPower);
+        rightWheelMotor.setPower(-wheelPower);
+    }
+
+    /**
+     * Turns the robot a certain number of degrees
+     * Negative is left
+     * Positive is right
+     */
+    public void turn(double degrees) {
+        double wheelPower = 1.0;
+
+    }
 }
