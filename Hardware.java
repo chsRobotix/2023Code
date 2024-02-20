@@ -69,14 +69,13 @@ public class Hardware {
     /* vision system */
     // Variable to store and instance of the TensorFlow Object Detection(TFOD)
     // processor.
-//    public TfodProcessor tfod;
+    // public TfodProcessor tfod;
 
     // variable to store an instane of VisionPortal
     public VisionPortal visionPortal;
 
     public Hardware(OpMode opMode) {
         this.opMode = opMode;
-        init();
     }
 
     /**
@@ -125,5 +124,8 @@ public class Hardware {
 
         /* sensors */
         //potentiometer = opMode.hardwareMap.get(AnalogInput.class, "potentiometer");
+
+        opMode.telemetry.addData("Hardware.java: ", "Initialized hardware");
+        opMode.telemetry.update();
     }
 }
