@@ -14,8 +14,8 @@ public class Hardware {
     // the gear ratio between the wheel motor and the wheel
     public final double WHEEL_GEAR_RATIO = 80.0 / 3.0;
 
-    // the cirumference of the wheel in inches
-    public final double WHEEL_CIRCUMFERENCE = 10;
+    // the circumference of the wheel in inches
+    public final double WHEEL_CIRCUMFERENCE = 4.0;
 
     /* arm rotation */
     // constants for how far the arm can rotate outward and inward
@@ -71,7 +71,7 @@ public class Hardware {
     // processor.
     // public TfodProcessor tfod;
 
-    // variable to store an instane of VisionPortal
+    // variable to store an instance of VisionPortal
     public VisionPortal visionPortal;
 
     public Hardware(OpMode opMode) {
@@ -148,16 +148,16 @@ public class Hardware {
      * Drives forward a specified distance
      * 
      * @param distance   How far the robot should drive
-     * @param lengthUnit What unit the distance is in(inches or ceentimeters)
+     * @param lengthUnit What unit the distance is in(inches or centimeters)
      */
     public void driveDistance(double distance, LengthUnit lengthUnit) {
         double degrees = distance / WHEEL_CIRCUMFERENCE;
 
-        leftWheelMotor.setTargetPosition();
+        // leftWheelMotor.setTargetPosition();
         leftWheelMotor.setPower(0.4);
         leftWheelMotor.setMode(DcMotor.RunMode.RUN_TO_POSITION);
 
-        rightWheelMotor.setTargetPosition();
+        // rightWheelMotor.setTargetPosition();
         rightWheelMotor.setPower(-0.4);
         rightWheelMotor.setMode(DcMotor.RunMode.RUN_TO_POSITION);
     }
@@ -171,14 +171,15 @@ public class Hardware {
      *                Positive numbers turn the robot right
      */
     public void turn(double degrees) {
-        
-
+        // the number of ticks that each motor needs to turn
         // each wheel only needs to turn half of the number of degrees
-        leftWheelMotor.setTargetPosition(degrees / 2 * WHEEL_GEAR_RATIO);
+        int motorTicks = (int) Math.round(degrees / 2 * WHEEL_GEAR_RATIO);
+
+        leftWheelMotor.setTargetPosition(leftWheelMotor.getCurrentPosition() + motorTicks);
         leftWheelMotor.setPower(0.4);
         leftWheelMotor.setMode(DcMotor.RunMode.RUN_TO_POSITION);
 
-        rightWheelMotor.setTargetPosition(-degrees / 2 * WHEEL_GEAR_RATIO);
+        rightWheelMotor.setTargetPosition(rightWheelMotor.getCurrentPosition() - motorTicks);
         rightWheelMotor.setPower(-0.4);
         rightWheelMotor.setMode(DcMotor.RunMode.RUN_TO_POSITION);
     }
@@ -186,5 +187,16 @@ public class Hardware {
     /* Arm Methods */
     public void rotateArm() {
 
+    }
+
+    /**
+     * Set the power of the wheels to the same value
+     *
+     * @param wheelPower Specifies the wheel power.
+     *                   Positive drives the robot forward. Negative drives it backward.
+     */
+    public void drive(double wheelPower) {
+        leftWheelMotor.setPower(-wheelPower);
+        rightWheelMotor.setPower(-wheelPower);
     }
 }

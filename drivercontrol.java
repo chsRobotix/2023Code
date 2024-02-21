@@ -27,7 +27,6 @@ public class drivercontrol extends OpMode {
         grabPixelPosition();
         airplaneLauncher();
 
-        telemetry.addData("Limit switch", hardware.pincerLimiter.getState());
         telemetry.addData("Arm rotation position: ", hardware.armRotationMotor.getCurrentPosition());
         telemetry.addData("Arm extension position: ", hardware.armExtensionMotor.getCurrentPosition());
         telemetry.addData("Claw rotation position: ", hardware.clawRotationServo.getPosition());
@@ -69,7 +68,7 @@ public class drivercontrol extends OpMode {
         // this will only run if the limit switch for the max arm extension has not been touched
         // if dpad_up is pressed and the max switch has not been hit
         // extend the arm
-        if (gamepad2.dpad_up && hardware.armRetractionSwitch.getState() && hardware.pincerLimiter.getState()) {
+        if (gamepad2.dpad_up && hardware.armRetractionSwitch.getState()) {
             hardware.armExtensionMotor.setTargetPosition(position + hardware.ARM_EXTEND_SPEED);
             hardware.armExtensionMotor.setPower(0.4);
             hardware.armExtensionMotor.setMode(DcMotor.RunMode.RUN_TO_POSITION);
@@ -90,7 +89,7 @@ public class drivercontrol extends OpMode {
         // get the current position of the arm
         int position = hardware.armRotationMotor.getCurrentPosition();
 
-        if (gamepad2.right_stick_y > 0 && hardware.pincerLimiter.getState()) {
+        if (gamepad2.right_stick_y > 0 && position > hardware.ARM_ROTATE_MIN) {
             /*
              * If rotating by ARM_ROTATE_SPEED would make the arm exceed the min
              *  rotate to ARM_ROTATE_MIN instead
@@ -106,7 +105,7 @@ public class drivercontrol extends OpMode {
 
             extendArmInResponse(false);
 
-        } else if (gamepad2.right_stick_y < 0) {
+        } else if (gamepad2.right_stick_y < 0 && position < hardware.ARM_ROTATE_MAX) {
             /*
              * If rotating by ARM_ROTATE_SPEED would make the arm exceed the max
              *  rotate to max instead
