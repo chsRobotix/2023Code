@@ -153,13 +153,13 @@ public class Hardware {
     public void driveDistance(double distance, LengthUnit lengthUnit) {
         double degrees = distance / WHEEL_CIRCUMFERENCE;
 
-        hardware.leftWheelMotor.setTargetPosition();
-        hardware.leftWheelMotor.setPower(0.4);
-        hardware.leftWheelMotor.setMode(DcMotor.RunMode.RUN_TO_POSITION);
+        leftWheelMotor.setTargetPosition();
+        leftWheelMotor.setPower(0.4);
+        leftWheelMotor.setMode(DcMotor.RunMode.RUN_TO_POSITION);
 
-        hardware.rightWheelMotor.setTargetPosition();
-        hardware.rightWheelMotor.setPower(-0.4);
-        hardware.rightWheelMotor.setMode(DcMotor.RunMode.RUN_TO_POSITION);
+        rightWheelMotor.setTargetPosition();
+        rightWheelMotor.setPower(-0.4);
+        rightWheelMotor.setMode(DcMotor.RunMode.RUN_TO_POSITION);
     }
 
     /**
@@ -171,14 +171,16 @@ public class Hardware {
      *                Positive numbers turn the robot right
      */
     public void turn(double degrees) {
-        // each wheel only needs to turn half of the number of degrees
-        hardware.leftWheelMotor.setTargetPosition(degrees / 2 * WHEEL_GEAR_RATIO);
-        hardware.leftWheelMotor.setPower(0.4);
-        hardware.leftWheelMotor.setMode(DcMotor.RunMode.RUN_TO_POSITION);
+        
 
-        hardware.rightWheelMotor.setTargetPosition(-degrees / 2 * WHEEL_GEAR_RATIO);
-        hardware.rightWheelMotor.setPower(-0.4);
-        hardware.rightWheelMotor.setMode(DcMotor.RunMode.RUN_TO_POSITION);
+        // each wheel only needs to turn half of the number of degrees
+        leftWheelMotor.setTargetPosition(degrees / 2 * WHEEL_GEAR_RATIO);
+        leftWheelMotor.setPower(0.4);
+        leftWheelMotor.setMode(DcMotor.RunMode.RUN_TO_POSITION);
+
+        rightWheelMotor.setTargetPosition(-degrees / 2 * WHEEL_GEAR_RATIO);
+        rightWheelMotor.setPower(-0.4);
+        rightWheelMotor.setMode(DcMotor.RunMode.RUN_TO_POSITION);
     }
 
     /* Arm Methods */
