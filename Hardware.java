@@ -8,11 +8,14 @@ public class Hardware {
     private OpMode opMode;
 
     /* wheel movement */
-    // constant for the sensitivity of turning
-    public final double TURNING_SENSITIVITY = 0.5;
-
     // the DC motors for the wheels
     public DcMotor leftWheelMotor, rightWheelMotor;
+
+    // the gear ratio between the wheel motor and the wheel
+    public final double WHEEL_GEAR_RATIO = 80.0 / 3.0;
+
+    // the cirumference of the wheel in inches
+    public final double WHEEL_CIRCUMFERENCE = 10;
 
     /* arm rotation */
     // constants for how far the arm can rotate outward and inward
@@ -60,9 +63,6 @@ public class Hardware {
     // the servo that launches the airplane
     public Servo airplaneLauncherServo;
 
-    // limit switch on the claw preventing it from going down too much
-    public DigitalChannel pincerLimiter;
-
     // sensors
     //public AnalogInput potentiometer;
 
@@ -95,10 +95,6 @@ public class Hardware {
         armRotationMotor = opMode.hardwareMap.get(DcMotor.class, "arm_rotator");
         armRotationMotor.resetDeviceConfigurationForOpMode();
 
-        // limiter switch at the end of the claw
-        // prevents arm from smashing against the ground
-        pincerLimiter = opMode.hardwareMap.get(DigitalChannel.class, "pincerLimiter");
-
         /* arm extension */
         armExtensionMotor = opMode.hardwareMap.get(DcMotor.class, "arm_extender");
         armExtensionMotor.setDirection(DcMotorSimple.Direction.REVERSE);
@@ -124,29 +120,69 @@ public class Hardware {
 
         /* sensors */
         //potentiometer = opMode.hardwareMap.get(AnalogInput.class, "potentiometer");
-
-        opMode.telemetry.addData("Hardware.java: ", "Initialized hardware");
-        opMode.telemetry.update();
     }
 
+    /* Wheel Methods */
     /**
-     * Set the power of the wheels to the same value
+     * Drives the robot straight at a specified power
+     * The robot continues at the power until commanded elsewise
      *
      * @param wheelPower Specifies the wheel power.
      *                   Positive drives the robot forward. Negative drives it backward.
      */
-    public void drive(double wheelPower) {
+    public void setWheelPower(double wheelPower) {
         leftWheelMotor.setPower(-wheelPower);
         rightWheelMotor.setPower(-wheelPower);
     }
 
     /**
+     * Drives forward a specified number of inches
+     * 
+     * @param distance How far the robot should drive in inches
+     */
+    public void driveDistance(double distance) {
+        driveDistance(distance, LengthUnit.INCH);
+    }
+
+    /**
+     * Drives forward a specified distance
+     * 
+     * @param distance   How far the robot should drive
+     * @param lengthUnit What unit the distance is in(inches or ceentimeters)
+     */
+    public void driveDistance(double distance, LengthUnit lengthUnit) {
+        double degrees = distance / WHEEL_CIRCUMFERENCE;
+
+        hardware.leftWheelMotor.setTargetPosition();
+        hardware.leftWheelMotor.setPower(0.4);
+        hardware.leftWheelMotor.setMode(DcMotor.RunMode.RUN_TO_POSITION);
+
+        hardware.rightWheelMotor.setTargetPosition();
+        hardware.rightWheelMotor.setPower(-0.4);
+        hardware.rightWheelMotor.setMode(DcMotor.RunMode.RUN_TO_POSITION);
+    }
+
+    /**
      * Turns the robot a certain number of degrees
-     * Negative is left
-     * Positive is right
+     * The robot rotates in place without any linear movement
+     * 
+     * @param degrees the number of degrees for the robot to turn
+     *                Negative numbers turn the robot left
+     *                Positive numbers turn the robot right
      */
     public void turn(double degrees) {
-        double wheelPower = 1.0;
+        // each wheel only needs to turn half of the number of degrees
+        hardware.leftWheelMotor.setTargetPosition(degrees / 2 * WHEEL_GEAR_RATIO);
+        hardware.leftWheelMotor.setPower(0.4);
+        hardware.leftWheelMotor.setMode(DcMotor.RunMode.RUN_TO_POSITION);
+
+        hardware.rightWheelMotor.setTargetPosition(-degrees / 2 * WHEEL_GEAR_RATIO);
+        hardware.rightWheelMotor.setPower(-0.4);
+        hardware.rightWheelMotor.setMode(DcMotor.RunMode.RUN_TO_POSITION);
+    }
+
+    /* Arm Methods */
+    public void rotateArm() {
 
     }
 }

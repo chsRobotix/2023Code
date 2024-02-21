@@ -8,6 +8,9 @@ import com.qualcomm.robotcore.util.Range;
 public class drivercontrol extends OpMode {
     private Hardware hardware;
 
+    // constant for the sensitivity of turning
+    public final double TURNING_SENSITIVITY = 0.5;
+
     @Override
     public void init() {
         hardware = new Hardware(this);
@@ -39,7 +42,7 @@ public class drivercontrol extends OpMode {
      */
     public void movement() {
         double drive = gamepad1.left_stick_y;
-        double turn = gamepad1.right_stick_x * hardware.TURNING_SENSITIVITY;
+        double turn = gamepad1.right_stick_x * TURNING_SENSITIVITY;
 
         // power levels
         // motor gear rotation is inverse
