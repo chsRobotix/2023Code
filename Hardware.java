@@ -11,11 +11,11 @@ public class Hardware {
     // the DC motors for the wheels
     public DcMotor leftWheelMotor, rightWheelMotor;
 
-    // the gear ratio between the wheel motor and the wheel
-    public final double WHEEL_GEAR_RATIO = 80.0 / 3.0;
+    // the ratio between the number of wheel ticks and the number of degrees it turns
+    public final double WHEEL_TICKS_PER_DEGREE = 80.0 / 3.0;
 
-    // the circumference of the wheel in inches
-    public final double WHEEL_CIRCUMFERENCE = 4.0;
+    // the radius of the wheel in inches
+    public final double WHEEL_RADIUS = 2.0;
 
     /* arm rotation */
     // constants for how far the arm can rotate outward and inward
@@ -140,24 +140,37 @@ public class Hardware {
      * 
      * @param distance How far the robot should drive in inches
      */
-    public void driveDistance(double distance) {
-        driveDistance(distance, LengthUnit.INCH);
+    public void drive(double distance) {
+        drive(distance, LengthUnit.INCH);
     }
 
     /**
      * Drives forward a specified distance
      * 
      * @param distance   How far the robot should drive
+     *                   Negative values drive backwards
      * @param lengthUnit What unit the distance is in(inches or centimeters)
      */
-    public void driveDistance(double distance, LengthUnit lengthUnit) {
-        double degrees = distance / WHEEL_CIRCUMFERENCE;
+    public void drive(double distance, LengthUnit lengthUnit) {
+        double wheelCircumference = WHEEL_RADIUS * 2 * Math.PI;
 
-        // leftWheelMotor.setTargetPosition();
+        // if the provided distance is in centimeters
+        // convert the circumference to centimeters
+        if (lengthUnit == LengthUnit.CENTIMETER) {
+            wheelCircumference *= 2.54;
+        }
+
+        // get the number of degrees that the wheels will have to rotate
+        double degrees = distance / (wheelCircumference * 2.54) * 360;
+
+        // convert it to ticks
+        int ticks = (int) Math.round(degrees * WHEEL_TICKS_PER_DEGREE);
+
+        leftWheelMotor.setTargetPosition(leftWheelMotor.getCurrentPosition() + ticks);
         leftWheelMotor.setPower(0.4);
         leftWheelMotor.setMode(DcMotor.RunMode.RUN_TO_POSITION);
 
-        // rightWheelMotor.setTargetPosition();
+        rightWheelMotor.setTargetPosition(rightWheelMotor.getCurrentPosition() + ticks);
         rightWheelMotor.setPower(-0.4);
         rightWheelMotor.setMode(DcMotor.RunMode.RUN_TO_POSITION);
     }
@@ -173,7 +186,7 @@ public class Hardware {
     public void turn(double degrees) {
         // the number of ticks that each motor needs to turn
         // each wheel only needs to turn half of the number of degrees
-        int motorTicks = (int) Math.round(degrees / 2 * WHEEL_GEAR_RATIO);
+        int motorTicks = (int) Math.round(degrees / 2 * WHEEL_TICKS_PER_DEGREE);
 
         leftWheelMotor.setTargetPosition(leftWheelMotor.getCurrentPosition() + motorTicks);
         leftWheelMotor.setPower(0.4);
@@ -186,17 +199,5 @@ public class Hardware {
 
     /* Arm Methods */
     public void rotateArm() {
-
-    }
-
-    /**
-     * Set the power of the wheels to the same value
-     *
-     * @param wheelPower Specifies the wheel power.
-     *                   Positive drives the robot forward. Negative drives it backward.
-     */
-    public void drive(double wheelPower) {
-        leftWheelMotor.setPower(-wheelPower);
-        rightWheelMotor.setPower(-wheelPower);
     }
 }
