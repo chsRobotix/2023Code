@@ -21,7 +21,7 @@ public class drivercontrol extends OpMode {
     public void loop() {
         telemetry.update(); // call-back to android console
 
-        movement();
+        driveWheels();
         moveArm();
         grabber();
         grabPixelPosition();
@@ -39,7 +39,7 @@ public class drivercontrol extends OpMode {
      * Moves robot forward and backward according to left joystick of the gamepad1
      * Turns robot left and right according to right joystick of the gamepad1
      */
-    public void movement() {
+    public void driveWheels() {
         double drive = gamepad1.left_stick_y;
         double turn = gamepad1.right_stick_x * TURNING_SENSITIVITY;
 
@@ -60,6 +60,9 @@ public class drivercontrol extends OpMode {
         extendArm();
     }
 
+    /**
+     * Extends how far the robot arm extends and retracts
+     */
     public void extendArm() {
         // get current position of motor
         int position = hardware.armExtensionMotor.getCurrentPosition();
@@ -80,6 +83,30 @@ public class drivercontrol extends OpMode {
             hardware.armExtensionMotor.setPower(-0.4);
             hardware.armExtensionMotor.setMode(DcMotor.RunMode.RUN_TO_POSITION);
         }
+    }
+
+    /**
+     * As the arm rotates outward, it also retracts inward and vice versa
+     * To counterbalance, the arm extends or retracts accordingly to the rotation
+     *
+     * @param isRotatingOutward whether the arm is rotating outwards
+     */
+    public void extendArmInResponse(boolean isRotatingOutward) {
+        int position = hardware.armExtensionMotor.getCurrentPosition();
+
+        // if the arm is being rotated outward, 
+        // extend the arm outward too
+        if (isRotatingOutward) {
+            hardware.armExtensionMotor.setTargetPosition(position + hardware.ARM_EXTEND_SPEED / 2);
+            hardware.armExtensionMotor.setPower(0.1);
+
+        } else { // if the arm is being rotated inward,
+            // retract the arm inward too
+            hardware.armExtensionMotor.setTargetPosition(position - hardware.ARM_EXTEND_SPEED / 2);
+            hardware.armExtensionMotor.setPower(-0.1);
+        }
+
+        hardware.armExtensionMotor.setMode(DcMotor.RunMode.RUN_TO_POSITION);
     }
 
     /**
@@ -123,30 +150,6 @@ public class drivercontrol extends OpMode {
         }
 
         telemetry.addData("Current arm position: ", position);
-    }
-
-    /**
-     * As the arm rotates outward, it also retracts inward and vice versa
-     * To counterbalance, the arm extends or retracts accordingly to the rotation
-     *
-     * @param isRotatingOutward whether the arm is rotating outwards
-     */
-    public void extendArmInResponse(boolean isRotatingOutward) {
-        int position = hardware.armExtensionMotor.getCurrentPosition();
-
-        // if the arm is being rotated outward, 
-        // extend the arm outward too
-        if (isRotatingOutward) {
-            hardware.armExtensionMotor.setTargetPosition(position + hardware.ARM_EXTEND_SPEED / 2);
-            hardware.armExtensionMotor.setPower(0.1);
-
-        } else { // if the arm is being rotated inward,
-            // retract the arm inward too
-            hardware.armExtensionMotor.setTargetPosition(position - hardware.ARM_EXTEND_SPEED / 2);
-            hardware.armExtensionMotor.setPower(-0.1);
-        }
-
-        hardware.armExtensionMotor.setMode(DcMotor.RunMode.RUN_TO_POSITION);
     }
 
     /**
@@ -206,21 +209,5 @@ public class drivercontrol extends OpMode {
         if (gamepad1.y) {
             hardware.airplaneLauncherServo.setPosition(hardware.AIRPLANE_FIRING_POSITION);
         }
-    }
-
-    public void grabPixelPosition() {
-        // if x is pressed go to pixel grabbing position
-        if (gamepad2.x) {
-            hardware.armExtensionMotor.setTargetPosition(0);
-            hardware.armExtensionMotor.setPower(-0.8);
-            hardware.armExtensionMotor.setMode(DcMotor.RunMode.RUN_TO_POSITION);
-
-            hardware.armRotationMotor.setTargetPosition(0);
-            hardware.armRotationMotor.setPower(-0.2);
-            hardware.armRotationMotor.setMode(DcMotor.RunMode.RUN_TO_POSITION);
-
-            // rotate the claw back to its initial position
-            hardware.clawRotationServo.setPosition(hardware.CLAW_ROTATION_LOWEST_POSITION);
-        }
-    }
+    }    
 }

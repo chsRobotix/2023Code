@@ -23,6 +23,8 @@ public class Hardware {
     public final int ARM_ROTATE_MIN = 0;
     public final int ARM_ROTATE_SPEED = 50;
 
+    public final double ARM_TICKS_PER_DEGREE = ;
+
     // the DC motors for the arm
     public DcMotor armRotationMotor;
 
@@ -198,6 +200,11 @@ public class Hardware {
     }
 
     /* Arm Methods */
+    /**
+     * Rotates the arm to a position specified in degrees
+     */
     public void rotateArm() {
+        hardware.armRotationMotor.setPower(-0.15);
+            hardware.armRotationMotor.setMode(DcMotor.RunMode.RUN_TO_POSITION);
     }
 }
