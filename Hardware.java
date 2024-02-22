@@ -23,7 +23,9 @@ public class Hardware {
     public final int ARM_ROTATE_MIN = 0;
     public final int ARM_ROTATE_SPEED = 50;
 
-    public final double ARM_TICKS_PER_DEGREE = ;
+    // the ratio between the number of arm ticks and the number of degrees it turns
+    // value currently unknown
+    public final double ARM_TICKS_PER_DEGREE = -1.0;
 
     // the DC motors for the arm
     public DcMotor armRotationMotor;
@@ -163,7 +165,7 @@ public class Hardware {
         }
 
         // get the number of degrees that the wheels will have to rotate
-        double degrees = distance / (wheelCircumference * 2.54) * 360;
+        double degrees = distance / wheelCircumference * 360;
 
         // convert it to ticks
         int ticks = (int) Math.round(degrees * WHEEL_TICKS_PER_DEGREE);
@@ -202,9 +204,17 @@ public class Hardware {
     /* Arm Methods */
     /**
      * Rotates the arm to a position specified in degrees
+     * 
+     * @param degrees The position the arm moves to
+     *                The arm's starting position is 0
      */
-    public void rotateArm() {
+    public void rotateArm(double degrees) {
+        int ticks = degrees * ARM_TICKS_PER_DEGREE;
+
+        hardware.armRotationMotor.setTargetPosition(ticks);
         hardware.armRotationMotor.setPower(-0.15);
-            hardware.armRotationMotor.setMode(DcMotor.RunMode.RUN_TO_POSITION);
+        hardware.armRotationMotor.setMode(DcMotor.RunMode.RUN_TO_POSITION);
     }
+
+
 }

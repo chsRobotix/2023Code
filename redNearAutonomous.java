@@ -19,9 +19,10 @@ public class redNearAutonomous extends LinearOpMode {
         // wait until the player press the start button
         waitForStart();
 
-        hardware.armRotationMotor.setTargetPosition(360);
-        hardware.armRotationMotor.setPower(0.4);
-        hardware.armRotationMotor.setMode(DcMotor.RunMode.RUN_TO_POSITION);
+        hardware.rotateArm(90);
+        // hardware.armRotationMotor.setTargetPosition(360);
+        // hardware.armRotationMotor.setPower(0.4);
+        // hardware.armRotationMotor.setMode(DcMotor.RunMode.RUN_TO_POSITION);
 
         // drive forward 6 inches
         hardware.drive(6);
