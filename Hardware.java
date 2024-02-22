@@ -215,6 +215,4 @@ public class Hardware {
         hardware.armRotationMotor.setPower(-0.15);
         hardware.armRotationMotor.setMode(DcMotor.RunMode.RUN_TO_POSITION);
     }
-
-
 }
