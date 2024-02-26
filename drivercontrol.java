@@ -1,5 +1,7 @@
 package org.firstinspires.ftc.teamcode;
 
+import javax.print.attribute.HashPrintRequestAttributeSet;
+
 import com.qualcomm.robotcore.eventloop.opmode.*;
 import com.qualcomm.robotcore.hardware.*;
 import com.qualcomm.robotcore.util.Range;
@@ -61,6 +63,49 @@ public class drivercontrol extends OpMode {
     }
 
     /**
+     * Rotates arm outward and inward
+     */
+    public void rotateArm() {
+        // get the current position of the arm
+        int position = hardware.armRotationMotor.getCurrentPosition();
+
+        if (gamepad2.right_stick_y > 0 && position > hardware.ARM_ROTATE_MIN) {
+            /*
+             * If rotating by ARM_ROTATE_SPEED would make the arm exceed the min
+             *  rotate to ARM_ROTATE_MIN instead
+             * Else
+             *  rotate by ARM_ROTATE_SPEED
+             */
+            hardware.armRotationMotor.setTargetPosition(
+                    Math.min(position - hardware.ARM_ROTATE_SPEED, hardware.ARM_ROTATE_MIN)
+            );
+
+            hardware.armRotationMotor.setPower(-0.15);
+            hardware.armRotationMotor.setMode(DcMotor.RunMode.RUN_TO_POSITION);
+
+            extendArmInResponse(false);
+
+        } else if (gamepad2.right_stick_y < 0 && position < hardware.ARM_ROTATE_MAX) {
+            /*
+             * If rotating by ARM_ROTATE_SPEED would make the arm exceed the max
+             *  rotate to max instead
+             * Else
+             *  rotate by ARM_ROTATE_SPEED
+             */
+            hardware.armRotationMotor.setTargetPosition(
+                    Math.min(position + hardware.ARM_ROTATE_SPEED, hardware.ARM_ROTATE_MAX)
+            );
+
+            hardware.armRotationMotor.setPower(0.15);
+            hardware.armRotationMotor.setMode(DcMotor.RunMode.RUN_TO_POSITION);
+
+            extendArmInResponse(true);
+        }
+
+        telemetry.addData("Current arm position: ", position);
+    }
+
+    /**
      * Extends how far the robot arm extends and retracts
      */
     public void extendArm() {
@@ -110,49 +155,6 @@ public class drivercontrol extends OpMode {
     }
 
     /**
-     * Rotates arm outward and inward
-     */
-    public void rotateArm() {
-        // get the current position of the arm
-        int position = hardware.armRotationMotor.getCurrentPosition();
-
-        if (gamepad2.right_stick_y > 0 && position > hardware.ARM_ROTATE_MIN) {
-            /*
-             * If rotating by ARM_ROTATE_SPEED would make the arm exceed the min
-             *  rotate to ARM_ROTATE_MIN instead
-             * Else
-             *  rotate by ARM_ROTATE_SPEED
-             */
-            hardware.armRotationMotor.setTargetPosition(
-                    Math.min(position - hardware.ARM_ROTATE_SPEED, hardware.ARM_ROTATE_MIN)
-            );
-
-            hardware.armRotationMotor.setPower(-0.15);
-            hardware.armRotationMotor.setMode(DcMotor.RunMode.RUN_TO_POSITION);
-
-            extendArmInResponse(false);
-
-        } else if (gamepad2.right_stick_y < 0 && position < hardware.ARM_ROTATE_MAX) {
-            /*
-             * If rotating by ARM_ROTATE_SPEED would make the arm exceed the max
-             *  rotate to max instead
-             * Else
-             *  rotate by ARM_ROTATE_SPEED
-             */
-            hardware.armRotationMotor.setTargetPosition(
-                    Math.min(position + hardware.ARM_ROTATE_SPEED, hardware.ARM_ROTATE_MAX)
-            );
-
-            hardware.armRotationMotor.setPower(0.15);
-            hardware.armRotationMotor.setMode(DcMotor.RunMode.RUN_TO_POSITION);
-
-            extendArmInResponse(true);
-        }
-
-        telemetry.addData("Current arm position: ", position);
-    }
-
-    /**
      * Moves the grabber up and down
      * Also closes and opens the claw
      */
@@ -198,6 +200,38 @@ public class drivercontrol extends OpMode {
             // rotate the claw downward
             hardware.clawRotationServo.setPosition(hardware.CLAW_ROTATION_LOWEST_POSITION);
         }
+    }
+
+    /**
+     * Moves the arm and grabber into position to pick up a pixel
+     * However, it does not close the claw
+     */
+    public void grabPixelPosition() {
+        // if x is pressed go to pixel grabbing position
+        if (gamepad2.x) {
+            hardware.armExtensionMotor.setTargetPosition(0);
+            hardware.armExtensionMotor.setPower(-0.8);
+            hardware.armExtensionMotor.setMode(DcMotor.RunMode.RUN_TO_POSITION);
+
+            hardware.armRotationMotor.setTargetPosition(hardware.ARM_ROTATE_MIN);
+            hardware.armRotationMotor.setPower(-0.2);
+            hardware.armRotationMotor.setMode(DcMotor.RunMode.RUN_TO_POSITION);
+
+            // rotate the claw back to its initial position
+            hardware.clawRotationServo.setPosition(hardware.CLAW_ROTATION_LOWEST_POSITION);
+        }
+    }
+
+    /**
+     * Rotates the arm back and drops the pixel
+     */
+    public void dropPixel() {
+        hardware.armRotationMotor.setTargetPosition(hardware.ARM_ROTATE_MAX);
+        hardware.armRotationMotor.setPower(-0.2);
+        hardware.armRotationMotor.setMode(DcMotor.RunMode.RUN_TO_POSITION);
+
+        hardware.clawRotationServo.setPosition(hardware.CLAW_ROTATE_MAX);
+        hardware.pincerServo.setPosition(hardware.CLAW_OPEN_POSITION);
     }
 
     /**

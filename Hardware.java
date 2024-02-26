@@ -21,6 +21,7 @@ public class Hardware {
     // constants for how far the arm can rotate outward and inward
     public final int ARM_ROTATE_MAX = 2000;
     public final int ARM_ROTATE_MIN = 0;
+
     public final int ARM_ROTATE_SPEED = 50;
 
     // the ratio between the number of arm ticks and the number of degrees it turns
@@ -56,8 +57,8 @@ public class Hardware {
     public Servo clawRotationServo;
 
     // preset positions for claw rotations
-    public final double CLAW_ROTATION_LOWEST_POSITION = 0.6;
-    public final double CLAW_ROTATION_HIGHEST_POSITION = 0.0;
+    public final double CLAW_ROTATE_MIN = 0.6;
+    public final double CLAW_ROTATE_MAX = 0.0;
 
     /* airplane */
     // starting and ending position for airplane launcher

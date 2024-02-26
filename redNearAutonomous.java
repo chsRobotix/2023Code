@@ -24,8 +24,8 @@ public class redNearAutonomous extends LinearOpMode {
         // hardware.armRotationMotor.setPower(0.4);
         // hardware.armRotationMotor.setMode(DcMotor.RunMode.RUN_TO_POSITION);
 
-        // turn 90 degrees right
-        hardware.turn(90);
+        // turn 90 degrees left
+        hardware.turn(-90);
 
         // drive forward 24 inches
         hardware.drive(24);
