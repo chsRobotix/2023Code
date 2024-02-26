@@ -210,9 +210,34 @@ public class Hardware {
      *                The arm's starting position is 0
      */
     public void rotateArm(double degrees) {
-        int ticks = (int) Math.round(degrees * ARM_TICKS_PER_DEGREE);
+        int targetPosition = (int) Math.round(degrees * ARM_TICKS_PER_DEGREE);
+        
+        /*
+         * Calculate the direction that the arm will have to rotate
+         * Negative is down
+         * Positive is up
+         */
+        int direction = (int) Math.signum(targetPosition - armRotationMotor.getCurrentPosition());
 
-        armRotationMotor.setTargetPosition(ticks);
+        armRotationMotor.setTargetPosition(targetPosition);
+        armRotationMotor.setPower(direction * 0.15);
+        armRotationMotor.setMode(DcMotor.RunMode.RUN_TO_POSITION);
+    }
+
+    /**
+     * Rotates the arm to ARM_ROTATE_MAX
+     */
+    public void raiseArmToMax() {
+        armRotationMotor.setTargetPosition(ARM_ROTATE_MAX);
+        armRotationMotor.setPower(0.15);
+        armRotationMotor.setMode(DcMotor.RunMode.RUN_TO_POSITION);
+    }
+
+    /**
+     * Rotates the arm to ARM_ROTATE_MIN
+     */
+    public void lowerArmToMin() {
+        armRotationMotor.setTargetPosition(ARM_ROTATE_MIN);
         armRotationMotor.setPower(-0.15);
         armRotationMotor.setMode(DcMotor.RunMode.RUN_TO_POSITION);
     }

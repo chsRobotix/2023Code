@@ -24,18 +24,9 @@ public class drivercontrol extends OpMode {
         driveWheels();
         moveArm();
         grabber();
-
-        if (gamepad2.x) {
-            grabPixelPosition();
-        }
-
-        if (gamepad2.b) {
-            dropPixelPosition();
-        }
-
-        if (gamepad1.y) {
-            launchAirplane();
-        }
+        grabPixelPosition();
+        dropPixelPosition();
+        launchAirplane();
 
         telemetry.addData("Arm rotation position: ", hardware.armRotationMotor.getCurrentPosition());
         telemetry.addData("Arm extension position: ", hardware.armExtensionMotor.getCurrentPosition());
@@ -215,38 +206,44 @@ public class drivercontrol extends OpMode {
      * However, it does not close the claw
      */
     public void grabPixelPosition() {
-        // lower the arm
-        hardware.armExtensionMotor.setTargetPosition(0);
-        hardware.armExtensionMotor.setPower(-0.8);
-        hardware.armExtensionMotor.setMode(DcMotor.RunMode.RUN_TO_POSITION);
+        if (gamepad2.x) {
+            // retract the arm
+            hardware.armExtensionMotor.setTargetPosition(0);
+            hardware.armExtensionMotor.setPower(-0.8);
+            hardware.armExtensionMotor.setMode(DcMotor.RunMode.RUN_TO_POSITION);
 
-        // retract the arm
-        hardware.armRotationMotor.setTargetPosition(hardware.ARM_ROTATE_MIN);
-        hardware.armRotationMotor.setPower(-0.2);
-        hardware.armRotationMotor.setMode(DcMotor.RunMode.RUN_TO_POSITION);
+            // lower the arm
+            hardware.armRotationMotor.setTargetPosition(hardware.ARM_ROTATE_MIN);
+            hardware.armRotationMotor.setPower(-0.2);
+            hardware.armRotationMotor.setMode(DcMotor.RunMode.RUN_TO_POSITION);
 
-        // rotate the claw back to its initial position
-        hardware.clawRotationServo.setPosition(hardware.CLAW_ROTATE_MIN);
+            // rotate the claw back to its initial position
+            hardware.clawRotationServo.setPosition(hardware.CLAW_ROTATE_MIN);
+        }
     }
 
     /**
      * Rotates the arm back and drops the pixel
      */
     public void dropPixelPosition() {
-        // fully rotate the arm upw
-        hardware.armRotationMotor.setTargetPosition(hardware.ARM_ROTATE_MAX);
-        hardware.armRotationMotor.setPower(-0.2);
-        hardware.armRotationMotor.setMode(DcMotor.RunMode.RUN_TO_POSITION);
-
-        // rotate the claw up and open it
-        hardware.clawRotationServo.setPosition(hardware.CLAW_ROTATE_MAX);
+        if (gamepad2.b) {
+            // fully rotate the arm upw
+            hardware.armRotationMotor.setTargetPosition(hardware.ARM_ROTATE_MAX);
+            hardware.armRotationMotor.setPower(-0.2);
+            hardware.armRotationMotor.setMode(DcMotor.RunMode.RUN_TO_POSITION);
+    
+            // rotate the claw up and open it
+            hardware.clawRotationServo.setPosition(hardware.CLAW_ROTATE_MAX);
+        }
     }
 
     /**
      * Launches airplane at a fixed angle
      */
     public void launchAirplane() {
-        // move the hook backward to release the rubber band
-        hardware.airplaneLauncherServo.setPosition(hardware.AIRPLANE_FIRING_POSITION);
+        if (gamepad1.y) {
+            // move the hook backward to release the rubber band
+            hardware.airplaneLauncherServo.setPosition(hardware.AIRPLANE_FIRING_POSITION);
+        }
     }    
 }
