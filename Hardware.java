@@ -117,7 +117,7 @@ public class Hardware {
 
         // set the servo position of the grabber rotator to prevent ground collision
         clawRotationServo = opMode.hardwareMap.get(Servo.class, "pincer_rotation_servo");
-        clawRotationServo.setPosition(CLAW_ROTATION_LOWEST_POSITION);
+        clawRotationServo.setPosition(CLAW_ROTATE_MIN);
 
         /* airplane launcher */
         airplaneLauncherServo = opMode.hardwareMap.get(Servo.class, "airplane_launcher");
@@ -210,10 +210,10 @@ public class Hardware {
      *                The arm's starting position is 0
      */
     public void rotateArm(double degrees) {
-        int ticks = degrees * ARM_TICKS_PER_DEGREE;
+        int ticks = (int) Math.round(degrees * ARM_TICKS_PER_DEGREE);
 
-        hardware.armRotationMotor.setTargetPosition(ticks);
-        hardware.armRotationMotor.setPower(-0.15);
-        hardware.armRotationMotor.setMode(DcMotor.RunMode.RUN_TO_POSITION);
+        armRotationMotor.setTargetPosition(ticks);
+        armRotationMotor.setPower(-0.15);
+        armRotationMotor.setMode(DcMotor.RunMode.RUN_TO_POSITION);
     }
 }

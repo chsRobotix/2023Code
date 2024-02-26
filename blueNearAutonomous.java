@@ -6,7 +6,7 @@ import com.qualcomm.robotcore.hardware.DcMotor;
 import org.firstinspires.ftc.vision.VisionPortal;
 
 @Autonomous(name = "Blue Near Autonomous")
-public class redNearAutonomous extends LinearOpMode {
+public class blueNearAutonomous extends LinearOpMode {
     private Hardware hardware = new Hardware(this);
 
     /**
@@ -29,8 +29,6 @@ public class redNearAutonomous extends LinearOpMode {
 
         // drive forward 24 inches
         hardware.drive(24);
-
-        hardware.turn();
 
         sleep(5000);
     }

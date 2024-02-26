@@ -1,7 +1,5 @@
 package org.firstinspires.ftc.teamcode;
 
-import javax.print.attribute.HashPrintRequestAttributeSet;
-
 import com.qualcomm.robotcore.eventloop.opmode.*;
 import com.qualcomm.robotcore.hardware.*;
 import com.qualcomm.robotcore.util.Range;
@@ -26,8 +24,18 @@ public class drivercontrol extends OpMode {
         driveWheels();
         moveArm();
         grabber();
-        grabPixel();
-        airplaneLauncher();
+
+        if (gamepad2.x) {
+            grabPixelPosition();
+        }
+
+        if (gamepad2.b) {
+            dropPixelPosition();
+        }
+
+        if (gamepad1.y) {
+            launchAirplane();
+        }
 
         telemetry.addData("Arm rotation position: ", hardware.armRotationMotor.getCurrentPosition());
         telemetry.addData("Arm extension position: ", hardware.armExtensionMotor.getCurrentPosition());
@@ -193,12 +201,12 @@ public class drivercontrol extends OpMode {
         // if Y Button is pressed,
         // rotate the claw upward
         if (gamepad2.y) {
-            hardware.clawRotationServo.setPosition(hardware.CLAW_ROTATION_HIGHEST_POSITION);
+            hardware.clawRotationServo.setPosition(hardware.CLAW_ROTATE_MIN);
 
         } else if (gamepad2.a) {
             // if A button is pressed,
             // rotate the claw downward
-            hardware.clawRotationServo.setPosition(hardware.CLAW_ROTATION_LOWEST_POSITION);
+            hardware.clawRotationServo.setPosition(hardware.CLAW_ROTATE_MIN);
         }
     }
 
@@ -206,44 +214,39 @@ public class drivercontrol extends OpMode {
      * Moves the arm and grabber into position to pick up a pixel
      * However, it does not close the claw
      */
-    public void grabPixel() {
-        // if x is pressed go to pixel grabbing position
-        if (gamepad2.x) {
-            hardware.armExtensionMotor.setTargetPosition(0);
-            hardware.armExtensionMotor.setPower(-0.8);
-            hardware.armExtensionMotor.setMode(DcMotor.RunMode.RUN_TO_POSITION);
+    public void grabPixelPosition() {
+        // lower the arm
+        hardware.armExtensionMotor.setTargetPosition(0);
+        hardware.armExtensionMotor.setPower(-0.8);
+        hardware.armExtensionMotor.setMode(DcMotor.RunMode.RUN_TO_POSITION);
 
-            hardware.armRotationMotor.setTargetPosition(hardware.ARM_ROTATE_MIN);
-            hardware.armRotationMotor.setPower(-0.2);
-            hardware.armRotationMotor.setMode(DcMotor.RunMode.RUN_TO_POSITION);
+        // retract the arm
+        hardware.armRotationMotor.setTargetPosition(hardware.ARM_ROTATE_MIN);
+        hardware.armRotationMotor.setPower(-0.2);
+        hardware.armRotationMotor.setMode(DcMotor.RunMode.RUN_TO_POSITION);
 
-            // rotate the claw back to its initial position
-            hardware.clawRotationServo.setPosition(hardware.CLAW_ROTATION_LOWEST_POSITION);
-        }
+        // rotate the claw back to its initial position
+        hardware.clawRotationServo.setPosition(hardware.CLAW_ROTATE_MIN);
     }
 
     /**
      * Rotates the arm back and drops the pixel
      */
-    public void dropPixel() {
-
-
+    public void dropPixelPosition() {
+        // fully rotate the arm upw
         hardware.armRotationMotor.setTargetPosition(hardware.ARM_ROTATE_MAX);
         hardware.armRotationMotor.setPower(-0.2);
         hardware.armRotationMotor.setMode(DcMotor.RunMode.RUN_TO_POSITION);
 
+        // rotate the claw up and open it
         hardware.clawRotationServo.setPosition(hardware.CLAW_ROTATE_MAX);
-        hardware.pincerServo.setPosition(hardware.CLAW_OPEN_POSITION);
     }
 
     /**
      * Launches airplane at a fixed angle
      */
-    public void airplaneLauncher() {
-        // if Y button is pressed
+    public void launchAirplane() {
         // move the hook backward to release the rubber band
-        if (gamepad1.y) {
-            hardware.airplaneLauncherServo.setPosition(hardware.AIRPLANE_FIRING_POSITION);
-        }
+        hardware.airplaneLauncherServo.setPosition(hardware.AIRPLANE_FIRING_POSITION);
     }    
 }
