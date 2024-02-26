@@ -26,7 +26,7 @@ public class drivercontrol extends OpMode {
         driveWheels();
         moveArm();
         grabber();
-        grabPixelPosition();
+        grabPixel();
         airplaneLauncher();
 
         telemetry.addData("Arm rotation position: ", hardware.armRotationMotor.getCurrentPosition());
@@ -206,7 +206,7 @@ public class drivercontrol extends OpMode {
      * Moves the arm and grabber into position to pick up a pixel
      * However, it does not close the claw
      */
-    public void grabPixelPosition() {
+    public void grabPixel() {
         // if x is pressed go to pixel grabbing position
         if (gamepad2.x) {
             hardware.armExtensionMotor.setTargetPosition(0);
@@ -226,6 +226,8 @@ public class drivercontrol extends OpMode {
      * Rotates the arm back and drops the pixel
      */
     public void dropPixel() {
+
+
         hardware.armRotationMotor.setTargetPosition(hardware.ARM_ROTATE_MAX);
         hardware.armRotationMotor.setPower(-0.2);
         hardware.armRotationMotor.setMode(DcMotor.RunMode.RUN_TO_POSITION);
