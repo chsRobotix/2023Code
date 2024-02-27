@@ -4,7 +4,7 @@ import com.qualcomm.robotcore.eventloop.opmode.*;
 import com.qualcomm.robotcore.hardware.*;
 import com.qualcomm.robotcore.util.Range;
 
-@TeleOp(name = "Test")
+@TeleOp(name = "Driver Control")
 public class drivercontrol extends OpMode {
     private Hardware hardware;
 
@@ -192,7 +192,7 @@ public class drivercontrol extends OpMode {
         // if Y Button is pressed,
         // rotate the claw upward
         if (gamepad2.y) {
-            hardware.clawRotationServo.setPosition(hardware.CLAW_ROTATE_MIN);
+            hardware.clawRotationServo.setPosition(hardware.CLAW_ROTATE_MAX);
 
         } else if (gamepad2.a) {
             // if A button is pressed,
@@ -228,7 +228,7 @@ public class drivercontrol extends OpMode {
     public void dropPixelPosition() {
         if (gamepad2.b) {
             // fully rotate the arm upw
-            hardware.armRotationMotor.setTargetPosition(hardware.ARM_ROTATE_MAX);
+            hardware.armRotationMotor.setTargetPosition(hardware.ARM_ROTATE_MAX / 2);
             hardware.armRotationMotor.setPower(-0.2);
             hardware.armRotationMotor.setMode(DcMotor.RunMode.RUN_TO_POSITION);
     
