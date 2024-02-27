@@ -25,8 +25,7 @@ public class Hardware {
     public final int ARM_ROTATE_SPEED = 50;
 
     // the ratio between the number of arm ticks and the number of degrees it turns
-    // value currently unknown
-    public final double ARM_TICKS_PER_DEGREE = -1.0;
+    public final double ARM_TICKS_PER_DEGREE = 40.0 / 3.0;
 
     // the DC motors for the arm
     public DcMotor armRotationMotor;
@@ -157,7 +156,7 @@ public class Hardware {
      * @param lengthUnit What unit the distance is in(inches or centimeters)
      */
     public void drive(double distance, LengthUnit lengthUnit) {
-        double wheelCircumference = WHEEL_RADIUS * 2 * Math.PI;
+        double wheelCircumference = WHEEL_RADIUS * 2.0 * Math.PI;
 
         // if the provided distance is in centimeters
         // convert the circumference to centimeters
@@ -166,17 +165,21 @@ public class Hardware {
         }
 
         // get the number of degrees that the wheels will have to rotate
-        double degrees = distance / wheelCircumference * 360;
+        // the number 55 is arbitrarily determined through testing
+        double degrees = distance / wheelCircumference * 55;
 
         // convert it to ticks
         int ticks = (int) Math.round(degrees * WHEEL_TICKS_PER_DEGREE);
 
-        leftWheelMotor.setTargetPosition(leftWheelMotor.getCurrentPosition() + ticks);
+        opMode.telemetry.addData("ticks: ", ticks);
+        opMode.telemetry.update();
+
+        leftWheelMotor.setTargetPosition(leftWheelMotor.getCurrentPosition() - ticks);
         leftWheelMotor.setPower(0.4);
         leftWheelMotor.setMode(DcMotor.RunMode.RUN_TO_POSITION);
 
-        rightWheelMotor.setTargetPosition(rightWheelMotor.getCurrentPosition() + ticks);
-        rightWheelMotor.setPower(-0.4);
+        rightWheelMotor.setTargetPosition(rightWheelMotor.getCurrentPosition() - ticks);
+        rightWheelMotor.setPower(0.4);
         rightWheelMotor.setMode(DcMotor.RunMode.RUN_TO_POSITION);
     }
 
@@ -211,6 +214,11 @@ public class Hardware {
      */
     public void rotateArm(double degrees) {
         int targetPosition = (int) Math.round(degrees * ARM_TICKS_PER_DEGREE);
+
+        // if the arm attempts to exceed the bounds, abort
+        if (!(targetPosition > ARM_ROTATE_MIN && targetPosition < ARM_ROTATE_MAX)) {
+            return;
+        }
         
         /*
          * Calculate the direction that the arm will have to rotate

@@ -27,7 +27,7 @@ public class blueNearAutonomous extends LinearOpMode {
         hardware.turn(-90);
 
         // drive forward 24 inches
-        hardware.drive(24);
+        hardware.drive(12);
 
         sleep(5000);
     }
