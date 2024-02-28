@@ -227,8 +227,8 @@ public class drivercontrol extends OpMode {
      */
     public void dropPixelPosition() {
         if (gamepad2.b) {
-            // fully rotate the arm upw
-            hardware.armRotationMotor.setTargetPosition(hardware.ARM_ROTATE_MAX / 2);
+            // rotate the arm backwards
+            hardware.armRotationMotor.setTargetPosition((int) Math.round(hardware.ARM_ROTATE_MAX * 0.67));
             hardware.armRotationMotor.setPower(-0.2);
             hardware.armRotationMotor.setMode(DcMotor.RunMode.RUN_TO_POSITION);
     

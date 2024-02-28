@@ -25,7 +25,7 @@ public class Hardware {
     public final int ARM_ROTATE_SPEED = 50;
 
     // the ratio between the number of arm ticks and the number of degrees it turns
-    public final double ARM_TICKS_PER_DEGREE = 40.0 / 3.0;
+    public final double ARM_TICKS_PER_DEGREE = 36.0 / 5.0;
 
     // the DC motors for the arm
     public DcMotor armRotationMotor;
@@ -210,15 +210,14 @@ public class Hardware {
      * Rotates the arm to a position specified in degrees
      * 
      * @param degrees The position the arm moves to
-     *                The arm's starting position is 0
+     *                The arm's starting position is 0 degrees
+     *                50 degrees is parallel to the ground
      */
     public void rotateArm(double degrees) {
         int targetPosition = (int) Math.round(degrees * ARM_TICKS_PER_DEGREE);
 
-        // if the arm attempts to exceed the bounds, abort
-        if (!(targetPosition > ARM_ROTATE_MIN && targetPosition < ARM_ROTATE_MAX)) {
-            return;
-        }
+        // keep the target position within legal bounds
+        targetPosition = Math.min(Math.max(targetPosition, ARM_ROTATE_MIN), ARM_ROTATE_MAX);
         
         /*
          * Calculate the direction that the arm will have to rotate
