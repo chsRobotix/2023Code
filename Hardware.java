@@ -171,9 +171,6 @@ public class Hardware {
         // convert it to ticks
         int ticks = (int) Math.round(degrees * WHEEL_TICKS_PER_DEGREE);
 
-        opMode.telemetry.addData("ticks: ", ticks);
-        opMode.telemetry.update();
-
         leftWheelMotor.setTargetPosition(leftWheelMotor.getCurrentPosition() - ticks);
         leftWheelMotor.setPower(0.4);
         leftWheelMotor.setMode(DcMotor.RunMode.RUN_TO_POSITION);
@@ -229,6 +226,11 @@ public class Hardware {
         armRotationMotor.setTargetPosition(targetPosition);
         armRotationMotor.setPower(direction * 0.15);
         armRotationMotor.setMode(DcMotor.RunMode.RUN_TO_POSITION);
+
+        // adjust the extension of the arm to keep the arm length constant
+        armExtensionMotor.setTargetPosition(targetPosition / -1);
+        armExtensionMotor.setPower(0.4);
+        armExtensionMotor.setMode(DcMotor.RunMode.RUN_TO_POSITION);
     }
 
     /**

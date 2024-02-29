@@ -21,7 +21,7 @@ public class drivercontrol extends OpMode {
     public void loop() {
         telemetry.update(); // call-back to android console
 
-        driveWheels();
+        drive();
         moveArm();
         grabber();
         grabPixelPosition();
@@ -32,7 +32,6 @@ public class drivercontrol extends OpMode {
         telemetry.addData("Arm extension position: ", hardware.armExtensionMotor.getCurrentPosition());
         telemetry.addData("Claw rotation position: ", hardware.clawRotationServo.getPosition());
         telemetry.addData("Airplane launcher position: ", hardware.airplaneLauncherServo.getPosition());
-        //telemetry.addData("Potentiometer voltage: ", potentiometer.getVoltage());
     }
 
     /**
@@ -40,7 +39,7 @@ public class drivercontrol extends OpMode {
      * Moves robot forward and backward according to left joystick of the gamepad1
      * Turns robot left and right according to right joystick of the gamepad1
      */
-    public void driveWheels() {
+    public void drive() {
         double drive = gamepad1.left_stick_y;
         double turn = gamepad1.right_stick_x * TURNING_SENSITIVITY;
 
