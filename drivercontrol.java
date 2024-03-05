@@ -173,12 +173,12 @@ public class drivercontrol extends OpMode {
         // if the left trigger is pressed
         if (gamepad2.left_trigger > 0) {
             // rotate the claw upward
-            this.hardware.clawRotationServo.setPosition(currentClawRotationPosition - hardware.CLAW_ROTATE_SPEED);
+            hardware.clawRotationServo.setPosition(currentClawRotationPosition - hardware.CLAW_ROTATE_SPEED);
 
         } else if (gamepad2.right_trigger > 0) {
             // if the right trigger is pressed
             // rotate the claw downward
-            this.hardware.clawRotationServo.setPosition(currentClawRotationPosition + hardware.CLAW_ROTATE_SPEED);
+            hardware.clawRotationServo.setPosition(currentClawRotationPosition + hardware.CLAW_ROTATE_SPEED);
         }
 
         presetGrabberRotationPositions();
