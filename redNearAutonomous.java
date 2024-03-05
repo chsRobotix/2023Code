@@ -18,56 +18,56 @@ public class redNearAutonomous extends LinearOpMode {
         // wait until the player press the start button
         waitForStart();
 
-//        // lift the arm up by to level
-//        hardware.rotateArm(50);
-//
-//        sleep(1500);
-//
-//        hardware.armExtensionMotor.setTargetPosition(600);
-//        hardware.armExtensionMotor.setPower(0.4);
-//        hardware.armExtensionMotor.setMode(DcMotor.RunMode.RUN_TO_POSITION);
-//
-//        sleep(3000);
-//
-//        hardware.rotateArm(210);
-//
-//        sleep(2000);
-//
-//        hardware.clawRotationServo.setPosition(hardware.CLAW_ROTATE_MAX);
-//        sleep(1000);
-//        hardware.pincerServo.setPosition(hardware.CLAW_OPEN_POSITION);
-//
-//        sleep(4000);
-//
-//        hardware.pincerServo.setPosition(hardware.CLAW_CLOSE_POSITION);
-//
-//        // retract the arm
-//        hardware.armExtensionMotor.setTargetPosition(0);
-//        hardware.armExtensionMotor.setPower(-0.8);
-//        hardware.armExtensionMotor.setMode(DcMotor.RunMode.RUN_TO_POSITION);
-//
-//        // lower the arm
-//        hardware.armRotationMotor.setTargetPosition(hardware.ARM_ROTATE_MIN);
-//        hardware.armRotationMotor.setPower(-0.2);
-//        hardware.armRotationMotor.setMode(DcMotor.RunMode.RUN_TO_POSITION);
-//
-//        // rotate the claw back to its initial position
-//        hardware.clawRotationServo.setPosition(hardware.CLAW_ROTATE_MIN);
+        // lift the arm up by to level
+        hardware.rotateArm(50);
+
+        sleep(1500);
+
+        hardware.armExtensionMotor.setTargetPosition(600);
+        hardware.armExtensionMotor.setPower(0.4);
+        hardware.armExtensionMotor.setMode(DcMotor.RunMode.RUN_TO_POSITION);
+
+        sleep(3000);
+
+        hardware.rotateArm(210);
+
+        sleep(2000);
+
+        hardware.clawRotationServo.setPosition(hardware.CLAW_ROTATE_MAX);
+        sleep(1000);
+        hardware.pincerServo.setPosition(hardware.CLAW_OPEN_POSITION);
+
+        sleep(4000);
+
+        hardware.pincerServo.setPosition(hardware.CLAW_CLOSE_POSITION);
+
+        // retract the arm
+        hardware.armExtensionMotor.setTargetPosition(0);
+        hardware.armExtensionMotor.setPower(-0.8);
+        hardware.armExtensionMotor.setMode(DcMotor.RunMode.RUN_TO_POSITION);
+
+        // lower the arm
+        hardware.armRotationMotor.setTargetPosition(hardware.ARM_ROTATE_MIN);
+        hardware.armRotationMotor.setPower(-0.2);
+        hardware.armRotationMotor.setMode(DcMotor.RunMode.RUN_TO_POSITION);
+
+        // rotate the claw back to its initial position
+        hardware.clawRotationServo.setPosition(hardware.CLAW_ROTATE_MIN);
 
         // turn 90 degrees left
         // hardware.turn(-90);
 
-        hardware.rotateArm(90);
-
-        sleep(2000);
-
-//         drive forward 24 inches
-        hardware.drive(30);
-
-        sleep(5000);
-
-        hardware.drive(-30);
-
+//        hardware.rotateArm(90);
+//
+//        sleep(2000);
+//
+////         drive forward 24 inches
+//        hardware.drive(30);
+//
+//        sleep(5000);
+//
+//        hardware.drive(-30);
+//
         sleep(5000);
     }
 
