@@ -57,17 +57,17 @@ public class redNearAutonomous extends LinearOpMode {
         // turn 90 degrees left
         // hardware.turn(-90);
 
-//        hardware.rotateArm(90);
-//
-//        sleep(2000);
-//
-////         drive forward 24 inches
-//        hardware.drive(30);
-//
-//        sleep(5000);
-//
-//        hardware.drive(-30);
-//
+        hardware.rotateArm(90);
+
+        sleep(2000);
+
+        // drive forward 24 inches
+        hardware.drive(30);
+
+        sleep(5000);
+
+        hardware.drive(-30);
+
         sleep(5000);
     }
 
