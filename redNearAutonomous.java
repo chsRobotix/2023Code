@@ -18,26 +18,7 @@ public class redNearAutonomous extends LinearOpMode {
         // wait until the player press the start button
         waitForStart();
 
-        // lift the arm up by to level
-        hardware.rotateArm(50);
-
-        sleep(1500);
-
-        hardware.armExtensionMotor.setTargetPosition(600);
-        hardware.armExtensionMotor.setPower(0.4);
-        hardware.armExtensionMotor.setMode(DcMotor.RunMode.RUN_TO_POSITION);
-
-        sleep(3000);
-
-        hardware.rotateArm(210);
-
-        sleep(2000);
-
-        hardware.clawRotationServo.setPosition(hardware.CLAW_ROTATE_MAX);
-        sleep(1000);
-        hardware.pincerServo.setPosition(hardware.CLAW_OPEN_POSITION);
-
-        sleep(4000);
+        hardware.dropPixel();
 
         hardware.pincerServo.setPosition(hardware.CLAW_CLOSE_POSITION);
 
