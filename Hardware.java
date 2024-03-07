@@ -227,10 +227,10 @@ public class Hardware {
         armRotationMotor.setPower(direction * 0.15);
         armRotationMotor.setMode(DcMotor.RunMode.RUN_TO_POSITION);
 
-        // adjust the extension of the arm to keep the arm length constant
-        armExtensionMotor.setTargetPosition(targetPosition / -1);
-        armExtensionMotor.setPower(0.4);
-        armExtensionMotor.setMode(DcMotor.RunMode.RUN_TO_POSITION);
+//        // adjust the extension of the arm to keep the arm length constant
+//        armExtensionMotor.setTargetPosition(targetPosition / -1);
+//        armExtensionMotor.setPower(0.4);
+//        armExtensionMotor.setMode(DcMotor.RunMode.RUN_TO_POSITION);
     }
 
     /**
