@@ -1,7 +1,11 @@
 package org.firstinspires.ftc.teamcode;
 
+import  java.util.Arrays;
+
 import com.qualcomm.robotcore.eventloop.opmode.*;
 import com.qualcomm.robotcore.hardware.*;
+
+import org.firstinspires.ftc.robotcore.external.Telemetry;
 import org.firstinspires.ftc.vision.*;
 
 public class Hardware {
@@ -126,6 +130,36 @@ public class Hardware {
         //potentiometer = opMode.hardwareMap.get(AnalogInput.class, "potentiometer");
     }
 
+    /**
+     * Attempts to cast the opMode to a LinearOpMode
+     * Returns null if it fails
+     * @return a linearOpMode representation of opMode if possible
+     *         Else returns null
+     */
+    public LinearOpMode getLinearOpMode() {
+        try {
+            return (LinearOpMode) opMode;
+        } catch (ClassCastException) {
+            return null;
+        }
+    }
+
+    /**
+     *
+     * @param motors
+     */
+    public void autoSleep(DcMotor...motors) {
+        // does nothing if it isn't a LinearOpMode
+        if (getLinearOpMode() == null) {
+            return;
+        }
+
+        // while any of the motors are still running
+        while (Arrays.stream(motors).anyMatch(motor -> motor.isBusy())) {
+            getLinearOpMode().sleep(1);
+        }
+    }
+
     /* Wheel Methods */
     /**
      * Drives the robot straight at a specified power
@@ -178,6 +212,8 @@ public class Hardware {
         rightWheelMotor.setTargetPosition(rightWheelMotor.getCurrentPosition() - ticks);
         rightWheelMotor.setPower(0.4);
         rightWheelMotor.setMode(DcMotor.RunMode.RUN_TO_POSITION);
+
+
     }
 
     /**

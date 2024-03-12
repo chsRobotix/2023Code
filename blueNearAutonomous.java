@@ -18,21 +18,9 @@ public class blueNearAutonomous extends LinearOpMode {
         // wait until the player press the start button
         waitForStart();
 
-        hardware.rotateArm(50);
-        sleep(2000);
+        pushPixel();
 
-        // drive forward 30 inches
-        hardware.drive(30);
-        sleep(5000);
-
-        hardware.drive(-10);
-
-        sleep(2000);
-
-        hardware.turn(90);
-        sleep(1500);
-
-        hardware.drive(-37);
+        driveToBoard();
 
         dropPixel();
         sleep(4000);
@@ -52,8 +40,29 @@ public class blueNearAutonomous extends LinearOpMode {
         VisionPortal.Builder builder = new VisionPortal.Builder();
     }
 
+    /**
+     * Push the pixel onto the tape
+     */
     public void pushPixel() {
+        hardware.rotateArm(50);
+        sleep(2000);
 
+        // drive forward 28 inches
+        hardware.drive(28);
+        sleep(5000);
+
+        hardware.drive(-10);
+        sleep(2000);
+    }
+
+    /**
+     * Drive to the scoring board
+     */
+    public void driveToBoard() {
+        hardware.turn(90);
+        sleep(1500);
+
+        hardware.drive(-34);
     }
 
     /**
