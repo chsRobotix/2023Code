@@ -4,12 +4,10 @@ import  java.util.Arrays;
 
 import com.qualcomm.robotcore.eventloop.opmode.*;
 import com.qualcomm.robotcore.hardware.*;
-
-import org.firstinspires.ftc.robotcore.external.Telemetry;
 import org.firstinspires.ftc.vision.*;
 
 public class Hardware {
-    private OpMode opMode;
+    private final OpMode opMode;
 
     /* wheel movement */
     // the DC motors for the wheels
@@ -65,7 +63,7 @@ public class Hardware {
 
     /* airplane */
     // starting and ending position for airplane launcher
-    public final double AIRPLANE_LOADED_POSITION = 1.0 ;
+    public final double AIRPLANE_LOADED_POSITION = 1.0;
     public final double AIRPLANE_FIRING_POSITION = 0.0;
 
     // the servo that launches the airplane
@@ -133,37 +131,42 @@ public class Hardware {
     /**
      * Attempts to cast the opMode to a LinearOpMode
      * Returns null if it fails
+     *
      * @return a linearOpMode representation of opMode if possible
-     *         Else returns null
+     * Else returns null
      */
     public LinearOpMode getLinearOpMode() {
         try {
             return (LinearOpMode) opMode;
-        } catch (ClassCastException) {
+        } catch (ClassCastException e) {
             return null;
         }
     }
 
     /**
+     * Automatically sleeps the robot while the given motors are running
      *
-     * @param motors
+     * @param motors the motors that are running
      */
-    public void autoSleep(DcMotor...motors) {
+    public void autoSleep(DcMotor... motors) {
+        LinearOpMode linearOp = getLinearOpMode();
+
         // does nothing if it isn't a LinearOpMode
-        if (getLinearOpMode() == null) {
+        if (linearOp == null) {
             return;
         }
 
         // while any of the motors are still running
         while (Arrays.stream(motors).anyMatch(motor -> motor.isBusy())) {
-            getLinearOpMode().sleep(1);
+            linearOp.sleep(1);
         }
     }
 
     /* Wheel Methods */
+
     /**
      * Drives the robot straight at a specified power
-     * The robot continues at the power until commanded elsewise
+     * The robot continues at the power until commanded else wise
      *
      * @param wheelPower Specifies the wheel power.
      *                   Positive drives the robot forward. Negative drives it backward.
@@ -175,7 +178,7 @@ public class Hardware {
 
     /**
      * Drives forward a specified number of inches
-     * 
+     *
      * @param distance How far the robot should drive in inches
      */
     public void drive(double distance) {
@@ -184,7 +187,7 @@ public class Hardware {
 
     /**
      * Drives forward a specified distance
-     * 
+     *
      * @param distance   How far the robot should drive
      *                   Negative values drive backwards
      * @param lengthUnit What unit the distance is in(inches or centimeters)
@@ -213,13 +216,13 @@ public class Hardware {
         rightWheelMotor.setPower(0.4);
         rightWheelMotor.setMode(DcMotor.RunMode.RUN_TO_POSITION);
 
-
+        autoSleep(leftWheelMotor, rightWheelMotor);
     }
 
     /**
      * Turns the robot a certain number of degrees
      * The robot rotates in place without any linear movement
-     * 
+     *
      * @param degrees the number of degrees for the robot to turn
      *                Negative numbers turn the robot left
      *                Positive numbers turn the robot right
@@ -236,12 +239,15 @@ public class Hardware {
         rightWheelMotor.setTargetPosition(rightWheelMotor.getCurrentPosition() - motorTicks);
         rightWheelMotor.setPower(-0.4);
         rightWheelMotor.setMode(DcMotor.RunMode.RUN_TO_POSITION);
+
+        autoSleep(leftWheelMotor, rightWheelMotor);
     }
 
     /* Arm Methods */
+
     /**
      * Rotates the arm to a position specified in degrees
-     * 
+     *
      * @param degrees The position the arm moves to
      *                The arm's starting position is 0 degrees
      *                50 degrees is parallel to the ground
@@ -249,9 +255,9 @@ public class Hardware {
     public void rotateArm(double degrees) {
         int targetPosition = (int) Math.round(degrees * ARM_TICKS_PER_DEGREE);
 
-        // keep the target position within legal bounds
+        // keep the target position within acceptable bounds
         targetPosition = Math.min(Math.max(targetPosition, ARM_ROTATE_MIN), ARM_ROTATE_MAX);
-        
+
         /*
          * Calculate the direction that the arm will have to rotate
          * Negative is down
@@ -263,27 +269,11 @@ public class Hardware {
         armRotationMotor.setPower(direction * 0.15);
         armRotationMotor.setMode(DcMotor.RunMode.RUN_TO_POSITION);
 
-//        // adjust the extension of the arm to keep the arm length constant
+        // adjust the extension of the arm to keep the arm length constant
 //        armExtensionMotor.setTargetPosition(targetPosition / -1);
 //        armExtensionMotor.setPower(0.4);
 //        armExtensionMotor.setMode(DcMotor.RunMode.RUN_TO_POSITION);
-    }
 
-    /**
-     * Rotates the arm to ARM_ROTATE_MAX
-     */
-    public void raiseArmToMax() {
-        armRotationMotor.setTargetPosition(ARM_ROTATE_MAX);
-        armRotationMotor.setPower(0.15);
-        armRotationMotor.setMode(DcMotor.RunMode.RUN_TO_POSITION);
-    }
-
-    /**
-     * Rotates the arm to ARM_ROTATE_MIN
-     */
-    public void lowerArmToMin() {
-        armRotationMotor.setTargetPosition(ARM_ROTATE_MIN);
-        armRotationMotor.setPower(-0.15);
-        armRotationMotor.setMode(DcMotor.RunMode.RUN_TO_POSITION);
+        autoSleep(armRotationMotor);
     }
 }
