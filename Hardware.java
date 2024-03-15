@@ -277,4 +277,11 @@ public class Hardware {
 
         autoSleep(armRotationMotor);
     }
+
+    /**
+     * Moves the arm to a position
+     */
+    public void setArmExtension(int position) {
+
+    }
 }

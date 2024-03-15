@@ -23,10 +23,8 @@ public class blueNearAutonomous extends LinearOpMode {
         driveToBoard();
 
         dropPixel();
-        sleep(4000);
+//        sleep(4000);
         returnArmToInitialPosition();
-
-        sleep(4000);
     }
 
     /**
@@ -45,14 +43,14 @@ public class blueNearAutonomous extends LinearOpMode {
      */
     public void pushPixel() {
         hardware.rotateArm(50);
-        sleep(2000);
+//        sleep(2000);
 
         // drive forward 28 inches
         hardware.drive(28);
-        sleep(5000);
+//        sleep(5000);
 
         hardware.drive(-10);
-        sleep(2000);
+//        sleep(2000);
     }
 
     /**
@@ -60,7 +58,7 @@ public class blueNearAutonomous extends LinearOpMode {
      */
     public void driveToBoard() {
         hardware.turn(90);
-        sleep(1500);
+//        sleep(1500);
 
         hardware.drive(-34);
     }
@@ -78,7 +76,7 @@ public class blueNearAutonomous extends LinearOpMode {
 
         hardware.rotateArm(220);
 
-        sleep(2000);
+//        sleep(2000);
 
         hardware.clawRotationServo.setPosition(hardware.CLAW_ROTATE_MAX);
         sleep(1000);
