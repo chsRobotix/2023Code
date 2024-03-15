@@ -138,6 +138,7 @@ public class Hardware {
     public LinearOpMode getLinearOpMode() {
         try {
             return (LinearOpMode) opMode;
+
         } catch (ClassCastException e) {
             return null;
         }
