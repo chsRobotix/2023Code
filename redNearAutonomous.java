@@ -44,14 +44,14 @@ public class redNearAutonomous extends LinearOpMode {
      */
     public void pushPixel() {
         hardware.rotateArm(50);
-        sleep(2000);
+//        sleep(2000);
 
-        // drive forward 28 inches
-        hardware.drive(28);
-        sleep(5000);
+        // drive forward 29 inches
+        hardware.drive(29);
+//        sleep(5000);
 
         hardware.drive(-10);
-        sleep(2000);
+//        sleep(2000);
     }
 
     /**
@@ -59,7 +59,7 @@ public class redNearAutonomous extends LinearOpMode {
      */
     public void driveToBoard() {
         hardware.turn(-90);
-        sleep(1500);
+//        sleep(1500);
 
         hardware.drive(-34);
     }
@@ -69,7 +69,7 @@ public class redNearAutonomous extends LinearOpMode {
      */
     public void dropPixel() {
         telemetry.addData("armExtensionMotor position: ", hardware.armExtensionMotor.getCurrentPosition());
-        hardware.armExtensionMotor.setTargetPosition(1200);
+        hardware.armExtensionMotor.setTargetPosition(1300);
         hardware.armExtensionMotor.setPower(0.4);
         hardware.armExtensionMotor.setMode(DcMotor.RunMode.RUN_TO_POSITION);
 
@@ -77,7 +77,7 @@ public class redNearAutonomous extends LinearOpMode {
 
         hardware.rotateArm(220);
 
-        sleep(2000);
+//        sleep(2000);
 
         hardware.clawRotationServo.setPosition(hardware.CLAW_ROTATE_MAX);
         sleep(1000);

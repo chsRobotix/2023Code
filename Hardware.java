@@ -210,11 +210,11 @@ public class Hardware {
         int ticks = (int) Math.round(degrees * WHEEL_TICKS_PER_DEGREE);
 
         leftWheelMotor.setTargetPosition(leftWheelMotor.getCurrentPosition() - ticks);
-        leftWheelMotor.setPower(0.4);
+        leftWheelMotor.setPower(0.6);
         leftWheelMotor.setMode(DcMotor.RunMode.RUN_TO_POSITION);
 
         rightWheelMotor.setTargetPosition(rightWheelMotor.getCurrentPosition() - ticks);
-        rightWheelMotor.setPower(0.4);
+        rightWheelMotor.setPower(0.6);
         rightWheelMotor.setMode(DcMotor.RunMode.RUN_TO_POSITION);
 
         autoSleep(leftWheelMotor, rightWheelMotor);
@@ -234,11 +234,11 @@ public class Hardware {
         int motorTicks = (int) Math.round(degrees / 2 * WHEEL_TICKS_PER_DEGREE);
 
         leftWheelMotor.setTargetPosition(leftWheelMotor.getCurrentPosition() + motorTicks);
-        leftWheelMotor.setPower(0.4);
+        leftWheelMotor.setPower(0.6);
         leftWheelMotor.setMode(DcMotor.RunMode.RUN_TO_POSITION);
 
         rightWheelMotor.setTargetPosition(rightWheelMotor.getCurrentPosition() - motorTicks);
-        rightWheelMotor.setPower(-0.4);
+        rightWheelMotor.setPower(-0.6);
         rightWheelMotor.setMode(DcMotor.RunMode.RUN_TO_POSITION);
 
         autoSleep(leftWheelMotor, rightWheelMotor);

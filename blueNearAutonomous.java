@@ -19,12 +19,13 @@ public class blueNearAutonomous extends LinearOpMode {
         waitForStart();
 
         pushPixel();
-
         driveToBoard();
 
         dropPixel();
-//        sleep(4000);
+        sleep(4000);
         returnArmToInitialPosition();
+
+        sleep(4000);
     }
 
     /**
@@ -45,8 +46,8 @@ public class blueNearAutonomous extends LinearOpMode {
         hardware.rotateArm(50);
 //        sleep(2000);
 
-        // drive forward 28 inches
-        hardware.drive(28);
+        // drive forward 29 inches
+        hardware.drive(29);
 //        sleep(5000);
 
         hardware.drive(-10);
@@ -68,7 +69,7 @@ public class blueNearAutonomous extends LinearOpMode {
      */
     public void dropPixel() {
         telemetry.addData("armExtensionMotor position: ", hardware.armExtensionMotor.getCurrentPosition());
-        hardware.armExtensionMotor.setTargetPosition(1200);
+        hardware.armExtensionMotor.setTargetPosition(1300);
         hardware.armExtensionMotor.setPower(0.4);
         hardware.armExtensionMotor.setMode(DcMotor.RunMode.RUN_TO_POSITION);
 
